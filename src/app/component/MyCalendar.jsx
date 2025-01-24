@@ -48,9 +48,7 @@ export default function CalendarMain() {
   const [counters, setCounters] = useState({ item1: 0, item2: 0 })
   useEffect(() => {
     console.log("hey: ", myEvents)
-    return () => {
-    }
-  }, [])
+  }, [myEvents])
 
   const eventPropGetter = useCallback(
     (event) => ({
@@ -114,6 +112,11 @@ export default function CalendarMain() {
     [setMyEvents]
   )
 
+  const handleSelectEvent = useCallback(
+    (event) => window.alert(event.title),
+    []
+  )
+
   const onDropFromOutside = useCallback(
     ({ start, end, allDay: isAllDay }) => {
       if (draggedEvent === 'undroppable') {
@@ -171,6 +174,7 @@ export default function CalendarMain() {
           onDragOverFromOutside={customOnDragOverFromOutside}
           onEventDrop={moveEvent}
           onEventResize={resizeEvent}
+          onSelectEvent={handleSelectEvent}
           onSelectSlot={newEvent}
           onDoubleClickEvent={newEvent}
           resizable

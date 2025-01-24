@@ -1,101 +1,151 @@
-import Image from "next/image";
+"use client";
+import * as React from "react";
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import { Button, ButtonGroup, Grid, Grid2, Input, Link, TextField, Typography } from "@mui/material";
+import { Facebook, Google, Instagram, Label } from "@mui/icons-material";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+function CustomTabPanel(props) {
+    const { children, value, index, ...other } = props;
+    return (
+        <Box
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+        </Box>
+    );
+}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+CustomTabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        "aria-controls": `simple-tabpanel-${index}`,
+    };
+}
+
+export default function BasicTabs() {
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    return (
+        <Box className="flex h-screen w-screen items-center justify-start text-black dark:text-white">
+            <Box sx={{ width: "300px", marginInline: "auto", height: "500px" }} className="rounded-md border-2 p-4 shadow-2xl">
+                <Box sx={{ borderBottom: 1, borderColor: "Boxider" }}>
+                    <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        sx={{ width: "100%" }}
+                        aria-label="basic tabs example"
+                    >
+                        <Tab label="Login" {...a11yProps(0)} sx={{ width: "50%" }} />
+                        <Tab label="Sign up" {...a11yProps(1)} sx={{ width: "50%" }} />
+                    </Tabs>
+                </Box>
+                <CustomTabPanel value={value} index={0}>
+                    <Box className="flex flex-col gap-4">
+                        <Box className="flex flex-col gap-4">
+                            <TextField id="standard-basic" label="EMAIL" variant="standard" />
+                            <TextField
+                                id="standard-password-input"
+                                label="Password"
+                                type="password"
+                                variant="standard"
+                            />
+                        </Box>
+                        <Button variant="contained" className="w-full" onClick={() => {
+                            window.location.href = '/home';
+                        }}>
+                            Login
+                        </Button>
+                        <Link className="m-0 text-end" variant="caption" href="#">Forgot password?</Link>
+                        <Typography variant="subtitle1" className="mx-auto">or</Typography>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                marginInline: "auto",
+                                '& > *': {
+                                    m: 1,
+                                },
+                            }}
+                        >
+                            <ButtonGroup size="small" aria-label="Small button group">
+                                <Button variant="contained" className="w-full">
+                                    <Google />
+                                </Button>
+                            </ButtonGroup>
+                            <ButtonGroup size="small" aria-label="Small button group">
+                                <Button variant="contained" className="w-full">
+                                    <Facebook />
+                                </Button>
+                            </ButtonGroup>
+                            <ButtonGroup size="small" aria-label="Small button group">
+                                <Button variant="contained" className="w-full">
+                                    <Instagram />
+                                </Button>
+                            </ButtonGroup>
+                        </Box>
+                    </Box>
+                </CustomTabPanel>
+                <CustomTabPanel value={value} index={1}>
+                    <Box className="flex flex-col gap-4">
+                        <Box className="flex flex-col gap-4">
+                            <TextField id="standard-basic" label="EMAIL" variant="standard" />
+                            <TextField
+                                id="standard-password-input"
+                                label="Password"
+                                type="password"
+                                variant="standard"
+                            />
+                        </Box>
+                        <Button variant="contained" className="w-full">
+                            Sign Up
+                        </Button>
+                        <Typography variant="subtitle1" className="mx-auto">or</Typography>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                marginInline: "auto",
+                                '& > *': {
+                                    m: 1,
+                                },
+                            }}
+                        >
+                            <ButtonGroup size="small" aria-label="Small button group">
+                                <Button variant="contained" className="w-full">
+                                    <Google />
+                                </Button>
+                            </ButtonGroup>
+                            <ButtonGroup size="small" aria-label="Small button group">
+                                <Button variant="contained" className="w-full">
+                                    <Facebook />
+                                </Button>
+                            </ButtonGroup>
+                            <ButtonGroup size="small" aria-label="Small button group">
+                                <Button variant="contained" className="w-full">
+                                    <Instagram />
+                                </Button>
+                            </ButtonGroup>
+                        </Box>
+                    </Box>
+                </CustomTabPanel>
+            </Box>
+        </Box>
+    );
 }
