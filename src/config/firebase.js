@@ -36,19 +36,7 @@ export const createNewUser = (email, password) => {
             return error;
         });
 }
-export const loginUser = (email, password) => {
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            console.log(user);
-            return user;
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode, errorMessage);
-            return error;
-        });
-}
+export const loginUser = async (email, password) => signInWithEmailAndPassword(auth, email, password)
+
 
 // export const analytics = getAnalytics(app);

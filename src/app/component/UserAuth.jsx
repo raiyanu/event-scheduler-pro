@@ -17,8 +17,11 @@ import { useFormik } from "formik";
 import { createNewUser, loginUser } from "@/config/firebase";
 import { auth } from "@/lib/firebase.config";
 import { useAppDispatch } from "../redux/hook";
-import { login } from "../redux/slice/userSlice";
-import { useDispatch } from "react-redux";
+import { login, logout, setLoginStatus, userLogin } from "../redux/slice/userSlice";
+import { useDispatch, useStore } from "react-redux";
+import store from "../redux/store";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { authStateChangeHandler } from "../lib/authStateChangeHandler";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -49,8 +52,23 @@ function a11yProps(index) {
 }
 
 export function Auth() {
+    const dispatch = useDispatch();
+    const userState = useStore(store => store.user);
     const [value, setValue] = React.useState(0);
-
+    React.useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const uid = user.uid;
+                console.log("user: ", user.currentUser);
+                console.log("userState : ", userState.getState().user)
+                console.log("userState[user] : ", userState.getState().user)
+                console.log("userState[user][user] : ", userState.getState().user.user)
+            } else {
+                console.log("userState : ", userState.getState().user)
+                console.log("userState[user][user] : ", userState.getState().user.user)
+            }
+        })
+    }, []);
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -60,6 +78,9 @@ export function Auth() {
                 sx={{ width: "300px", marginInline: "auto", height: "500px" }}
                 className="rounded-lg bg-white p-4 shadow-2xl"
             >
+                <Button onClick={() => {
+                    console.log("Print userState: ", userState.getState())
+                }}> print state</Button>
                 <Box>
                     <Tabs
                         value={value}
@@ -86,27 +107,21 @@ export function Login() {
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
-            email: "",
-            password: "",
+            email: "abc@gmail.com",
+            password: "123123",
         },
         onSubmit: async (values) => {
-            // Make call to firebase
-            dispatch(login({ email: values.email, password: values.password }));
-            return;
             console.log(JSON.stringify(values, null, 2));
-            // make 3 seconds delay
-            const response = await loginUser(values.email, values.password);
-            if (!auth?.currentUser) {
-                alert("Login failed. Please try again.");
-                console.log(auth?.currentUser);
-            } else {
-                alert("Login successful!");
-                console.log(auth.currentUser);
-            }
+            await dispatch(userLogin({ email: values.email, password: values.password }));
         },
     });
     return (
         <Box className="flex flex-col gap-4">
+            <Button variant="contained" className="" onClick={() => {
+                auth.signOut();
+            }}>
+                Logout
+            </Button>
             <Box className="flex flex-col gap-4 *:!bg-transparent">
                 <TextField
                     id="standard-basic"
@@ -158,7 +173,7 @@ export function SignUp() {
     });
     return (
         <Box className="flex flex-col gap-4">
-            <Box className="flex flex-col gap-4 *:!bg-transparent">
+            <Box className="flex flex-col gap-4 *:!bg-transparent" >
                 <TextField id="standard-basic" label="EMAIL" variant="standard" name="email"
                     onChange={formik.handleChange}
                     value={formik.values.email} />
