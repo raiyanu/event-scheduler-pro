@@ -8,7 +8,7 @@ export const Theme = createTheme({
     colorSchemes: { light: true, dark: true },
     palette: {
         primary: {
-            main: '#FFB904', // Black
+            main: '#FFB904', // Yellow
             contrastText: colors.common.white, // White for text on primary
         },
         secondary: {
@@ -29,7 +29,7 @@ export const Theme = createTheme({
         },
         background: {
             default: colors.common.white, // White background
-            paper: colors.grey[100], // Light grey for surfaces
+            paper: colors.common.white, // Light grey for surfaces
         },
         text: {
             primary: colors.common.black, // Black for primary text
