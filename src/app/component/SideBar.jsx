@@ -5,13 +5,8 @@ import Typography from "@mui/material/Typography";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { NextAppProvider } from '@toolpad/core/nextjs';
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { useDemoRouter } from "@toolpad/core/internal";
 import { useMemo, useState } from "react";
-import { Home } from "@mui/icons-material";
-import { ThemeSwitcher } from "../context/ThemeContext";
-import Theme from '../context/ThemeContext'
-
-
+import { Home, Task } from "@mui/icons-material";
 
 
 export default function SideBarProvider(props) {
@@ -59,18 +54,22 @@ export default function SideBarProvider(props) {
                     segment: "orders",
                     title: "Orders",
                     icon: <ShoppingCartIcon />,
-                    pattern: "orders{/:orderId}*",
+                    pattern: "orders",
+                },
+                {
+                    segment: "agenda",
+                    title: "Agenda",
+                    icon: <Task />,
+                    pattern: "agenda",
                 },
             ]}
-            theme={Theme}
             window={demoWindow}
         >
-            <DashboardLayout theme={Theme} defaultSidebarCollapsed>
+            <DashboardLayout defaultSidebarCollapsed>
                 <Box sx={{
                     borderRadius: 1,
                     bgcolor: 'background.paper',
-                    color: "black"
-                }} className="overflow-y-auto overflow-x-hidden p-2" theme={Theme}>
+                }} className="h-screen overflow-y-auto overflow-x-hidden rounded-none p-2" >
                     {props.children}
                 </Box>
             </DashboardLayout>

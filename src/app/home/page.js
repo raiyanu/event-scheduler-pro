@@ -1,17 +1,22 @@
 "use client";
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import SideBarProvider from "../component/SideBar";
-import { Typography } from '@mui/material';
+import Button from "@mui/material/Button";
+import { Box, Typography } from "@mui/material";
+import PrimaryLayout from "../PrimaryLayout";
 
 export default function Home() {
   return (
-    <div className="max-w-full overflow-x-hidden">
-      <SideBarProvider>
-        <Typography variant='overline'>
-          hello there
+    <PrimaryLayout>
+      <Typography variant="overline" color="primary">
+        hello there
+      </Typography>
+      <Box>
+        <Typography color="primary">
+          Testing
+          <Button variant="contained" color="primary">
+            Buytton
+          </Button>
         </Typography>
-      </SideBarProvider>
-    </div>
+      </Box>
+    </PrimaryLayout>
   );
 }
