@@ -107,7 +107,7 @@ export function Login() {
     });
     return (
         <Box className="flex flex-col gap-4">
-            <Box className="flex flex-col gap-4 *:bg-transparent">
+            <Box className="flex flex-col gap-4 *:!bg-transparent">
                 <TextField
                     id="standard-basic"
                     label="EMAIL"
@@ -138,7 +138,7 @@ export function Login() {
             <Link className="m-0 text-end" variant="caption" href="#">
                 Forgot password?
             </Link>
-            <Typography variant="subtitle1" color="textSecondary" className="mx-auto">
+            <Typography variant="subtitle1" color="textSecondary" className="mx-auto text-center">
                 or
             </Typography>
             <SocialLogin />
@@ -158,7 +158,7 @@ export function SignUp() {
     });
     return (
         <Box className="flex flex-col gap-4">
-            <Box className="flex flex-col gap-4 *:bg-transparent">
+            <Box className="flex flex-col gap-4 *:!bg-transparent">
                 <TextField id="standard-basic" label="EMAIL" variant="standard" name="email"
                     onChange={formik.handleChange}
                     value={formik.values.email} />
@@ -184,7 +184,7 @@ export function SignUp() {
             <Button variant="contained" className="w-full" onClick={formik.handleSubmit}>
                 Sign Up
             </Button>
-            <Typography variant="subtitle1" className="mx-auto">
+            <Typography variant="subtitle1" color="textSecondary" className="mx-auto text-center">
                 or
             </Typography>
             <SocialLogin />
