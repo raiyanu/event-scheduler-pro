@@ -1,33 +1,6 @@
 import { colors } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 
-// export const Theme = createTheme({
-//     cssVariables: {
-//         colorSchemeSelector: "data-toolpad-color-scheme",
-//     },
-//     colorSchemes: { light: true, dark: true },
-//     palette: {
-//         text: {
-//             primary: colors.grey[50],
-//         },
-//         common: {
-//             black: "red",
-//             white: "#fff"
-//         },
-//         primary: {
-//             main: colors.yellow[500],
-//             light: colors.yellow[500],
-//             dark: colors.yellow[500],
-//             contrastText: colors.yellow[500],
-//         },
-//         secondary: {
-//             main: colors.yellow[500]
-//         },
-//     },
-// });
-
-
-
 export const Theme = createTheme({
     cssVariables: {
         colorSchemeSelector: "data-toolpad-color-scheme",
@@ -35,35 +8,35 @@ export const Theme = createTheme({
     colorSchemes: { light: true, dark: true },
     palette: {
         primary: {
-            main: "#000000", // Black
-            contrastText: "#FFFFFF", // White for text on primary
+            main: '#FFB904', // Black
+            contrastText: colors.common.white, // White for text on primary
         },
         secondary: {
-            main: "#808080", // Gray
-            contrastText: "#FFFFFF", // White for text on secondary
+            main: colors.yellow[500], // Gray
+            contrastText: colors.common.white, // White for text on secondary
         },
         success: {
-            main: "#4CAF50", // Green
+            main: colors.green[500], // Green
         },
         warning: {
-            main: "#FFC107", // Yellow
+            main: colors.amber[500], // Yellow
         },
         info: {
-            main: "#2196F3", // Blue
+            main: colors.blue[500], // Blue
         },
         error: {
-            main: "#9C27B0", // Purple
+            main: colors.purple[500], // Purple
         },
         background: {
-            default: "#FFFFFF", // White background
-            paper: "#F9F9F9", // Light grey for surfaces
+            default: colors.common.white, // White background
+            paper: colors.grey[100], // Light grey for surfaces
         },
         text: {
-            primary: "#000000", // Black for primary text
-            secondary: "#808080", // Gray for secondary text
-            disabled: "#D3D3D3", // Light gray for disabled text
+            primary: colors.common.black, // Black for primary text
+            secondary: colors.grey[500], // Gray for secondary text
+            disabled: colors.grey[300], // Light gray for disabled text
         },
-        divider: "#E0E0E0", // Divider color
+        divider: colors.grey[300], // Divider color
     },
     typography: {
         fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
@@ -154,7 +127,7 @@ export const Theme = createTheme({
             styleOverrides: {
                 root: {
                     borderRadius: "8px",
-                    backgroundColor: "#F9F9F9",
+                    backgroundColor: colors.grey[100],
                 },
             },
         },
@@ -169,15 +142,15 @@ export const Theme = createTheme({
         MuiAppBar: {
             styleOverrides: {
                 root: {
-                    backgroundColor: "#000000", // Black AppBar
-                    color: "#FFFFFF",
+                    backgroundColor: colors.common.black, // Black AppBar
+                    color: colors.common.white,
                 },
             },
         },
         MuiPaper: {
             styleOverrides: {
                 root: {
-                    backgroundColor: "#F9F9F9",
+                    backgroundColor: colors.grey[100],
                 },
             },
         },
