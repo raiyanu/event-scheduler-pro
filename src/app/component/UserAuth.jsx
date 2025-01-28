@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Facebook, Google, Instagram } from "@mui/icons-material";
 import { useFormik } from "formik";
-import { createNewUser, loginUser } from "@/config/firebase";
+import { AuthWithGoogle, createNewUser, loginUser } from "@/config/firebase";
 import { auth } from "@/lib/firebase.config";
 import { useAppDispatch } from "../redux/hook";
 import {
@@ -25,7 +25,7 @@ import {
 } from "../redux/slice/userSlice";
 import { useDispatch, useStore } from "react-redux";
 import store from "../redux/store";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { authStateChangeHandler } from "../lib/authStateChangeHandler";
 import { redirect, useRouter } from "next/navigation";
 
@@ -238,7 +238,50 @@ const SocialLogin = () => (
         }}
     >
         <ButtonGroup size="small" aria-label="Small button group">
-            <Button variant="contained" className="w-full">
+            <Button
+                variant="contained"
+                className="w-full"
+                onClick={() => {
+                    signInWithPopup(auth, AuthWithGoogle)
+                        .then((result) => {
+                            // This gives you a Google Access Token. You can use it to access the Google API.
+                            const credential =
+                                GoogleAuthProvider.credentialFromResult(result);
+                            const token = credential.accessToken;
+                            // The signed-in user info.
+                            const user = result.user;
+                            // IdP data available using getAdditionalUserInfo(result)
+                            // ...
+                            console.log(
+                                "User: ",
+                                user,
+                                "Token: ",
+                                token,
+                                "Credential: ",
+                                credential
+                            );
+                        })
+                        .catch((error) => {
+                            // Handle Errors here.
+                            const errorCode = error.code;
+                            const errorMessage = error.message;
+                            // The email of the user's account used.
+                            const email = error.customData.email;
+                            // The AuthCredential type that was used.
+                            const credential = GoogleAuthProvider.credentialFromError(error);
+
+                            // ...
+
+                            console.log(
+                                "Error: ",
+                                errorCode,
+                                errorMessage,
+                                email,
+                                credential
+                            );
+                        });
+                }}
+            >
                 <Google />
             </Button>
         </ButtonGroup>
