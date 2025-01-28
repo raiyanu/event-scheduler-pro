@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { Theme } from './context/ThemeContext'
 import { ThemeProvider, useColorScheme } from '@mui/material'
 import SideBarProvider from './component/SideBar';
@@ -9,11 +9,13 @@ import GlobalActionProvider from './GlobalActionProvider';
 
 export default function MainLayout({ children }) {
     return (
-        <PublicLayout>
-            <SideBarProvider>
-                {children}
-            </SideBarProvider>
-        </PublicLayout >
+        <Suspense fallback={<></>}>
+            <PublicLayout>
+                <SideBarProvider>
+                    {children}
+                </SideBarProvider>
+            </PublicLayout >
+        </Suspense>
     )
 }
 
