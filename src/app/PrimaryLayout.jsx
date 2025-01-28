@@ -1,3 +1,4 @@
+"use client";
 import React, { Suspense, useEffect } from 'react'
 import { Theme } from './context/ThemeContext'
 import { ThemeProvider, useColorScheme } from '@mui/material'
