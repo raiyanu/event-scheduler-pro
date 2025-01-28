@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import { useEffect, useState, memo } from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -59,8 +59,8 @@ function a11yProps(index) {
 
 export function Auth() {
     const router = useRouter();
-    const [value, setValue] = React.useState(0);
-    React.useEffect(() => {
+    const [value, setValue] = useState(0);
+    useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 try {
@@ -103,7 +103,7 @@ export function Auth() {
     );
 }
 
-const Login = React.memo(() => {
+const Login = memo(() => {
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
@@ -166,7 +166,7 @@ const Login = React.memo(() => {
     );
 });
 
-const SignUp = React.memo(() => {
+const SignUp = memo(() => {
     const formik = useFormik({
         initialValues: {
             email: "",

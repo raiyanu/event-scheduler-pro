@@ -1,4 +1,3 @@
-"use client"
 import { Auth } from "./component/UserAuth";
 import { PublicLayout } from "./PrimaryLayout";
 export default function BasicTabs() {

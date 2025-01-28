@@ -1,15 +1,8 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
+import { isSupported, getAnalytics } from "firebase/analytics"; // Import Firebase Analytics
 
-// import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyCc61n8Vns1wj4147XqR0Nawrqb59Nz5E8",
     authDomain: "event-scheduler-pro.firebaseapp.com",
@@ -21,24 +14,46 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 export const AuthWithGoogle = new GoogleAuthProvider();
-export const createNewUser = (email, password) => {
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            console.log(user);
-            return user;
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode, errorMessage);
-            return error;
-        });
+
+// Initialize Analytics if supported
+isSupported().then((supported) => {
+    if (supported) {
+        const analytics = getAnalytics(app);
+        // Now you can use Firebase Analytics safely in supported environments
+    } else {
+        console.log("Firebase Analytics is not supported in this environment.");
+    }
+});
+
+// Function to create a new user
+export const createNewUser = async (email, password) => {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log(user);
+        return user;
+    } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        return { errorCode, errorMessage };  // Return error for handling elsewhere
+    }
 }
-export const loginUser = async (email, password) => signInWithEmailAndPassword(auth, email, password)
 
-
-// export const analytics = getAnalytics(app);
+// Function to log in a user
+export const loginUser = async (email, password) => {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log(user);
+        return user;
+    } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        return { errorCode, errorMessage };  // Return error for handling elsewhere
+    }
+}

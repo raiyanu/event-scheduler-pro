@@ -1,3 +1,4 @@
+"use client"
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -15,6 +16,16 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 export default function SideBarProvider(props) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        // This will run on the client side only
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        return null; // Or return a loader/spinner
+    }
     const { window } = props;
     const demoWindow = window !== undefined ? window() : undefined;
     const user = useSelector(getUser);
@@ -36,15 +47,15 @@ export default function SideBarProvider(props) {
             router.push("/");
         }
     }, [user, isLoggedUser]);
-
+    const navigate = (path) => router.push(path);
     const authentication = useMemo(() => {
         return {
             signIn: () => {
-                router.push("/");
+                navigate("/");
             },
             signOut: async () => {
                 await auth.signOut();
-                router.push("/");
+                navigate("/");
             },
         };
     }, [session]);
