@@ -5,15 +5,26 @@ import SideBarProvider from './component/SideBar';
 import { Provider, useDispatch, useStore } from 'react-redux';
 import store from './redux/store';
 import { onAuthStateChanged } from 'firebase/auth';
+import GlobalActionProvider from './GlobalActionProvider';
 
-export default function PrimaryLayout({ children }) {
+export default function MainLayout({ children }) {
+    return (
+        <PublicLayout>
+            <SideBarProvider>
+                {children}
+            </SideBarProvider>
+        </PublicLayout >
+    )
+}
+
+export function PublicLayout({ children }) {
     return (
         <Provider store={store}>
-            <ThemeProvider theme={Theme}>
-                <SideBarProvider>
+            <GlobalActionProvider>
+                <ThemeProvider theme={Theme}>
                     {children}
-                </SideBarProvider>
-            </ThemeProvider>
+                </ThemeProvider>
+            </GlobalActionProvider>
         </Provider>
     )
 }

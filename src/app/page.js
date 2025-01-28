@@ -1,11 +1,10 @@
 "use client"
 import { Auth } from "./component/UserAuth";
-import SecondaryLayout from "./SecondaryLayout";
-
+import { PublicLayout } from "./PrimaryLayout";
 export default function BasicTabs() {
     return (
-        <SecondaryLayout>
+        <PublicLayout>
             <Auth />
-        </SecondaryLayout>
+        </PublicLayout>
     );
 }

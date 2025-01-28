@@ -1,11 +1,11 @@
 "use client";
 import Button from "@mui/material/Button";
 import { Box, Typography } from "@mui/material";
-import PrimaryLayout from "../PrimaryLayout";
+import MainLayout from "../PrimaryLayout";
 
 export default function Home() {
   return (
-    <PrimaryLayout>
+    <MainLayout>
       <Typography variant="overline" color="primary">
         hello there
       </Typography>
@@ -17,6 +17,6 @@ export default function Home() {
           </Button>
         </Typography>
       </Box>
-    </PrimaryLayout>
+    </MainLayout>
   );
 }
