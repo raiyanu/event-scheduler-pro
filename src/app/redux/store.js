@@ -3,11 +3,12 @@ import { combineReducers } from 'redux'
 import userReducer from './slice/userSlice.js'
 
 const rootReducer = combineReducers({
-    user: userReducer,
+    AUTH: userReducer,
 })
 
 const store = configureStore({
-    reducer: rootReducer
+    reducer: rootReducer,
+    devTools: true,
 })
 
 export default store;

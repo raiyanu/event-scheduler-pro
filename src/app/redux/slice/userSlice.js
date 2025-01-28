@@ -1,18 +1,21 @@
 import { loginUser } from "@/config/firebase";
-import { auth } from "@/lib/firebase.config";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    user: {},
+    user: {
+        uid: null,
+        email: null,
+        emailVerified: null,
+        isAnonymous: null,
+        displayName: null
+    },
     loginStatus: false,
     authenticatingState: 'idle',
 };
 
 export const userLogin = createAsyncThunk('auth/Login', async (payload, { rejectWithValue }) => {
     try {
-        console.log("payload: ", payload);
         const res = await loginUser(payload.email, payload.password);
-        console.log("res: ", res);
         if (res) {
             return res;
         } else {
@@ -24,11 +27,16 @@ export const userLogin = createAsyncThunk('auth/Login', async (payload, { reject
 })
 
 const userSlice = createSlice({
-    name: "user",
+    name: "AUTH",
     initialState,
     reducers: {
+        updateUser: (state, action) => {
+            state.user = action.payload;
+            state.loginStatus = true;
+        },
         logout: (state) => {
             state.user = {};
+            state.loginStatus = false;
         },
         setLoginStatus: (state, action) => {
             state.loginStatus = action.payload;
@@ -50,39 +58,45 @@ const userSlice = createSlice({
                 state.authenticatingState = 'failed';
                 state.loginStatus = false;
             });
-    }
+    },
+    selectors: (state) => state.user,
 });
 
-export const authStateChanged = () => {
-    return (dispatch) => {
-        auth().onAuthStateChanged((user) => {
-            if (user) {
-                dispatch(setUser(user));
-            } else {
-                dispatch(clearUser());
-            }
-        });
-    };
+
+
+export const selectUser = (state) => state.AUTH.user;
+export const { logout, setLoginStatus, updateUser } = userSlice.actions;
+export default userSlice.reducer;
+
+export const getUser = (state) => {
+    return state.AUTH.user;
+};
+
+export const isLogged = (state) => {
+    return state.AUTH.loginStatus;
 };
 
 
-export const selectUser = (state) => state.user.user;
-export const { logout, setLoginStatus } = userSlice.actions;
-export default userSlice.reducer;
 
-
-
-
-function extractUserInfo(userData) {
+export function extractUserInfo(userData) {
     // Extracting necessary fields from the provided object
     const userInfo = {
-        uid: userData.user.uid, // User unique identifier
-        email: userData.user.email, // User email
-        emailVerified: userData.user.emailVerified, // Whether the email is verified
-        isAnonymous: userData.user.isAnonymous, // Whether the user is anonymous
-        displayName: userData.user.providerData[0].displayName || 'No Display Name' // Display name, fallback if null
+        ...userData.providerData[0],
+        displayName: userData.providerData[0].displayName ? userData.providerData[0].displayName : "User",
     };
-
-    // Return the extracted user info
     return userInfo;
 }
+
+
+
+// export const authStateChanged = () => {
+//     return (dispatch) => {
+//         auth().onAuthStateChanged((user) => {
+//             if (user) {
+//                 dispatch(setUser(user));
+//             } else {
+//                 dispatch(clearUser());
+//             }
+//         });
+//     };
+// };

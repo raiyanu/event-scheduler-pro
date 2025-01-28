@@ -3,35 +3,48 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { NextAppProvider } from '@toolpad/core/nextjs';
+import { NextAppProvider } from "@toolpad/core/nextjs";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Home, Task } from "@mui/icons-material";
-
+import { useSelector, useStore } from "react-redux";
+import { getUser, isLogged } from "../redux/slice/userSlice";
+import store from "../redux/store";
+import { auth } from "@/lib/firebase.config";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function SideBarProvider(props) {
     const { window } = props;
     const demoWindow = window !== undefined ? window() : undefined;
+    const user = useSelector(getUser);
+    const isLoggedUser = useSelector(isLogged);
+    const userState = useStore((state) => state.AUTH.user);
+    const router = useRouter();
     const [session, setSession] = useState({
         user: {
-            name: 'Bharat Kashyap',
-            email: 'bharatkashyap@outlook.com',
-            image: 'https://avatars.githubusercontent.com/u/19550456',
+            name: "",
+            email: "",
+            image: "",
         },
     });
+
+    useEffect(() => {
+        if (isLoggedUser) {
+            setSession({ user: { ...user, name: user.displayName } });
+        } else {
+            router.push("/");
+        }
+    }, [user, isLoggedUser]);
+
     const authentication = useMemo(() => {
         return {
             signIn: () => {
-                setSession({
-                    user: {
-                        name: 'Bharat Kashyap',
-                        email: 'bharatkashyap@outlook.com',
-                        image: 'https://avatars.githubusercontent.com/u/19550456',
-                    },
-                });
+                router.push("/");
             },
-            signOut: () => {
-                setSession(null);
+            signOut: async () => {
+                await auth.signOut();
+                router.push("/");
             },
         };
     }, [session]);
@@ -41,20 +54,14 @@ export default function SideBarProvider(props) {
             session={session}
             branding={{
                 logo: <img src="/logo.svg" alt="Event Scheduler Pro" />,
-                title: 'Event Scheduler Pro',
-                homeUrl: '/toolpad/core/introduction',
+                title: "ES-Pro",
+                homeUrl: "/home",
             }}
             navigation={[
                 {
                     segment: "home",
                     title: "Home",
                     icon: <Home />,
-                },
-                {
-                    segment: "orders",
-                    title: "Orders",
-                    icon: <ShoppingCartIcon />,
-                    pattern: "orders",
                 },
                 {
                     segment: "agenda",
@@ -66,10 +73,13 @@ export default function SideBarProvider(props) {
             window={demoWindow}
         >
             <DashboardLayout defaultSidebarCollapsed>
-                <Box sx={{
-                    borderRadius: 1,
-                    bgcolor: 'background.paper',
-                }} className="h-screen overflow-y-auto overflow-x-hidden rounded-none p-2" >
+                <Box
+                    sx={{
+                        borderRadius: 1,
+                        bgcolor: "background.paper",
+                    }}
+                    className="h-screen overflow-y-auto overflow-x-hidden rounded-none p-2"
+                >
                     {props.children}
                 </Box>
             </DashboardLayout>
@@ -77,12 +87,12 @@ export default function SideBarProvider(props) {
     );
 }
 
-
-
-{/* <PageContent
+{
+    /* <PageContent
     pathname={router.pathname}
     navigate={router.navigate}
-/> */}
+/> */
+}
 
 function PageContent({ pathname, navigate }) {
     return (
@@ -95,9 +105,7 @@ function PageContent({ pathname, navigate }) {
                 textAlign: "center",
             }}
         >
-            <Typography>
-                Dashboard content for {pathname}
-            </Typography>
+            <Typography>Dashboard content for {pathname}</Typography>
             {pathname.startsWith("/orders") ? (
                 <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
                     <Button

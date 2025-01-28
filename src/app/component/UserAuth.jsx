@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 import {
     Button,
     ButtonGroup,
@@ -17,11 +17,17 @@ import { useFormik } from "formik";
 import { createNewUser, loginUser } from "@/config/firebase";
 import { auth } from "@/lib/firebase.config";
 import { useAppDispatch } from "../redux/hook";
-import { login, logout, setLoginStatus, userLogin } from "../redux/slice/userSlice";
+import {
+    login,
+    logout,
+    setLoginStatus,
+    userLogin,
+} from "../redux/slice/userSlice";
 import { useDispatch, useStore } from "react-redux";
 import store from "../redux/store";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { authStateChangeHandler } from "../lib/authStateChangeHandler";
+import { redirect, useRouter } from "next/navigation";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -52,22 +58,19 @@ function a11yProps(index) {
 }
 
 export function Auth() {
-    const dispatch = useDispatch();
-    const userState = useStore(store => store.user);
+    const router = useRouter();
     const [value, setValue] = React.useState(0);
     React.useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const uid = user.uid;
-                console.log("user: ", user.currentUser);
-                console.log("userState : ", userState.getState().user)
-                console.log("userState[user] : ", userState.getState().user)
-                console.log("userState[user][user] : ", userState.getState().user.user)
-            } else {
-                console.log("userState : ", userState.getState().user)
-                console.log("userState[user][user] : ", userState.getState().user.user)
+                try {
+                    router.push("/home");
+                } catch (error) {
+                    console.log("Failed while trying to redirect");
+                    console.log("Error: ", error);
+                }
             }
-        })
+        });
     }, []);
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -78,9 +81,6 @@ export function Auth() {
                 sx={{ width: "300px", marginInline: "auto", height: "500px" }}
                 className="rounded-lg bg-white p-4 shadow-2xl"
             >
-                <Button onClick={() => {
-                    console.log("Print userState: ", userState.getState())
-                }}> print state</Button>
                 <Box>
                     <Tabs
                         value={value}
@@ -103,7 +103,7 @@ export function Auth() {
     );
 }
 
-export function Login() {
+const Login = React.memo(() => {
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
@@ -112,16 +112,13 @@ export function Login() {
         },
         onSubmit: async (values) => {
             console.log(JSON.stringify(values, null, 2));
-            await dispatch(userLogin({ email: values.email, password: values.password }));
+            await dispatch(
+                userLogin({ email: values.email, password: values.password })
+            );
         },
     });
     return (
         <Box className="flex flex-col gap-4">
-            <Button variant="contained" className="" onClick={() => {
-                auth.signOut();
-            }}>
-                Logout
-            </Button>
             <Box className="flex flex-col gap-4 *:!bg-transparent">
                 <TextField
                     id="standard-basic"
@@ -148,19 +145,28 @@ export function Login() {
                 onClick={formik.handleSubmit}
                 disabled={formik.isSubmitting}
             >
-                {formik.isSubmitting ? <CircularProgress color="warning" className="mr-2" size={18} /> : "Login"}
+                {formik.isSubmitting ? (
+                    <CircularProgress color="warning" className="mr-2" size={18} />
+                ) : (
+                    "Login"
+                )}
             </Button>
             <Link className="m-0 text-end" variant="caption" href="#">
                 Forgot password?
             </Link>
-            <Typography variant="subtitle1" color="textSecondary" className="mx-auto text-center">
+            <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                className="mx-auto text-center"
+            >
                 or
             </Typography>
             <SocialLogin />
         </Box>
     );
-}
-export function SignUp() {
+});
+
+const SignUp = React.memo(() => {
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -173,10 +179,15 @@ export function SignUp() {
     });
     return (
         <Box className="flex flex-col gap-4">
-            <Box className="flex flex-col gap-4 *:!bg-transparent" >
-                <TextField id="standard-basic" label="EMAIL" variant="standard" name="email"
+            <Box className="flex flex-col gap-4 *:!bg-transparent">
+                <TextField
+                    id="standard-basic"
+                    label="EMAIL"
+                    variant="standard"
+                    name="email"
                     onChange={formik.handleChange}
-                    value={formik.values.email} />
+                    value={formik.values.email}
+                />
                 <TextField
                     id="standard-password-input"
                     label="Password"
@@ -196,41 +207,50 @@ export function SignUp() {
                     value={formik.values.confirmPassword}
                 />
             </Box>
-            <Button variant="contained" className="w-full" onClick={formik.handleSubmit}>
+            <Button
+                variant="contained"
+                className="w-full"
+                onClick={formik.handleSubmit}
+            >
                 Sign Up
             </Button>
-            <Typography variant="subtitle1" color="textSecondary" className="mx-auto text-center">
+            <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                className="mx-auto text-center"
+            >
                 or
             </Typography>
             <SocialLogin />
         </Box>
     );
-}
+});
 
-
-const SocialLogin = () => <Box
-    sx={{
-        display: "flex",
-        alignItems: "center",
-        marginInline: "auto",
-        "& > *": {
-            m: 1,
-        },
-    }}
->
-    <ButtonGroup size="small" aria-label="Small button group">
-        <Button variant="contained" className="w-full">
-            <Google />
-        </Button>
-    </ButtonGroup>
-    <ButtonGroup size="small" aria-label="Small button group">
-        <Button variant="contained" className="w-full">
-            <Facebook />
-        </Button>
-    </ButtonGroup>
-    <ButtonGroup size="small" aria-label="Small button group">
-        <Button variant="contained" className="w-full">
-            <Instagram />
-        </Button>
-    </ButtonGroup>
-</Box>
+const SocialLogin = () => (
+    <Box
+        sx={{
+            display: "flex",
+            alignItems: "center",
+            marginInline: "auto",
+            "& > *": {
+                m: 1,
+            },
+        }}
+    >
+        <ButtonGroup size="small" aria-label="Small button group">
+            <Button variant="contained" className="w-full">
+                <Google />
+            </Button>
+        </ButtonGroup>
+        <ButtonGroup size="small" aria-label="Small button group">
+            <Button variant="contained" className="w-full">
+                <Facebook />
+            </Button>
+        </ButtonGroup>
+        <ButtonGroup size="small" aria-label="Small button group">
+            <Button variant="contained" className="w-full">
+                <Instagram />
+            </Button>
+        </ButtonGroup>
+    </Box>
+);

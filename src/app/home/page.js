@@ -7,16 +7,8 @@ export default function Home() {
   return (
     <MainLayout>
       <Typography variant="overline" color="primary">
-        hello there
+        Home
       </Typography>
-      <Box>
-        <Typography color="primary">
-          Testing
-          <Button variant="contained" color="primary">
-            Buytton
-          </Button>
-        </Typography>
-      </Box>
     </MainLayout>
   );
 }
