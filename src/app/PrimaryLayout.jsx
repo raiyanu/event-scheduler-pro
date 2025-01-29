@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { Suspense, useEffect } from 'react'
 import { Theme } from './context/ThemeContext'
 import { ThemeProvider, useColorScheme } from '@mui/material'
@@ -24,7 +24,7 @@ export function PublicLayout({ children }) {
     return (
         <Provider store={store}>
             <GlobalActionProvider>
-                <ThemeProvider theme={Theme}>
+                <ThemeProvider theme={Theme} >
                     {children}
                 </ThemeProvider>
             </GlobalActionProvider>

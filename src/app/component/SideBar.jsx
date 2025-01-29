@@ -14,20 +14,14 @@ import store from "../redux/store";
 import { auth } from "@/lib/firebase.config";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { Theme } from "../context/ThemeContext";
 
 export default function SideBarProvider(props) {
-    const [mounted, setMounted] = useState(false);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
-        // This will run on the client side only
-        setMounted(true);
+        setIsClient(true);
     }, []);
-
-    if (!mounted) {
-        return null; // Or return a loader/spinner
-    }
-    const { window } = props;
-    const demoWindow = window !== undefined ? window() : undefined;
     const user = useSelector(getUser);
     const isLoggedUser = useSelector(isLogged);
     const userState = useStore((state) => state.AUTH.user);
@@ -47,6 +41,10 @@ export default function SideBarProvider(props) {
             router.push("/");
         }
     }, [user, isLoggedUser]);
+
+
+    const { window } = props;
+    const demoWindow = window !== undefined ? window() : undefined;
     const navigate = (path) => router.push(path);
     const authentication = useMemo(() => {
         return {
@@ -59,6 +57,7 @@ export default function SideBarProvider(props) {
             },
         };
     }, [session]);
+
     return (
         <NextAppProvider
             authentication={authentication}
@@ -82,7 +81,9 @@ export default function SideBarProvider(props) {
                 },
             ]}
             window={demoWindow}
+        // Remove or handle the data-toolpad-color-scheme attribute if necessary
         >
+
             <DashboardLayout defaultSidebarCollapsed>
                 <Box
                     sx={{
