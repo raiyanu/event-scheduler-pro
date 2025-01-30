@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { GoogleAuthProvider } from "firebase/auth";
 import { isSupported, getAnalytics } from "firebase/analytics"; // Import Firebase Analytics
+import { GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCc61n8Vns1wj4147XqR0Nawrqb59Nz5E8",
@@ -15,7 +15,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app);
 export const AuthWithGoogle = new GoogleAuthProvider();
 
 // Initialize Analytics if supported
@@ -57,3 +57,7 @@ export const loginUser = async (email, password) => {
         return { errorCode, errorMessage };  // Return error for handling elsewhere
     }
 }
+
+
+
+export const GoogleAuth = new GoogleAuthProvider();

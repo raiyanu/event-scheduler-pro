@@ -1,4 +1,4 @@
-import { loginUser } from "@/config/firebase";
+import { createNewUser, loginUser } from "@/config/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -16,6 +16,19 @@ const initialState = {
 export const userLogin = createAsyncThunk('auth/Login', async (payload, { rejectWithValue }) => {
     try {
         const res = await loginUser(payload.email, payload.password);
+        if (res) {
+            return res;
+        } else {
+            return rejectWithValue(new Error(res.message))
+        }
+    } catch (error) {
+        return rejectWithValue(new Error(res.message))
+    }
+})
+export const userSignUp = createAsyncThunk('auth/SignUp', async (payload, { rejectWithValue }) => {
+    try {
+        console.log("dispatched")
+        const res = await createNewUser(payload.email, payload.password);
         if (res) {
             return res;
         } else {
@@ -55,6 +68,19 @@ const userSlice = createSlice({
                 state.loginStatus = true;
             })
             .addCase(userLogin.rejected, (state) => {
+                state.authenticatingState = 'failed';
+                state.loginStatus = false;
+            })
+            .addCase(userSignUp.pending, (state) => {
+                state.authenticatingState = 'loading';
+            })
+            .addCase(userSignUp.fulfilled, (state, action) => {
+                const userInfo = extractUserInfo(action.payload);
+                state.authenticatingState = 'succeeded';
+                state.user = userInfo;
+                state.loginStatus = true;
+            })
+            .addCase(userSignUp.rejected, (state) => {
                 state.authenticatingState = 'failed';
                 state.loginStatus = false;
             });

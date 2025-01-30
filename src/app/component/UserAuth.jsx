@@ -14,14 +14,14 @@ import {
 } from "@mui/material";
 import { Facebook, Google, Instagram } from "@mui/icons-material";
 import { useFormik } from "formik";
-import { AuthWithGoogle, createNewUser, loginUser } from "@/config/firebase";
-import { auth } from "@/lib/firebase.config";
+import { AuthWithGoogle, createNewUser, loginUser, auth } from "@/config/firebase";
 import { useAppDispatch } from "../redux/hook";
 import {
     login,
     logout,
     setLoginStatus,
     userLogin,
+    userSignUp,
 } from "../redux/slice/userSlice";
 import { useDispatch, useStore } from "react-redux";
 import store from "../redux/store";
@@ -167,13 +167,21 @@ const Login = memo(() => {
 });
 
 const SignUp = memo(() => {
+    const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
-            email: "",
-            password: "",
-            confirmPassword: "",
+            email: "ray@gmail.com",
+            password: "ray123",
+            confirmPassword: "ray123",
         },
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
+            if (!(values.confirmPassword === values.password)) {
+                alert("Password does not match");
+                return;
+            }
+            await dispatch(
+                userSignUp({ email: values.email, password: values.password })
+            );
             console.log(JSON.stringify(values, null, 2));
         },
     });
