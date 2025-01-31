@@ -8,24 +8,41 @@ import CircularProgress from "@mui/material/CircularProgress";
 import {
     Button,
     ButtonGroup,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Link,
+    Modal,
     TextField,
     Typography,
 } from "@mui/material";
 import { Facebook, Google, Instagram } from "@mui/icons-material";
 import { useFormik } from "formik";
-import { AuthWithGoogle, createNewUser, loginUser, auth } from "@/config/firebase";
+import {
+    AuthWithGoogle,
+    createNewUser,
+    loginUser,
+    auth,
+} from "@/config/firebase";
 import { useAppDispatch } from "../redux/hook";
 import {
+    calmAuthenticatingState,
     login,
     logout,
     setLoginStatus,
     userLogin,
     userSignUp,
 } from "../redux/slice/userSlice";
-import { useDispatch, useStore } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import store from "../redux/store";
-import { getAuth, onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import {
+    getAuth,
+    GoogleAuthProvider,
+    onAuthStateChanged,
+    signInWithPopup,
+} from "firebase/auth";
 import { authStateChangeHandler } from "../lib/authStateChangeHandler";
 import { redirect, useRouter } from "next/navigation";
 
@@ -78,7 +95,7 @@ export function Auth() {
     return (
         <Box className="flex h-screen w-screen items-center justify-start bg-[url(/bg-frame.svg)] bg-cover bg-center bg-no-repeat text-black dark:text-white">
             <Box
-                sx={{ width: "300px", marginInline: "auto", height: "500px" }}
+                sx={{ width: "300px", marginInline: "auto", height: "530px" }}
                 className="rounded-lg bg-white p-4 shadow-2xl"
             >
                 <Box>
@@ -105,6 +122,12 @@ export function Auth() {
 
 const Login = memo(() => {
     const dispatch = useDispatch();
+    const authenticatingError = useSelector(
+        (state) => state.AUTH.authenticatingError
+    );
+    const authenticatingState = useSelector(
+        (state) => state.AUTH.authenticatingState
+    );
     const formik = useFormik({
         initialValues: {
             email: "abc@gmail.com",
@@ -115,6 +138,10 @@ const Login = memo(() => {
             await dispatch(
                 userLogin({ email: values.email, password: values.password })
             );
+            setTimeout(() => {
+                dispatch(setLoginStatus(false));
+                dispatch(calmAuthenticatingState());
+            }, 2000);
         },
     });
     return (
@@ -139,6 +166,9 @@ const Login = memo(() => {
                     value={formik.values.password}
                 />
             </Box>
+            <Typography variant="caption" className="text-right text-red-600">
+                {authenticatingError}
+            </Typography>
             <Button
                 variant="contained"
                 className="w-full"
@@ -151,9 +181,7 @@ const Login = memo(() => {
                     "Login"
                 )}
             </Button>
-            <Link className="m-0 text-end" variant="caption" href="#">
-                Forgot password?
-            </Link>
+            <ForgottedPassword />
             <Typography
                 variant="subtitle1"
                 color="textSecondary"
@@ -168,26 +196,52 @@ const Login = memo(() => {
 
 const SignUp = memo(() => {
     const dispatch = useDispatch();
+    const router = useRouter();
+    const authenticatingError = useSelector(
+        (state) => state.AUTH.authenticatingError
+    );
+    const authenticatingState = useSelector(
+        (state) => state.AUTH.authenticatingState
+    );
     const formik = useFormik({
         initialValues: {
             email: "ray@gmail.com",
             password: "ray123",
             confirmPassword: "ray123",
+            username: "ray",
         },
         onSubmit: async (values) => {
             if (!(values.confirmPassword === values.password)) {
                 alert("Password does not match");
                 return;
             }
+
             await dispatch(
-                userSignUp({ email: values.email, password: values.password })
+                userSignUp({
+                    email: values.email,
+                    password: values.password,
+                    router,
+                    username: values.username,
+                })
             );
-            console.log(JSON.stringify(values, null, 2));
+
+            setTimeout(() => {
+                dispatch(setLoginStatus(false));
+                dispatch(calmAuthenticatingState());
+            }, 2000);
         },
     });
     return (
         <Box className="flex flex-col gap-4">
             <Box className="flex flex-col gap-4 *:!bg-transparent">
+                <TextField
+                    id="form-username"
+                    label="EMAIL"
+                    variant="standard"
+                    name="username"
+                    onChange={formik.handleChange}
+                    value={formik.values.username}
+                />
                 <TextField
                     id="standard-basic"
                     label="EMAIL"
@@ -215,10 +269,18 @@ const SignUp = memo(() => {
                     value={formik.values.confirmPassword}
                 />
             </Box>
+            <Typography variant="caption" className="text-right text-red-600">
+                {authenticatingError}
+            </Typography>
             <Button
                 variant="contained"
                 className="w-full"
                 onClick={formik.handleSubmit}
+                disabled={
+                    formik.isSubmitting ||
+                    authenticatingState === "loading" ||
+                    authenticatingState === "success"
+                }
             >
                 Sign Up
             </Button>
@@ -271,12 +333,12 @@ const SocialLogin = () => (
                         })
                         .catch((error) => {
                             // Handle Errors here.
-                            const errorCode = error.code;
-                            const errorMessage = error.message;
+                            const errorCode = error?.code;
+                            const errorMessage = error?.message;
                             // The email of the user's account used.
-                            const email = error.customData.email;
+                            const email = error?.customData?.email;
                             // The AuthCredential type that was used.
-                            const credential = GoogleAuthProvider.credentialFromError(error);
+                            const credential = GoogleAuthProvider?.credentialFromError(error);
 
                             // ...
 
@@ -305,3 +367,63 @@ const SocialLogin = () => (
         </ButtonGroup>
     </Box>
 );
+
+const ForgottedPassword = () => {
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+    const formik = useFormik({
+        initialValues: {
+            email: "",
+        },
+        onSubmit: async (values) => {
+            // Handle password reset logic here
+            console.log("Password reset email sent to:", values.email);
+            handleClose();
+        },
+    });
+    return (
+        <>
+            <Button className="m-0 ml-auto p-0 text-right" color="secondary" variant="caption" onClick={handleClickOpen}>
+                Forgot password?
+            </Button>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Reset Password"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Enter your email address below and we'll send you a link to reset your password.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="email"
+                        label="Email Address"
+                        type="email"
+                        fullWidth
+                        variant="standard"
+                        name="email"
+                        onChange={formik.handleChange}
+                        value={formik.values.email}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={formik.handleSubmit} color="primary">
+                        Send
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
+};

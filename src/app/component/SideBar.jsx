@@ -9,8 +9,8 @@ import { NextAppProvider } from "@toolpad/core/nextjs";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useEffect, useMemo, useState } from "react";
 import { Home, Task } from "@mui/icons-material";
-import { useSelector, useStore } from "react-redux";
-import { getUser, isLogged } from "../redux/slice/userSlice";
+import { useDispatch, useSelector, useStore } from "react-redux";
+import { getUser, isLogged, logout } from "../redux/slice/userSlice";
 import store from "../redux/store";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -36,9 +36,6 @@ import Link from "next/link";
 export default function SideBarProvider(props) {
     const [isClient, setIsClient] = useState(false);
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
     const user = useSelector(getUser);
     const isLoggedUser = useSelector(isLogged);
     const userState = useStore((state) => state.AUTH.user);
@@ -50,18 +47,23 @@ export default function SideBarProvider(props) {
             image: "",
         },
     });
+    const dispatch = useDispatch();
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     useEffect(() => {
         if (isLoggedUser) {
             setSession({ user: { ...user, name: user.displayName } });
         } else {
-            router.push("/");
+            setSession(null);
         }
     }, [user, isLoggedUser]);
 
     const { window } = props;
     const demoWindow = window !== undefined ? window() : undefined;
     const navigate = (path) => router.push(path);
+
     const authentication = useMemo(() => {
         return {
             signIn: () => {
@@ -69,7 +71,8 @@ export default function SideBarProvider(props) {
             },
             signOut: async () => {
                 await auth.signOut();
-                navigate("/");
+                dispatch(logout());
+                setSession(null);
             },
         };
     }, [session]);
@@ -200,7 +203,7 @@ const accounts = [
 function AccountSidebarPreview(props) {
     const { handleClick, open, mini } = props;
     return (
-        <Stack direction="column" className="cursor-pointer" p={0}>
+        <Stack direction="column" p={0}>
             <Divider />
             <AccountPreview
                 variant={mini ? "condensed" : "expanded"}
