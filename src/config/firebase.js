@@ -233,5 +233,5 @@ export const getTaskList = async () => {
     };
     const taskListRef = collection(db, "users", auth.currentUser?.uid, "tasks");
     const taskList = await getDocs(taskListRef);
-    return [...taskList.docs.map((doc) => doc.data())];
+    return [...taskList.docs.map((doc) => ({ ...doc.data(), id: doc.id }))];
 }

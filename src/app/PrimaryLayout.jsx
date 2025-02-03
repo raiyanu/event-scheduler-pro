@@ -7,14 +7,17 @@ import { Provider, useDispatch, useStore } from 'react-redux';
 import store from './redux/store';
 import { onAuthStateChanged } from 'firebase/auth';
 import GlobalActionProvider from './GlobalActionProvider';
+import TaskDetailPanelProvider from './context/TaskDetailPanelProvider';
 
 export default function MainLayout({ children }) {
     return (
         <Suspense fallback={<></>}>
             <PublicLayout>
-                <SideBarProvider>
-                    {children}
-                </SideBarProvider>
+                <TaskDetailPanelProvider>
+                    <SideBarProvider>
+                        {children}
+                    </SideBarProvider>
+                </TaskDetailPanelProvider>
             </PublicLayout >
         </Suspense>
     )

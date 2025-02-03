@@ -3,7 +3,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     tasks: [],
-    taskLoading: "idle",
+    taskLoading: "idle", // For Collection process
+    taskCRUD: "idle", // For Create, Update, Delete process single task
 };
 
 export const fetchTasks = createAsyncThunk(
@@ -12,6 +13,17 @@ export const fetchTasks = createAsyncThunk(
         try {
             const resTask = await getTaskList();
             return resTask;
+        } catch (error) {
+            return rejectWithValue(new Error(res.message));
+        }
+    }
+);
+
+export const DeleteTasks = createAsyncThunk(
+    "tasks/DeleteTasks",
+    async (payload, { rejectWithValue }) => {
+        try {
+            console.log(payload)
         } catch (error) {
             return rejectWithValue(new Error(res.message));
         }
@@ -29,11 +41,20 @@ const taskSlice = createSlice({
             })
             .addCase(fetchTasks.fulfilled, (state, action) => {
                 state.tasks = action.payload;
-                console.log(action.payload);
+                console.log(action.payload?.[0]);
                 state.taskLoading = "loaded";
             })
             .addCase(fetchTasks.rejected, (state, action) => {
                 state.taskLoading = "failed";
+            })
+            .addCase(DeleteTasks.pending, (state) => {
+                state.taskCRUD = "processing";
+            })
+            .addCase(DeleteTasks.fulfilled, (state, action) => {
+                state.taskCRUD = "success";
+            })
+            .addCase(DeleteTasks.rejected, (state, action) => {
+                state.taskCRUD = "failed";
             });
     },
 });

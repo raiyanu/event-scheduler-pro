@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment, useContext } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -13,6 +13,7 @@ import {
     Button,
     CircularProgress,
     IconButton,
+    ListItemButton,
     styled,
     Tab,
     Tabs,
@@ -20,38 +21,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTasks } from "../redux/slice/taskSlice";
 import { Refresh } from "@mui/icons-material";
+import { TaskDetailPanelContext } from "../context/TaskDetailPanelProvider";
 
-export const MyListItem = ({ info }) => {
-    const [date, setDate] = useState("");
 
-    useEffect(() => {
-        setDate(FriendlyData(info.startTime.nanoseconds));
-    }, []);
-    return (
-        <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-                {info.icon ? <Avatar>{info.icon}</Avatar> : <Avatar alt={info.Name} />}
-            </ListItemAvatar>
-            <ListItemText
-                primary={info.title}
-                secondary={
-                    <>
-                        <Typography
-                            component="span"
-                            variant="body2"
-                            sx={{ color: "text.primary", display: "inline" }}
-                        >
-                            {date}
-                        </Typography>
-                        {" — " + info.description}
-                    </>
-                }
-            />
-        </ListItem>
-    );
-};
-
-const FriendlyData = (nanoseconds) => {
+const FriendlyDate = (nanoseconds) => {
     const staticDate = new Date(nanoseconds / 1000000);
     const now = new Date();
     const diff = staticDate - now;
@@ -222,6 +195,46 @@ function CustomTabPanel(props) {
         </div>
     );
 }
+
+export const MyListItem = ({ info }) => {
+    const [date, setDate] = useState("");
+    const { handleClickOpen } = useContext(TaskDetailPanelContext);
+    useEffect(() => {
+        setDate(FriendlyDate(info.startTime.nanoseconds));
+    }, []);
+    return (
+        <ListItem alignItems="flex-start" className="p-0">
+            <ListItemButton onClick={() => {
+                handleClickOpen(info);
+            }}>
+                <ListItemAvatar>
+                    {info.icon ? <Avatar>{info.icon}</Avatar> : <Avatar alt={info.Name} />}
+                </ListItemAvatar>
+                <ListItemText
+                    primary={< Typography
+                        component="span"
+                        variant="subtitle1"
+                        sx={{ color: "text.primary", display: "inline" }} className="font-bold"
+                    >
+                        {info.title}
+                    </Typography>}
+                    secondary={
+                        <>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                sx={{ color: "text.primary", display: "inline" }}
+                            >
+                                {date}
+                            </Typography>
+                            {" — " + info.description}
+                        </>
+                    }
+                />
+            </ListItemButton>
+        </ListItem>
+    );
+};
 
 function taskNavTabPropsGenerator(index) {
     return {

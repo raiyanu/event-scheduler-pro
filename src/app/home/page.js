@@ -2,23 +2,32 @@
 import Button from "@mui/material/Button";
 import {
   Autocomplete,
+  Avatar,
   Badge,
   Box,
   Divider,
+  IconButton,
   InputAdornment,
+  ListItemIcon,
+  Menu,
+  MenuItem,
   styled,
   Tab,
   Tabs,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import MainLayout from "../PrimaryLayout";
 import {
   AccountCircle,
   Email,
+  Logout,
   Notifications,
   Person,
+  PersonAdd,
   Search,
+  Settings,
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { getUser } from "../redux/slice/userSlice";
@@ -46,11 +55,11 @@ export default function Home() {
   return (
     <MainLayout>
       <Box className="flex flex-col-reverse gap-8 lg:grid lg:grid-cols-[1fr_1fr] lg:gap-2">
-        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling} className="relative py-3 lg:px-3">
+        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? true : undefined} className="relative py-3 lg:px-3">
           <WelcomeMessage />
           <TaskList />
         </CustomContainer>
-        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling} className="relative py-3 lg:px-3">
+        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? true : undefined} className="relative py-3 lg:px-3">
           <MainHeroSection />
         </CustomContainer>
       </Box>
@@ -83,6 +92,14 @@ export const WelcomeMessage = () => {
 };
 
 export const ProfileLineCard = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const userInfo = useSelector(getUser);
   return (
     <>
@@ -114,12 +131,100 @@ export const ProfileLineCard = () => {
           </Box>
           <Box className="flex gap-4 *:cursor-pointer lg:gap-7">
             <Badge variant="dot" overlap="circular" color="primary">
-              <Notifications />
+              <Tooltip title="Account settings">
+                <IconButton
+                  onClick={handleClick}
+                  size="small"
+                  sx={{ ml: 2 }}
+                  aria-controls={open ? 'account-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                >
+
+                  <Notifications />
+                </IconButton>
+              </Tooltip>
             </Badge>
-            <Email />
+            <Tooltip title="Account settings">
+              <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ ml: 2 }}
+                aria-controls={open ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+              >
+
+                <Email />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
       </Box>
+
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              '&::before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={handleClose}>
+          <Avatar /> Profile
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <Avatar /> My account
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <PersonAdd fontSize="small" />
+          </ListItemIcon>
+          Add another account
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
+          Settings
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
     </>
   );
 };
