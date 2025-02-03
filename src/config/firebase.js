@@ -84,9 +84,12 @@ export const createNewUser = async ({ email, password, username }) => {
     try {
         const usernameTaken = await isUsernameTaken(username);
         if (usernameTaken) {
+            console.log(usernameTaken);
             console.error("Username already taken! Choose another.");
             return { ok: false, errorCode: "auth/Username-is-already-taken" };
         }
+        await occupyUsername(username);
+
         const userCredential = await createUserWithEmailAndPassword(
             auth,
             email,
@@ -123,9 +126,14 @@ export const loginUser = async (email, password) => {
 };
 
 export const isUsernameTaken = async (username) => {
+    console.log(username);
     const usernameRef = doc(db, "username", username);
     const usernameSnap = await getDoc(usernameRef);
-    return usernameSnap.exists();
+    console.log(usernameSnap);
+    console.log(usernameSnap.data());
+    console.log(usernameSnap.exists())
+    console.log(usernameSnap.exists);
+    return usernameSnap.exists() ? true : false; // Explicitly return false if the document does not exist
 };
 
 export const occupyUsername = async (username) => {

@@ -40,7 +40,6 @@ export const userSignUp = createAsyncThunk(
     async (payload, { rejectWithValue }) => {
         try {
             console.log("dispatched");
-            await occupyUsername(payload.username);
             console.log("Username is taken");
             const res = await createNewUser({
                 email: payload.email,
@@ -48,6 +47,7 @@ export const userSignUp = createAsyncThunk(
                 username: payload.username,
             });
             if (res.ok) {
+                console.log("User created successfully");
                 await occupyUsername(payload.username);
                 return { ...res, router: payload.router };
             } else {
