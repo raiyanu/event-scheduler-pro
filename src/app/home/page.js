@@ -22,25 +22,37 @@ import {
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { getUser } from "../redux/slice/userSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import TaskList from "../component/TaskContainer";
+import useOnScrollShowScrollbar from "../hooks/useOnScrollShowScrollbar";
+
+
+export const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
+  [theme.breakpoints.up("md")]: {
+    maxHeight: "calc(100vh - 5rem)",
+    overflowY: "scroll",
+    scrollbarWidth: isscrolling ? "" : "none",
+    scrollbarBaseColor: "red",
+    "&::-webkit-scrollbar": {
+      width: isscrolling ? "7px" : "0px",
+    },
+    transition: "scrollbar-width 0.3s ease-in-out ease-in-out",
+  },
+}));
+
 
 export default function Home() {
+  const [scrollContainerRef, isscrolling] = useOnScrollShowScrollbar(Box);
   return (
     <MainLayout>
-      <Box className="flex flex-col-reverse gap-8 lg:grid lg:grid-cols-[1fr_2px_1fr] lg:gap-2">
-        <Box>
+      <Box className="flex flex-col-reverse gap-8 lg:grid lg:grid-cols-[1fr_1fr] lg:gap-2">
+        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling} className="relative py-3 lg:px-3">
           <WelcomeMessage />
-          <TaskContainer />
-        </Box>
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{
-            borderColor: "rgba(0,0,0,0.05)",
-            marginTop: "3rem",
-          }}
-        />
-        <MainHeroSection />
+          <TaskList />
+        </CustomContainer>
+        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling} className="relative py-3 lg:px-3">
+          <MainHeroSection />
+        </CustomContainer>
       </Box>
     </MainLayout>
   );
@@ -48,17 +60,12 @@ export default function Home() {
 
 export const MainHeroSection = () => {
   return (
-    <Box>
-      <ProfileLineCard />
-    </Box>
+    <ProfileLineCard />
   );
 };
 
 export const WelcomeMessage = () => {
   const userInfo = useSelector(getUser);
-  useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
   return (
     <Box className="max-lg:hidden">
       <Typography
@@ -144,83 +151,14 @@ export function SearchBar() {
   );
 }
 
-const CustomTabContainer = styled(Tabs)({
-  borderBottom: "1px solid rgba(0, 0, 0, 0)",
-  "& .MuiTabs-indicator": {
-    backgroundColor: "transparent",
-  },
-});
 
-const CustomTab = styled((props) => <Tab {...props} />)(({ theme }) => ({
-  color: "rgba(0, 0, 0, 0.85)",
-  color: "text.secondary",
-  opacity: 0.7,
-  "&.Mui-selected": {
-    color: "text.secondary",
-    fontWeight: theme.typography.fontWeightMedium,
-    opacity: 1,
-  },
-  "&.Mui-focusVisible": {
-    backgroundColor: "#d1eaff",
-  },
-}));
-
-export const TaskContainer = () => {
-  const [value, setValue] = useState(1);
-  return (
-    <Box className="mt-8 grid grid-cols-1 gap-4">
-      <Typography variant="h3" className="font-semibold">
-        Your tasks
-      </Typography>
-      <Box sx={{ width: "100%" }}>
-        <Box>
-          <CustomTabContainer
-            value={value}
-            onChange={(event, newValue) => {
-              setValue(newValue);
-            }}
-            aria-label="basic tabs example"
-            variant="scrollable"
-            scrollButtons="auto"
-            allowScrollButtonsMobile
-          >
-            <CustomTab label="Yesterday" {...a11yProps(0)} />
-            <CustomTab label="Today" {...a11yProps(1)} />
-            <CustomTab label="Tomorrow" {...a11yProps(2)} />
-          </CustomTabContainer>
-        </Box>
-        <CustomTabPanel value={value} index={0}>
-          Yesterday
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-          Today
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={2}>
-          Tomorrow
-        </CustomTabPanel>
-      </Box>
-    </Box>
-  );
-};
-
-function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
-}
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
+const CustomDivider = () => {
+  return <Divider
+    orientation="vertical"
+    flexItem
+    sx={{
+      borderColor: "rgba(0,0,0,0.02)",
+      marginTop: "3rem",
+    }}
+  />
 }

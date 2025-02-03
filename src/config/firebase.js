@@ -226,3 +226,12 @@ export const resetPassword = async (email) => {
         });
     return { ok: true };
 };
+
+export const getTaskList = async () => {
+    if (!auth.currentUser) {
+        return [];
+    };
+    const taskListRef = collection(db, "users", auth.currentUser?.uid, "tasks");
+    const taskList = await getDocs(taskListRef);
+    return [...taskList.docs.map((doc) => doc.data())];
+}

@@ -74,16 +74,15 @@ export function Test() {
 }
 
 const run = async () => {
+    console.log(await getTaskList());
+}
+const getTaskList = async () => {
     if (!auth.currentUser) {
-        console.error("No authenticated user found.");
-        return;
-    }
-
-    const myuserDooc = doc(db, "users", auth.currentUser.uid);
-    await updateDoc(myuserDooc, newData);
-
-    const user = await getUserFullInfo();
-    console.log(user.data());
+        return [];
+    };
+    const taskListRef = collection(db, "users", auth.currentUser?.uid, "tasks");
+    const taskList = await getDocs(taskListRef);
+    return [...taskList.docs.map((doc) => doc.data())];
 }
 
 const addTask = (task) => {

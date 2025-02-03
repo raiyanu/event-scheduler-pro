@@ -143,7 +143,7 @@ export default function SideBarProvider(props) {
                         borderRadius: 1,
                         bgcolor: "background.paper",
                     }}
-                    className="h-screen overflow-y-auto overflow-x-hidden rounded-none p-2"
+                    className="h-screen overflow-y-auto overflow-x-hidden rounded-none"
                 >
                     {props.children}
                 </Box>

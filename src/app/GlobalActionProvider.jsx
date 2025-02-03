@@ -1,15 +1,16 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react"
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { extractUserInfo, logout, updateUser } from "./redux/slice/userSlice";
 import { auth, getUserFullInfo } from "@/config/firebase";
+import { fetchTasks } from "./redux/slice/taskSlice";
 
 export default function GlobalActionProvider({ children }) {
+    const tasks = useSelector((state) => state.TASK.tasks);
     const dispatch = useDispatch();
     useEffect(() => {
         (async () => {
             onAuthStateChanged(auth, async (user) => {
-                console.log("Auth/ChangeTriggered");
                 if (user) {
                     if (user) {
                         console.log("User is signed in");
@@ -18,6 +19,7 @@ export default function GlobalActionProvider({ children }) {
                         setTimeout(async () => {
                             await dispatch(updateUser(extractUserInfo({ ...user, ...userFullInfo })));
                         }, 2000);
+                        dispatch(fetchTasks());
                     } else {
                         console.log("User is signed out");
                         dispatch(logout())
