@@ -1,4 +1,4 @@
-import { addTask, deleteTask, getTaskList } from "@/config/firebase";
+import { addTask, deleteTask, getTaskList, updateTaskDoc } from "@/config/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -25,6 +25,19 @@ export const deleteTasks = createAsyncThunk(
         try {
             console.log(payload);
             await deleteTask(payload);
+            const resTask = await getTaskList();
+            return resTask;
+        } catch (error) {
+            return rejectWithValue(new Error(res.message));
+        }
+    }
+);
+
+export const updateTask = createAsyncThunk(
+    "tasks/UpdateTasks",
+    async (payload, { rejectWithValue }) => {
+        try {
+            await updateTaskDoc(payload.id, payload.task);
             const resTask = await getTaskList();
             return resTask;
         } catch (error) {
@@ -82,6 +95,16 @@ const taskSlice = createSlice({
                 state.taskCRUD = "success";
             })
             .addCase(addTasks.rejected, (state, action) => {
+                state.taskCRUD = "failed";
+            })
+            .addCase(updateTask.pending, (state) => {
+                state.taskCRUD = "processing";
+            })
+            .addCase(updateTask.fulfilled, (state, action) => {
+                state.tasks = action.payload;
+                state.taskCRUD = "success";
+            })
+            .addCase(updateTask.rejected, (state, action) => {
                 state.taskCRUD = "failed";
             })
     },

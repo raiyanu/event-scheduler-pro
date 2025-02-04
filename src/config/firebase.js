@@ -266,3 +266,19 @@ export const addTask = async (task) => {
         return { ok: false, message: error.message };
     }
 };
+
+export const updateTaskDoc = async (taskId, task) => {
+    if (!auth.currentUser) {
+        return { ok: false, message: "User not authenticated" };
+    }
+    console.log(taskId, task);
+    try {
+        const taskRef = doc(db, "users", auth.currentUser.uid, "tasks", taskId);
+        await updateDoc(taskRef, task);
+        console.log("Task updated successfully!");
+        return { ok: true };
+    } catch (error) {
+        console.error("Error updating task:", error.message);
+        return { ok: false, message: error.message };
+    }
+};

@@ -137,7 +137,7 @@ export function SwipeableTemporaryDrawer() {
     );
 }
 
-const DrawerContent = ({ toggleDrawer }) => {
+export const DrawerContent = ({ toggleDrawer }) => {
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
