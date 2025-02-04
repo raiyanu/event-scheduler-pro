@@ -10,12 +10,22 @@ import {
 import {
     Box,
     Button,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
     IconButton,
+    InputLabel,
     Menu,
+    MenuItem,
     Paper,
+    Radio,
+    RadioGroup,
+    Select,
     TextField,
     Typography,
 } from "@mui/material";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 import { useEffect, useState } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import List from "@mui/material/List";
@@ -30,6 +40,10 @@ import { useFormik } from "formik";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import EmojiPicker from "emoji-picker-react";
+import { DatePicker, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { useDispatch } from "react-redux";
+import { addTasks } from "../redux/slice/taskSlice";
 
 export function AddTaskLineCard() {
     const [date, setDate] = useState(null);
@@ -64,7 +78,7 @@ export function AddTask() {
 }
 
 export function SwipeableTemporaryDrawer() {
-    const [drawerState, setDrawerState] = useState(true);
+    const [drawerState, setDrawerState] = useState(false);
     const toggleDrawer = (open) => (event) => {
         if (
             event &&
@@ -126,48 +140,48 @@ export function SwipeableTemporaryDrawer() {
 }
 
 const DrawerContent = ({ toggleDrawer }) => {
+    const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
-            title: "",
-            description: "",
+            title: "test",
+            description: "test",
             priority: "",
-            dueDate: "",
-            removedAt: null,
+            startTime: null,
+            XstartTime: null,
             endTime: null,
+            XendTime: null,
             importance: "",
             icon: "📖",
-            isRepeated: "",
             difficulty: "",
             createdAt: null,
             status: "",
             tags: [],
-            startTime: null,
         },
-        onSubmit: (values) => {
-            let startTime = values.startTime;
+        onSubmit: async (values) => {
+            console.log(values);
+            let startTime = values.XstartTime;
             values.startTime = {
                 seconds: Math.floor(startTime / 1000),
                 nanoseconds: startTime * 1000000,
             };
 
-            let createdAt = values.createdAt;
             values.createdAt = {
-                seconds: Math.floor(createdAt / 1000),
-                nanoseconds: createdAt * 1000000,
+                seconds: Math.floor(new Date() / 1000),
+                nanoseconds: new Date() * 1000000,
             };
 
-            let removedAt = values.removedAt;
             values.removedAt = {
-                seconds: Math.floor(removedAt / 1000),
-                nanoseconds: removedAt * 1000000,
+                seconds: null,
+                nanoseconds: null,
             };
 
-            let endTime = values.endTime;
+            let endTime = values.XendTime;
             values.endTime = {
                 seconds: Math.floor(endTime / 1000),
                 nanoseconds: endTime * 1000000,
             };
             console.log(values);
+            await dispatch(addTasks(values));
         },
     });
     return (
@@ -207,6 +221,7 @@ const DrawerContent = ({ toggleDrawer }) => {
         </>
     );
 };
+
 const AddTaskForm = ({ formik }) => {
     const [EmojiState, setEmojiState] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -226,11 +241,10 @@ const AddTaskForm = ({ formik }) => {
                         aria-controls={open ? 'basic-menu' : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
-                        className="h-8 align-middle text-lg"
+                        className="aspect-square align-middle text-lg"
                         onClick={(event) => {
                             handleClick(event);
-                            setEmojiState(!EmojiState)
-
+                            setEmojiState(true)
                         }}>
                         {formik.values.icon}
                     </IconButton>
@@ -248,7 +262,7 @@ const AddTaskForm = ({ formik }) => {
                             onEmojiClick={(event) => {
                                 console.log(event.emoji)
                                 formik.setFieldValue("icon", event.emoji)
-                                setEmojiState(!EmojiState)
+                                setEmojiState(false)
                                 handleClose()
                             }}
                         />
@@ -277,77 +291,120 @@ const AddTaskForm = ({ formik }) => {
                 onChange={formik.handleChange}
                 error={formik.touched.description && Boolean(formik.errors.description)}
                 helperText={formik.touched.description && formik.errors.description}
+                multiline
+                maxRows={6}
             />
             <Box className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-                <TextField
-                    id="priority"
-                    name="priority"
-                    variant="standard"
-                    label="Priority"
-                    value={formik.values.priority}
-                    onChange={formik.handleChange}
-                    error={formik.touched.priority && Boolean(formik.errors.priority)}
-                    helperText={formik.touched.priority && formik.errors.priority}
+                <FormControl variant="standard" sx={{}}>
+                    <InputLabel id="demo-simple-select-standard-label">Priority</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-standard-label"
+                        id="demo-simple-select-standard"
+                        value={formik.values.priority}
+                        onChange={formik.handleChange}
+                        label="Priority"
+                        name="priority"
+                    >
+                        <MenuItem value={null}>none</MenuItem>
+                        <MenuItem value={"low"}>low</MenuItem>
+                        <MenuItem value={"casual"}>casual</MenuItem>
+                        <MenuItem value={"medium"}>medium</MenuItem>
+                        <MenuItem value={"high"}>high</MenuItem>
+                    </Select>
+                </FormControl>
+                <FormControl variant="standard" sx={{}}>
+                    <InputLabel id="demo-simple-select-standard-label">Importance</InputLabel>
+                    <Select
+                        id="importance"
+                        name="importance"
+                        variant="standard"
+                        label="Importance"
+                        value={formik.values.importance}
+                        onChange={formik.handleChange}
+                        error={formik.touched.importance && Boolean(formik.errors.importance)}
+                        helperText={formik.touched.importance && formik.errors.importance}
+                    >
+                        <MenuItem value={null}>none</MenuItem>
+                        <MenuItem value={"low"}>low</MenuItem>
+                        <MenuItem value={"medium"}>medium</MenuItem>
+                        <MenuItem value={"high"}>high</MenuItem>
+                        <MenuItem value={"critical"}>critical</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+            <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
+            </Box>
+            <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
+                <DateTimePicker
+                    disablePast
+                    name="XstartTime"
+                    label="Start Time"
+                    format="DD/MM/YYYY-hh:MM"
+                    onChange={(value) => formik.setFieldValue("XstartTime", value.toDate(), true)}
+                    slotProps={{
+                        textField: {
+                            variant: "outlined",
+                            error: formik.touched.XstartTime && Boolean(formik.errors.XstartTime),
+                            helperText: formik.touched.XstartTime && formik.errors.XstartTime
+                        }
+                    }}
+
                 />
-                <TextField
-                    id="importance"
-                    name="importance"
-                    variant="standard"
-                    label="Importance"
-                    value={formik.values.importance}
-                    onChange={formik.handleChange}
-                    error={formik.touched.importance && Boolean(formik.errors.importance)}
-                    helperText={formik.touched.importance && formik.errors.importance}
+                <DateTimePicker
+                    disablePast
+                    label="XendTime"
+                    format="DD/MM/YYYY-hh:MM"
+                    onChange={(value) => formik.setFieldValue("XendTime", value.toDate(), true)}
+                    slotProps={{
+                        textField: {
+                            variant: "outlined",
+                            error: formik.touched.XendTime && Boolean(formik.errors.XendTime),
+                            helperText: formik.touched.XendTime && formik.errors.XendTime
+                        }
+                    }}
                 />
             </Box>
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
-                <TextField
-                    fullWidth
-                    id="dueDate"
-                    variant="standard"
-                    name="dueDate"
-                    type="date"
-                    value={formik.values.dueDate}
-                    onChange={formik.handleChange}
-                    error={formik.touched.dueDate && Boolean(formik.errors.dueDate)}
-                    helperText={formik.touched.dueDate && formik.errors.dueDate}
-                    className="*:h-full"
-                />
 
-                <TextField
-                    fullWidth
-                    id="isRepeated"
-                    variant="standard"
-                    name="isRepeated"
-                    label="Is Repeated"
-                    value={formik.values.isRepeated}
-                    onChange={formik.handleChange}
-                    error={formik.touched.isRepeated && Boolean(formik.errors.isRepeated)}
-                    helperText={formik.touched.isRepeated && formik.errors.isRepeated}
-                />
+                <FormControl>
+                    <FormLabel id="demo-row-radio-buttons-group-label">Difficulty</FormLabel>
+                    <RadioGroup
+                        row
+                        id="difficulty"
+                        name="difficulty"
+                        variant="standard"
+                        label="Difficulty"
+                        aria-labelledby="demo-row-radio-buttons-group-label"
+                        value={formik.values.difficulty}
+                        onChange={formik.handleChange}
+                        error={formik.touched.difficulty && Boolean(formik.errors.difficulty)}
+                        helperText={formik.touched.difficulty && formik.errors.difficulty}
+                    >
+                        <FormControlLabel value="easy" control={<Radio />} label="Easy" />
+                        <FormControlLabel value="medium" control={<Radio />} label="Medium" />
+                        <FormControlLabel value="hard" control={<Radio />} label="Hard" />
+                    </RadioGroup>
+                </FormControl>
+                <FormControl>
+                    <FormLabel id="demo-row-radio-buttons-group-label">Status</FormLabel>
+                    <RadioGroup
+                        row
+                        id="status"
+                        variant="standard"
+                        name="status"
+                        label="Status"
+                        value={formik.values.status}
+                        onChange={formik.handleChange}
+                        error={formik.touched.status && Boolean(formik.errors.status)}
+                        helperText={formik.touched.status && formik.errors.status}
+                    >
+                        <FormControlLabel value="to-start" control={<Radio />} label="To Start" />
+                        <FormControlLabel value="progress" control={<Radio />} label="progress" />
+                        <FormControlLabel value="done" control={<Radio />} label="Done" />
+                    </RadioGroup>
+                </FormControl>
             </Box>
-            <TextField
-                fullWidth
-                id="difficulty"
-                name="difficulty"
-                variant="standard"
-                label="Difficulty"
-                value={formik.values.difficulty}
-                onChange={formik.handleChange}
-                error={formik.touched.difficulty && Boolean(formik.errors.difficulty)}
-                helperText={formik.touched.difficulty && formik.errors.difficulty}
-            />
-            <TextField
-                fullWidth
-                id="status"
-                variant="standard"
-                name="status"
-                label="Status"
-                value={formik.values.status}
-                onChange={formik.handleChange}
-                error={formik.touched.status && Boolean(formik.errors.status)}
-                helperText={formik.touched.status && formik.errors.status}
-            />
+
             <Autocomplete
                 multiple
                 id="tags"
@@ -370,6 +427,7 @@ const AddTaskForm = ({ formik }) => {
                 renderInput={(params) => (
                     <TextField
                         {...params}
+                        variant="standard"
                         label="Tags"
                         placeholder="Add tags"
                         error={formik.touched.tags && Boolean(formik.errors.tags)}

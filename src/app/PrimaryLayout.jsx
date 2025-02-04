@@ -8,6 +8,8 @@ import store from './redux/store';
 import { onAuthStateChanged } from 'firebase/auth';
 import GlobalActionProvider from './GlobalActionProvider';
 import TaskDetailPanelProvider from './context/TaskDetailPanelProvider';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 export default function MainLayout({ children }) {
     return (
@@ -26,11 +28,13 @@ export default function MainLayout({ children }) {
 export function PublicLayout({ children }) {
     return (
         <Provider store={store}>
-            <GlobalActionProvider>
-                <ThemeProvider theme={Theme} >
-                    {children}
-                </ThemeProvider>
-            </GlobalActionProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <GlobalActionProvider>
+                    <ThemeProvider theme={Theme} >
+                        {children}
+                    </ThemeProvider>
+                </GlobalActionProvider>
+            </LocalizationProvider>
         </Provider>
     )
 }

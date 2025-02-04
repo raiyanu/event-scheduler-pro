@@ -1,4 +1,4 @@
-import { deleteTask, getTaskList } from "@/config/firebase";
+import { addTask, deleteTask, getTaskList } from "@/config/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -41,6 +41,7 @@ export const addTasks = createAsyncThunk(
             const resTask = await getTaskList();
             return resTask;
         } catch (error) {
+            console.log(error);
             return rejectWithValue(new Error(res.message));
         }
     }
