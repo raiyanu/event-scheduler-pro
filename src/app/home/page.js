@@ -34,6 +34,7 @@ import { getUser } from "../redux/slice/userSlice";
 import { useEffect, useRef, useState } from "react";
 import TaskList from "../component/TaskContainer";
 import useOnScrollShowScrollbar from "../hooks/useOnScrollShowScrollbar";
+import { AddTaskLineCard } from "../component/AddTask";
 
 
 export const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
@@ -69,7 +70,10 @@ export default function Home() {
 
 export const MainHeroSection = () => {
   return (
-    <ProfileLineCard />
+    <>
+      <ProfileLineCard />
+      <AddTaskLineCard />
+    </>
   );
 };
 

@@ -19,12 +19,25 @@ export const fetchTasks = createAsyncThunk(
     }
 );
 
-export const DeleteTasks = createAsyncThunk(
+export const deleteTasks = createAsyncThunk(
     "tasks/DeleteTasks",
     async (payload, { rejectWithValue }) => {
         try {
-            console.log(payload)
+            console.log(payload);
             await deleteTask(payload);
+            const resTask = await getTaskList();
+            return resTask;
+        } catch (error) {
+            return rejectWithValue(new Error(res.message));
+        }
+    }
+);
+
+export const addTasks = createAsyncThunk(
+    "tasks/AddTasks",
+    async (payload, { rejectWithValue }) => {
+        try {
+            await addTask(payload);
             const resTask = await getTaskList();
             return resTask;
         } catch (error) {
@@ -44,25 +57,34 @@ const taskSlice = createSlice({
             })
             .addCase(fetchTasks.fulfilled, (state, action) => {
                 state.tasks = action.payload;
+                console.log(action.payload[0]);
                 state.taskLoading = "loaded";
             })
             .addCase(fetchTasks.rejected, (state, action) => {
                 state.taskLoading = "failed";
             })
-            .addCase(DeleteTasks.pending, (state) => {
+            .addCase(deleteTasks.pending, (state) => {
                 state.taskCRUD = "processing";
             })
-            .addCase(DeleteTasks.fulfilled, (state, action) => {
+            .addCase(deleteTasks.fulfilled, (state, action) => {
                 state.tasks = action.payload;
                 state.taskCRUD = "success";
             })
-            .addCase(DeleteTasks.rejected, (state, action) => {
+            .addCase(deleteTasks.rejected, (state, action) => {
                 state.taskCRUD = "failed";
-            });
+            })
+            .addCase(addTasks.pending, (state) => {
+                state.taskCRUD = "processing";
+            })
+            .addCase(addTasks.fulfilled, (state, action) => {
+                state.tasks = action.payload;
+                state.taskCRUD = "success";
+            })
+            .addCase(addTasks.rejected, (state, action) => {
+                state.taskCRUD = "failed";
+            })
     },
 });
 
 export const { } = taskSlice.actions;
 export default taskSlice.reducer;
-
-

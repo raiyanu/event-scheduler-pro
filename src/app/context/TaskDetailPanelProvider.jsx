@@ -17,7 +17,7 @@ import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
-import { DeleteTasks } from "../redux/slice/taskSlice";
+import { deleteTasks } from "../redux/slice/taskSlice";
 import { useDispatch } from "react-redux";
 
 export const TaskDetailPanelContext = createContext();
@@ -164,7 +164,7 @@ export default function TaskDetailPanelProvider({ children }) {
                                     variant="contained"
                                     color="error"
                                     onClick={async () => {
-                                        await displatch(DeleteTasks(info.id));
+                                        await displatch(deleteTasks(info.id));
                                         handleCloseActionModal();
                                         handleClose();
                                     }}

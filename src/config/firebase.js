@@ -251,3 +251,18 @@ export const deleteTask = async (taskId) => {
         return { ok: false, message: error.message };
     }
 };
+
+export const addTask = async (task) => {
+    if (!auth.currentUser) {
+        return { ok: false, message: "User not authenticated" };
+    }
+    try {
+        const taskRef = collection(db, "users", auth.currentUser.uid, "tasks");
+        await addDoc(taskRef, task);
+        console.log("Task added successfully!");
+        return { ok: true };
+    } catch (error) {
+        console.error("Error adding task:", error.message);
+        return { ok: false, message: error.message };
+    }
+};
