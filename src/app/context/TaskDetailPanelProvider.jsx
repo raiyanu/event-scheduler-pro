@@ -74,10 +74,8 @@ export default function TaskDetailPanelProvider({ children }) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent className="*:mt-2">
-                    <DialogContentText className="p-0 *:mt-2">
-                        <Typography variant="body1">
-                            {info?.description ? info.description : "--"}
-                        </Typography>
+                    <DialogContentText className="p-0 *:mt-2" variant="body1">
+                        {info?.description ? info.description : "--"}
                     </DialogContentText>
                     <Box className="flex gap-2">
                         {info.tags &&

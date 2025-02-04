@@ -18,6 +18,7 @@ import {
     updateDoc,
     addDoc,
     setDoc,
+    deleteDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -235,3 +236,18 @@ export const getTaskList = async () => {
     const taskList = await getDocs(taskListRef);
     return [...taskList.docs.map((doc) => ({ ...doc.data(), id: doc.id }))];
 }
+
+export const deleteTask = async (taskId) => {
+    if (!auth.currentUser) {
+        return { ok: false, message: "User not authenticated" };
+    }
+    try {
+        const taskRef = doc(db, "users", auth.currentUser.uid, "tasks", taskId);
+        await deleteDoc(taskRef);
+        console.log("Task deleted successfully!");
+        return { ok: true };
+    } catch (error) {
+        console.error("Error deleting task:", error.message);
+        return { ok: false, message: error.message };
+    }
+};
