@@ -29,7 +29,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import { deleteTasks, updateTask } from "../redux/slice/taskSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Clock } from "@mui/x-date-pickers/TimeClock/Clock";
 import { ClockIcon } from "@mui/x-date-pickers";
 
@@ -55,7 +55,7 @@ export default function TaskDetailPanelProvider({ children }) {
     const [openActionModal, setOpenActionModal] = useState(false);
     const handleOpenActionModal = () => setOpenActionModal(true);
     const handleCloseActionModal = () => setOpenActionModal(false);
-
+    const taskCRUDStatus = useSelector((state) => state.TASK.taskCRUD);
     const displatch = useDispatch();
 
     const [markdown, setMarkdown] = useState("");
@@ -73,12 +73,12 @@ export default function TaskDetailPanelProvider({ children }) {
                 sx={{
                     ".MuiDialog-paper": {
                         minWidth: "460px",
-                        maxWidth: "100vw",
+                        maxWidth: "600px",
                     },
                 }}
             >
                 <DialogTitle id="responsive-dialog-title" className="flex items-center">
-                    <span className="text-3xl">{info?.icon ? info.icon : "--"}</span>{" "}
+                    <span className="text-3xl">{info?.icon ? info.icon : "--"}</span>
                     <span className="text-xl">{info?.title ? info.title : "--"}</span>
                 </DialogTitle>
                 <IconButton
@@ -93,20 +93,7 @@ export default function TaskDetailPanelProvider({ children }) {
                 >
                     <CloseIcon />
                 </IconButton>
-                <DialogContent className="px-6 py-0 *:mt-2">
-                    <Box className="flex gap-2">
-                        {info.tags &&
-                            info.tags.length >= 0 &&
-                            info.tags.map((tag, index) => (
-                                <Chip
-                                    label={tag}
-                                    key={index.toString() + "-myTaskElementTags"}
-                                    variant="outlined"
-                                    color="warning"
-                                    size="small"
-                                />
-                            ))}
-                    </Box>
+                <DialogContent className="px-6 py-0 *:mt-3">
                     <Box className="flex items-center gap-2">
                         <ClockIcon />
                         <Box className="flex flex-shrink-0">
@@ -125,7 +112,7 @@ export default function TaskDetailPanelProvider({ children }) {
                                     : "--"}
                             </Typography>
                         </Box>
-                    </Box>{" "}
+                    </Box>
                     <DialogContentText className="p-0 *:mt-2" variant="body1">
                         {info?.description ? info.description : "--"}
                     </DialogContentText>
@@ -147,12 +134,25 @@ export default function TaskDetailPanelProvider({ children }) {
                     </Box>
                     {/* <Box>
                         <Typography variant="button">
-                            Created At: {" "}
+                            Created At: 
                             {info?.createdAt ? new Date(info.createdAt.seconds * 1000).toLocaleString() : "--"}
                         </Typography>
                     </Box> */}
+                    <Box className="flex flex-wrap gap-2">
+                        {info.tags &&
+                            info.tags.length >= 0 &&
+                            info.tags.map((tag, index) => (
+                                <Chip
+                                    label={tag}
+                                    key={index.toString() + "-myTaskElementTags"}
+                                    variant="outlined"
+                                    color="warning"
+                                    size="small"
+                                />
+                            ))}
+                    </Box>
                 </DialogContent>
-                <DialogActions className="justify-between">
+                <DialogActions className="mt-4 justify-between">
                     <Box className="justify-between">
                         <IconButton
                             onClick={() => {
@@ -180,13 +180,24 @@ export default function TaskDetailPanelProvider({ children }) {
                     <Box className="flex gap-2 *:flex-shrink-0 *:flex-grow-0">
                         <Box className="flex gap-1">
                             <FormControl sx={{ minWidth: 80 }} fullWidth>
-                                <InputLabel id="demo-simple-select-label">Mark</InputLabel>
+                                <InputLabel
+                                    id="demo-simple-select-label"
+                                    sx={{
+                                        "&:not(.Mui-focused):not(.MuiInputLabel-shrink)": {
+                                            transform: "translate(15px, 10px) scale(1)",
+                                        },
+                                    }}
+                                >
+                                    Mark
+                                </InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     label="Mark"
                                     value={markdown}
                                     onChange={(e) => setMarkdown(e.target.value)}
+                                    size="small"
+                                    className="p-0"
                                 >
                                     <MenuItem value={"to-start"}>To-start</MenuItem>
                                     <MenuItem value={"progress"}>Progress</MenuItem>
@@ -195,6 +206,7 @@ export default function TaskDetailPanelProvider({ children }) {
                             </FormControl>
                             {markdown !== "" && (
                                 <Button
+                                    className="h-10"
                                     onClick={async () => {
                                         await displatch(
                                             updateTask({ id: info.id, task: { status: markdown } })
@@ -212,6 +224,7 @@ export default function TaskDetailPanelProvider({ children }) {
                             variant="contained"
                             color="warning"
                             autoFocus
+                            className="h-10"
                         >
                             Close
                         </Button>
@@ -293,7 +306,7 @@ export default function TaskDetailPanelProvider({ children }) {
     );
 }
 
-function friendlyStatus(status) {
+export function friendlyStatus(status) {
     switch (status) {
         case "to-start":
             return "To start";
@@ -306,7 +319,7 @@ function friendlyStatus(status) {
     }
 }
 
-function formatDate(date) {
+export function formatDate(date) {
     const options = {
         day: "numeric",
         month: "short",
