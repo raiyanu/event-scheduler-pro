@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, Fragment, useContext } from "react";
+import { useState, useEffect, Fragment, useContext, useMemo } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -151,11 +151,22 @@ export default function TaskContainer() {
 
 export function TaskList() {
     const tasks = useSelector((state) => state.TASK.tasks);
-
+    const sortedTasks = useMemo(() => {
+        try {
+            return sortTasksByCreatedAt(tasks);
+        } catch (error) {
+            console.log(error);
+            return []
+        }
+    }, [tasks]);
     const dispatch = useDispatch();
     useEffect(() => {
         loadTask();
     }, []);
+    useEffect(() => {
+        console.log(tasks)
+        console.log(sortedTasks)
+    }, [tasks]);
 
     const loadTask = () => {
         dispatch(fetchTasks());
@@ -169,7 +180,7 @@ export function TaskList() {
                 marginInline: "auto",
             }}
         >
-            {tasks.map((task, index) => (
+            {sortedTasks.map((task, index) => (
                 <Fragment key={index}>
                     <MyListItem info={task} />
                     {index < tasks.length - 1 && (
@@ -241,4 +252,15 @@ function taskNavTabPropsGenerator(index) {
         id: `simple-tab-${index}`,
         "aria-controls": `simple-tabpanel-${index}`,
     };
+}
+
+
+function sortTasksByCreatedAt(tasks) {
+    const sortedTasks = [...tasks].sort((a, b) => {
+        if (b.createdAt.seconds !== a.createdAt.seconds) {
+            return b.createdAt.seconds - a.createdAt.seconds;
+        }
+        return b.createdAt.nanoseconds - a.createdAt.nanoseconds;
+    });
+    return sortedTasks;
 }

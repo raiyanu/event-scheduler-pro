@@ -91,51 +91,49 @@ export function SwipeableTemporaryDrawer() {
     };
 
     return (
-        <div>
-            <>
-                <Button
-                    onClick={toggleDrawer(true)}
-                    variant="contained"
-                    className="px-3 py-2"
-                >
-                    <Add className="fill-white text-xl" />
-                    <Typography variant="button" className="text-white">
-                        Add Task
-                    </Typography>
-                </Button>
-                <SwipeableDrawer
-                    anchor={"bottom"}
-                    open={drawerState}
-                    onClose={toggleDrawer(false)}
-                    onOpen={toggleDrawer(true)}
+        <Box>
+            <Button
+                onClick={toggleDrawer(true)}
+                variant="contained"
+                className="px-3 py-2"
+            >
+                <Add className="fill-white text-xl" />
+                <Typography variant="button" className="text-white">
+                    Add Task
+                </Typography>
+            </Button>
+            <SwipeableDrawer
+                anchor={"bottom"}
+                open={drawerState}
+                onClose={toggleDrawer(false)}
+                onOpen={toggleDrawer(true)}
+                sx={{
+                    "& .MuiDrawer-paper": {
+                        bgcolor: "green",
+                        width: "100%",
+                        maxWidth: "700px",
+                        minWidth: "300px",
+                        marginInline: "auto",
+                    },
+                    "& .MuiDrawer-modal": {
+                        backdropFilter: "blur(10px)",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                    },
+                }}
+            >
+                <Paper
                     sx={{
-                        "& .MuiDrawer-paper": {
-                            bgcolor: "green",
-                            width: "100%",
-                            maxWidth: "700px",
-                            minWidth: "300px",
-                            marginInline: "auto",
-                        },
-                        "& .MuiDrawer-modal": {
-                            backdropFilter: "blur(10px)",
-                            backgroundColor: "rgba(0,0,0,0.5)",
-                        },
+                        width: "100%",
+                        height: "80vh",
+                        p: "1rem",
+                        marginInline: "auto",
+                        maxWidth: "700px",
                     }}
                 >
-                    <Paper
-                        sx={{
-                            width: "100%",
-                            height: "80vh",
-                            p: "1rem",
-                            marginInline: "auto",
-                            maxWidth: "700px",
-                        }}
-                    >
-                        <DrawerContent toggleDrawer={toggleDrawer} />
-                    </Paper>
-                </SwipeableDrawer>
-            </>
-        </div>
+                    <DrawerContent toggleDrawer={toggleDrawer} />
+                </Paper>
+            </SwipeableDrawer>
+        </Box>
     );
 }
 
@@ -143,15 +141,15 @@ const DrawerContent = ({ toggleDrawer }) => {
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
-            title: "test",
-            description: "test",
+            title: "",
+            description: "",
             priority: "",
             startTime: null,
             XstartTime: null,
             endTime: null,
             XendTime: null,
             importance: "",
-            icon: "📖",
+            icon: "😉",
             difficulty: "",
             createdAt: null,
             status: "",
@@ -182,6 +180,8 @@ const DrawerContent = ({ toggleDrawer }) => {
             };
             console.log(values);
             await dispatch(addTasks(values));
+            formik.resetForm();
+            toggleDrawer(false)();
         },
     });
     return (
