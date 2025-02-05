@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import { memo, useContext, useEffect, useState } from "react";
+import { createContext, memo, useContext, useEffect, useState } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
@@ -68,36 +68,27 @@ export function AddTaskLineCard() {
                     <Typography variant="h6">{date?.toLocaleTimeString()}</Typography>
                 </Box>
                 <Box>
-                    <AddTaskContainer />
+                    <AddTaskButton />
                 </Box>
             </Box>
         </Box>
     );
 }
 
-
 const AddTaskContainer = memo(function AddTaskContainer() {
-    return <AddTask />;
-});
-
-const AddTask = memo(function AddTask() {
     return <SwipeableDrawerContainer />;
 });
 
 const UpdateTaskDrawer = memo(function UpdateTaskDrawer({ task }) {
     return <SwipeableDrawerContainer task={task} />;
 });
+const TaskCrudDrawerContext = createContext(null);
 
-export { AddTaskContainer, AddTask, UpdateTaskDrawer };
-
-export function SwipeableDrawerContainer({ task }) {
-    console.log(task)
-    const updating = !task ? true : false;
-    if (!task) {
-        task = {};
-    }
+export const TaskCrudDrawerProvider = ({ children }) => {
     const [drawerState, setDrawerState] = useState(false);
-    const toggleDrawer = (open) => (event) => {
+    const [task, setTask] = useState({});
+    const [drawerAction, setDrawerAction] = useState("add");
+    const toggleDrawer = (open, event) => {
         if (
             event &&
             event.type === "keydown" &&
@@ -107,80 +98,152 @@ export function SwipeableDrawerContainer({ task }) {
         }
         setDrawerState(open);
     };
-
     return (
-        <Box>
-            {updating ? (
-                <Button
-                    onClick={toggleDrawer(true)}
-                    variant="contained"
-                    className="px-3 py-2"
-                >
-                    <Add className="fill-white text-xl" />
-                    <Typography variant="button" className="text-white">
-                        Add Task
-                    </Typography>
-                </Button>
-            ) : (
-                <IconButton
-                    onClick={(event) => {
-                        // handleTaskModalClose();
-                        toggleDrawer(true)(event);
-                    }}
-                    variant="contained"
-                    color="warning"
-                    autoFocus
-                >
-                    <Edit />
-                </IconButton>
-            )}
-            <SwipeableDrawer
-                anchor={"bottom"}
-                open={drawerState}
-                onClose={toggleDrawer(false)}
-                onOpen={toggleDrawer(true)}
-                sx={{
-                    "& .MuiDrawer-paper": {
-                        bgcolor: "green",
-                        width: "100%",
-                        maxWidth: "700px",
-                        minWidth: "300px",
-                        marginInline: "auto",
-                    },
-                    "& .MuiDrawer-modal": {
-                        backdropFilter: "blur(10px)",
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                    },
-                    zIndex: 1400,
+        <>
+            <TaskCrudDrawerContext.Provider
+                value={{
+                    task,
+                    toggleDrawer,
+                    drawerState,
+                    setTask,
+                    setDrawerAction,
+                    drawerAction,
                 }}
             >
-                <Paper
-                    sx={{
-                        width: "100%",
-                        height: "80vh",
-                        p: "1rem",
-                        marginInline: "auto",
-                        maxWidth: "700px",
-                    }}
-                >
-                    <DrawerContent task={task} updating={updating} toggleDrawer={toggleDrawer} />
-                </Paper>
-            </SwipeableDrawer>
-        </Box>
+                {children}
+                <SwipeableDrawerContainer
+                    toggleDrawer={toggleDrawer}
+                    drawerState={drawerState}
+                />
+            </TaskCrudDrawerContext.Provider>
+        </>
+    );
+};
+
+export { AddTaskContainer, UpdateTaskDrawer };
+
+export const AddTaskButton = () => {
+    const { toggleDrawer, setDrawerAction, setTask } = useContext(
+        TaskCrudDrawerContext
+    );
+    return (
+        <Button
+            onClick={(event) => {
+                toggleDrawer(true, event);
+                setTask({});
+                setDrawerAction("add");
+            }}
+            variant="contained"
+            className="px-3 py-2"
+        >
+            <Add className="fill-white text-xl" />
+            <Typography variant="button" className="text-white">
+                Add Task
+            </Typography>
+        </Button>
+    );
+};
+
+export const UpdateTaskButton = ({ handleClose, task }) => {
+    const { toggleDrawer, setTask, setDrawerAction } = useContext(
+        TaskCrudDrawerContext
+    );
+    useEffect(() => {
+        console.log("task:", task);
+        setTask(task);
+    }, [task]);
+    return (
+        <IconButton
+            onClick={(event) => {
+                toggleDrawer(true, event);
+                handleClose();
+                setTask(task);
+                setDrawerAction("update");
+            }}
+            variant="contained"
+            color="warning"
+            autoFocus
+        >
+            <Edit />
+        </IconButton>
+    );
+};
+
+export function SwipeableDrawerContainer({
+    task,
+    updating,
+    toggleDrawer,
+    drawerState,
+}) {
+    return (
+        <SwipeableDrawer
+            anchor={"bottom"}
+            open={drawerState}
+            onClose={(event) => {
+                toggleDrawer(false, event);
+            }}
+            onOpen={(event) => {
+                toggleDrawer(true, event);
+            }}
+            sx={{
+                "& .MuiDrawer-paper": {
+                    bgcolor: "green",
+                    width: "100%",
+                    maxWidth: "700px",
+                    minWidth: "300px",
+                    marginInline: "auto",
+                },
+                "& .MuiDrawer-modal": {
+                    backdropFilter: "blur(10px)",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                },
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+            }}
+        >
+            <Paper
+                sx={{
+                    width: "100%",
+                    height: "80vh",
+                    p: "1rem",
+                    marginInline: "auto",
+                    maxWidth: "700px",
+                }}
+            >
+                {task?.id ? (
+                    <DrawerUpdateContent
+                        task={task}
+                        toggleDrawer={toggleDrawer}
+                    />
+                ) : (
+                    <DrawerAddContent
+                        toggleDrawer={toggleDrawer}
+                    />
+                )}
+            </Paper>
+        </SwipeableDrawer>
     );
 }
 
-export const DrawerContent = ({ toggleDrawer, updating, task }) => {
-    const { handleModalClose } = useContext(taskPaneViewHandler);
+export const DrawerUpdateContent = memo(function DrawerContent({
+    toggleDrawer,
+    updating,
+}) {
+    const { drawerAction, task, setTask } = useContext(TaskCrudDrawerContext);
     const dispatch = useDispatch();
-    console.log(task)
+    if (drawerAction === "update") {
+        updating = true;
+    }
     const formik = useFormik({
         initialValues: {
             title: task.title ? task.title : "",
             description: task.description ? task.description : "",
             priority: task.priority ? task.priority : "",
-            XstartTime: task.startTime?.seconds ? dayjs(task.startTime.seconds * 1000) : null,
-            XendTime: task.endTime?.seconds ? dayjs(task.endTime.seconds * 1000) : null,
+            XstartTime: task.startTime?.seconds
+                ? dayjs(task.startTime.seconds * 1000)
+                : null,
+            XendTime: task.endTime?.seconds
+                ? dayjs(task.endTime.seconds * 1000)
+                : null,
             importance: task.importance ? task.importance : "",
             icon: task.icon ? task.icon : "😉",
             difficulty: task.difficulty ? task.difficulty : "",
@@ -210,11 +273,9 @@ export const DrawerContent = ({ toggleDrawer, updating, task }) => {
             console.log(values);
             if (task.id) {
                 values.id = task.id;
-
                 console.log("updating");
                 await dispatch(updateTask({ id: task.id, task: values }));
                 await dispatch(fetchTasks());
-                handleModalClose();
                 toggleDrawer(false)();
             } else {
                 console.log("adding");
@@ -224,6 +285,116 @@ export const DrawerContent = ({ toggleDrawer, updating, task }) => {
             toggleDrawer(false)();
         },
     });
+
+    return (
+        <>
+            <Box className="grid h-full grid-flow-row grid-rows-[50px_1fr_50px] gap-4">
+                {/* Header */}
+                <Box>
+                    <Box className="flex w-full items-start justify-between">
+                        <Typography variant="h5" className="p-3 text-red-700">
+                            Update Task
+                        </Typography>
+                        <IconButton
+                            onClick={(event) => {
+                                toggleDrawer(false, event);
+                            }}
+                        >
+                            <Close />
+                        </IconButton>
+                    </Box>
+                    <Divider />
+                </Box>
+                {/* Body */}
+                <Box className="overflow-y-hidden">
+                    <Box className="h-full overflow-y-scroll">
+                        <TaskForm formik={formik} task={task} />
+                    </Box>
+                </Box>
+                {/* Footer */}
+                <Box>
+                    <Divider />
+                    <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
+                        <Button
+                            variant="text"
+                            onClick={(event) => {
+                                toggleDrawer(false, event);
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button variant="contained" onClick={formik.handleSubmit}>
+                            "Update Task"
+                        </Button>
+                    </Box>
+                </Box>
+            </Box>
+        </>
+    );
+});
+
+export const DrawerAddContent = memo(function DrawerContent({
+    toggleDrawer,
+    updating,
+}) {
+    const { drawerAction, task, setTask } = useContext(TaskCrudDrawerContext);
+    const dispatch = useDispatch();
+    if (drawerAction === "update") {
+        updating = true;
+    }
+    const formik = useFormik({
+        initialValues: {
+            title: task.title ? task.title : "",
+            description: task.description ? task.description : "",
+            priority: task.priority ? task.priority : "",
+            XstartTime: task.startTime?.seconds
+                ? dayjs(task.startTime.seconds * 1000)
+                : null,
+            XendTime: task.endTime?.seconds
+                ? dayjs(task.endTime.seconds * 1000)
+                : null,
+            importance: task.importance ? task.importance : "",
+            icon: task.icon ? task.icon : "😉",
+            difficulty: task.difficulty ? task.difficulty : "",
+            createdAt: task.createdAt ? task.createdAt : null,
+            status: task.status ? task.status : "",
+            tags: task.tags ? task.tags : [],
+        },
+        onSubmit: async (values) => {
+            console.log(values);
+            let startTime = values.XstartTime;
+
+            values.startTime = {
+                seconds: Math.floor(startTime / 1000),
+                nanoseconds: (startTime % 1000) * 1000000,
+            };
+
+            values.createdAt = {
+                seconds: Math.floor(new Date() / 1000),
+                nanoseconds: new Date() * 1000000,
+            };
+
+            let endTime = values.XendTime;
+            values.endTime = {
+                seconds: Math.floor(endTime / 1000),
+                nanoseconds: (endTime % 1000) * 1000000,
+            };
+            console.log(values);
+            if (task.id) {
+                values.id = task.id;
+                console.log("updating");
+                await dispatch(updateTask({ id: task.id, task: values }));
+                await dispatch(fetchTasks());
+                toggleDrawer(false)();
+            } else {
+                console.log("adding");
+                await dispatch(addTasks(values));
+            }
+            formik.resetForm();
+            toggleDrawer(false)();
+        },
+    });
+
     return (
         <>
             <Box className="grid h-full grid-flow-row grid-rows-[50px_1fr_50px] gap-4">
@@ -233,7 +404,11 @@ export const DrawerContent = ({ toggleDrawer, updating, task }) => {
                         <Typography variant="h5" className="p-3">
                             {updating ? "Add Task" : "Update Task"}
                         </Typography>
-                        <IconButton onClick={toggleDrawer(false)}>
+                        <IconButton
+                            onClick={(event) => {
+                                toggleDrawer(false, event);
+                            }}
+                        >
                             <Close />
                         </IconButton>
                     </Box>
@@ -242,27 +417,32 @@ export const DrawerContent = ({ toggleDrawer, updating, task }) => {
                 {/* Body */}
                 <Box className="overflow-y-hidden">
                     <Box className="h-full overflow-y-scroll">
-                        <TaskForm formik={formik} />
+                        <TaskForm formik={formik} task={task} />
                     </Box>
                 </Box>
                 {/* Footer */}
                 <Box>
                     <Divider />
                     <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
-                        <Button variant="text" onClick={toggleDrawer(false)}>
+                        <Button
+                            variant="text"
+                            onClick={(event) => {
+                                toggleDrawer(false, event);
+                            }}
+                        >
                             Cancel
                         </Button>
                         <Button variant="contained" onClick={formik.handleSubmit}>
-                            {updating ? "Add Task" : "Update Task"}
+                            "Update Task"
                         </Button>
                     </Box>
                 </Box>
             </Box>
         </>
     );
-};
+});
 
-const TaskForm = ({ formik }) => {
+const TaskForm = memo(function TaskForm({ formik }) {
     const [EmojiState, setEmojiState] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -382,7 +562,7 @@ const TaskForm = ({ formik }) => {
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2"></Box>
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
                 <DateTimePicker
-                    // disablePast T// ODO: enable this feature depending on the task status 
+                    // disablePast T// ODO: enable this feature depending on the task status
                     name="XstartTime"
                     label="Start Time"
                     format="DD/MM/YYYY-hh:MM"
@@ -400,7 +580,7 @@ const TaskForm = ({ formik }) => {
                     }}
                 />
                 <DateTimePicker
-                    // disablePast // TODO: enable this feature depending on the task status 
+                    // disablePast // TODO: enable this feature depending on the task status
                     label="End Time"
                     format="DD/MM/YYYY-hh:MM"
                     defaultValue={formik.values.XendTime}
@@ -504,7 +684,7 @@ const TaskForm = ({ formik }) => {
             />
         </Box>
     );
-};
+});
 
 const tagIdeas = [
     "Work",

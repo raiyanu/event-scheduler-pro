@@ -10,16 +10,19 @@ import GlobalActionProvider from './GlobalActionProvider';
 import TaskDetailPanelProvider from './context/TaskDetailPanelProvider';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { TaskCrudDrawerProvider } from './component/AddTask';
 
 export default function MainLayout({ children }) {
     return (
         <Suspense fallback={<></>}>
             <PublicLayout>
-                <TaskDetailPanelProvider>
-                    <SideBarProvider>
-                        {children}
-                    </SideBarProvider>
-                </TaskDetailPanelProvider>
+                <TaskCrudDrawerProvider>
+                    <TaskDetailPanelProvider>
+                        <SideBarProvider>
+                            {children}
+                        </SideBarProvider>
+                    </TaskDetailPanelProvider>
+                </TaskCrudDrawerProvider>
             </PublicLayout >
         </Suspense>
     )
