@@ -235,7 +235,7 @@ export default function TaskDetailPanelProvider({ children }) {
                                             await displatch(
                                                 updateTask({ id: info.id, task: { status: markdown } })
                                             );
-                                            // handleClose();
+                                            await handleClose();
                                         }}
                                     >
                                         Updated

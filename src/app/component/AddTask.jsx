@@ -86,7 +86,7 @@ const TaskCrudDrawerContext = createContext(null);
 
 export const TaskCrudDrawerProvider = ({ children }) => {
     const [drawerState, setDrawerState] = useState(false);
-    const [task, setTask] = useState({});
+    const [task, setTask] = useState(null);
     const [drawerAction, setDrawerAction] = useState("add");
     const toggleDrawer = (open, event) => {
         if (
@@ -112,8 +112,11 @@ export const TaskCrudDrawerProvider = ({ children }) => {
             >
                 {children}
                 <SwipeableDrawerContainer
-                    toggleDrawer={toggleDrawer}
+                    task={task}
                     drawerState={drawerState}
+                    setTask={setTask}
+                    setDrawerAction={setDrawerAction}
+                    drawerAction={drawerAction}
                 />
             </TaskCrudDrawerContext.Provider>
         </>
@@ -123,14 +126,12 @@ export const TaskCrudDrawerProvider = ({ children }) => {
 export { AddTaskContainer, UpdateTaskDrawer };
 
 export const AddTaskButton = () => {
-    const { toggleDrawer, setDrawerAction, setTask } = useContext(
-        TaskCrudDrawerContext
-    );
+    const { toggleDrawer, setDrawerAction, setTask } = useContext(TaskCrudDrawerContext);
     return (
         <Button
             onClick={(event) => {
                 toggleDrawer(true, event);
-                setTask({});
+                setTask(null);
                 setDrawerAction("add");
             }}
             variant="contained"
@@ -150,14 +151,13 @@ export const UpdateTaskButton = ({ handleClose, task }) => {
     );
     useEffect(() => {
         console.log("task:", task);
-        setTask(task);
     }, [task]);
     return (
         <IconButton
-            onClick={(event) => {
+            onClick={async (event) => {
+                setTask(() => task);
                 toggleDrawer(true, event);
                 handleClose();
-                setTask(task);
                 setDrawerAction("update");
             }}
             variant="contained"
@@ -169,12 +169,10 @@ export const UpdateTaskButton = ({ handleClose, task }) => {
     );
 };
 
-export function SwipeableDrawerContainer({
-    task,
-    updating,
-    toggleDrawer,
-    drawerState,
-}) {
+export function SwipeableDrawerContainer({ task, drawerState, setTask, setDrawerAction }) {
+    useEffect(() => {
+        console.log(task);
+    }, [task]);
     return (
         <SwipeableDrawer
             anchor={"bottom"}
@@ -187,7 +185,6 @@ export function SwipeableDrawerContainer({
             }}
             sx={{
                 "& .MuiDrawer-paper": {
-                    bgcolor: "green",
                     width: "100%",
                     maxWidth: "700px",
                     minWidth: "300px",
@@ -210,51 +207,43 @@ export function SwipeableDrawerContainer({
                 }}
             >
                 {task?.id ? (
-                    <DrawerUpdateContent
-                        task={task}
-                        toggleDrawer={toggleDrawer}
-                    />
+                    <DrawerUpdateContent task={task} />
                 ) : (
-                    <DrawerAddContent
-                        toggleDrawer={toggleDrawer}
-                    />
+                    <DrawerAddContent />
                 )}
             </Paper>
         </SwipeableDrawer>
     );
 }
 
-export const DrawerUpdateContent = memo(function DrawerContent({
-    toggleDrawer,
-    updating,
-}) {
-    const { drawerAction, task, setTask } = useContext(TaskCrudDrawerContext);
+export const DrawerUpdateContent = ({ updating }) => {
+    const { drawerAction, task, setTask, toggleDrawer } = useContext(TaskCrudDrawerContext);
     const dispatch = useDispatch();
     if (drawerAction === "update") {
         updating = true;
     }
     const formik = useFormik({
         initialValues: {
-            title: task.title ? task.title : "",
-            description: task.description ? task.description : "",
-            priority: task.priority ? task.priority : "",
-            XstartTime: task.startTime?.seconds
-                ? dayjs(task.startTime.seconds * 1000)
+            title: task?.title ? task?.title : "",
+            description: task?.description ? task?.description : "",
+            priority: task?.priority ? task?.priority : "",
+            XstartTime: task?.startTime?.seconds
+                ? dayjs(task?.startTime.seconds * 1000)
                 : null,
-            XendTime: task.endTime?.seconds
-                ? dayjs(task.endTime.seconds * 1000)
+            XendTime: task?.endTime?.seconds
+                ? dayjs(task?.endTime.seconds * 1000)
                 : null,
-            importance: task.importance ? task.importance : "",
-            icon: task.icon ? task.icon : "😉",
-            difficulty: task.difficulty ? task.difficulty : "",
-            createdAt: task.createdAt ? task.createdAt : null,
-            status: task.status ? task.status : "",
-            tags: task.tags ? task.tags : [],
+            importance: task?.importance ? task?.importance : "",
+            icon: task?.icon ? task?.icon : "😉",
+            difficulty: task?.difficulty ? task?.difficulty : "",
+            createdAt: task?.createdAt ? task?.createdAt : null,
+            status: task?.status ? task?.status : "",
+            tags: task?.tags ? task?.tags : [],
         },
         onSubmit: async (values) => {
+            console.log("values before mod: ", values);
             console.log(values);
             let startTime = values.XstartTime;
-
             values.startTime = {
                 seconds: Math.floor(startTime / 1000),
                 nanoseconds: (startTime % 1000) * 1000000,
@@ -270,21 +259,36 @@ export const DrawerUpdateContent = memo(function DrawerContent({
                 seconds: Math.floor(endTime / 1000),
                 nanoseconds: (endTime % 1000) * 1000000,
             };
-            console.log(values);
-            if (task.id) {
-                values.id = task.id;
-                console.log("updating");
-                await dispatch(updateTask({ id: task.id, task: values }));
-                await dispatch(fetchTasks());
-                toggleDrawer(false)();
-            } else {
-                console.log("adding");
-                await dispatch(addTasks(values));
-            }
-            formik.resetForm();
+            values.id = task.id;
+            console.log("values after mod: ", values);
+            console.log("updating");
+            await dispatch(updateTask({ id: task.id, task: values }));
+            await dispatch(fetchTasks());
             toggleDrawer(false)();
+            formik.resetForm();
         },
     });
+
+    useEffect(() => {
+        formik.setValues({
+            title: task?.title ? task?.title : "",
+            description: task?.description ? task?.description : "",
+            priority: task?.priority ? task?.priority : "",
+            XstartTime: task?.startTime?.seconds
+                ? dayjs(task?.startTime.seconds * 1000)
+                : null,
+            XendTime: task?.endTime?.seconds
+                ? dayjs(task?.endTime.seconds * 1000)
+                : null,
+            importance: task?.importance ? task?.importance : "",
+            icon: task?.icon ? task?.icon : "😉",
+            difficulty: task?.difficulty ? task?.difficulty : "",
+            createdAt: task?.createdAt ? task?.createdAt : null,
+            status: task?.status ? task?.status : "",
+            tags: task?.tags ? task?.tags : [],
+        });
+        console.log("reset: ", formik.values);
+    }, [task]);
 
     return (
         <>
@@ -292,7 +296,7 @@ export const DrawerUpdateContent = memo(function DrawerContent({
                 {/* Header */}
                 <Box>
                     <Box className="flex w-full items-start justify-between">
-                        <Typography variant="h5" className="p-3 text-red-700">
+                        <Typography variant="h5" className="p-3">
                             Update Task
                         </Typography>
                         <IconButton
@@ -331,34 +335,24 @@ export const DrawerUpdateContent = memo(function DrawerContent({
             </Box>
         </>
     );
-});
+};
 
-export const DrawerAddContent = memo(function DrawerContent({
-    toggleDrawer,
-    updating,
-}) {
-    const { drawerAction, task, setTask } = useContext(TaskCrudDrawerContext);
+export const DrawerAddContent = ({ }) => {
+    const { drawerAction, toggleDrawer } = useContext(TaskCrudDrawerContext);
     const dispatch = useDispatch();
-    if (drawerAction === "update") {
-        updating = true;
-    }
     const formik = useFormik({
         initialValues: {
-            title: task.title ? task.title : "",
-            description: task.description ? task.description : "",
-            priority: task.priority ? task.priority : "",
-            XstartTime: task.startTime?.seconds
-                ? dayjs(task.startTime.seconds * 1000)
-                : null,
-            XendTime: task.endTime?.seconds
-                ? dayjs(task.endTime.seconds * 1000)
-                : null,
-            importance: task.importance ? task.importance : "",
-            icon: task.icon ? task.icon : "😉",
-            difficulty: task.difficulty ? task.difficulty : "",
-            createdAt: task.createdAt ? task.createdAt : null,
-            status: task.status ? task.status : "",
-            tags: task.tags ? task.tags : [],
+            title: "",
+            description: "",
+            priority: "",
+            XstartTime: null,
+            XendTime: null,
+            importance: "",
+            icon: "😉",
+            difficulty: "",
+            createdAt: null,
+            status: "",
+            tags: [],
         },
         onSubmit: async (values) => {
             console.log(values);
@@ -380,16 +374,8 @@ export const DrawerAddContent = memo(function DrawerContent({
                 nanoseconds: (endTime % 1000) * 1000000,
             };
             console.log(values);
-            if (task.id) {
-                values.id = task.id;
-                console.log("updating");
-                await dispatch(updateTask({ id: task.id, task: values }));
-                await dispatch(fetchTasks());
-                toggleDrawer(false)();
-            } else {
-                console.log("adding");
-                await dispatch(addTasks(values));
-            }
+            console.log("adding");
+            await dispatch(addTasks(values));
             formik.resetForm();
             toggleDrawer(false)();
         },
@@ -402,7 +388,7 @@ export const DrawerAddContent = memo(function DrawerContent({
                 <Box>
                     <Box className="flex w-full items-start justify-between">
                         <Typography variant="h5" className="p-3">
-                            {updating ? "Add Task" : "Update Task"}
+                            Add Task
                         </Typography>
                         <IconButton
                             onClick={(event) => {
@@ -417,7 +403,7 @@ export const DrawerAddContent = memo(function DrawerContent({
                 {/* Body */}
                 <Box className="overflow-y-hidden">
                     <Box className="h-full overflow-y-scroll">
-                        <TaskForm formik={formik} task={task} />
+                        <TaskForm formik={formik} />
                     </Box>
                 </Box>
                 {/* Footer */}
@@ -433,16 +419,16 @@ export const DrawerAddContent = memo(function DrawerContent({
                             Cancel
                         </Button>
                         <Button variant="contained" onClick={formik.handleSubmit}>
-                            "Update Task"
+                            Add Task
                         </Button>
                     </Box>
                 </Box>
             </Box>
         </>
     );
-});
+};
 
-const TaskForm = memo(function TaskForm({ formik }) {
+const TaskForm = ({ formik }) => {
     const [EmojiState, setEmojiState] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -684,7 +670,7 @@ const TaskForm = memo(function TaskForm({ formik }) {
             />
         </Box>
     );
-});
+};
 
 const tagIdeas = [
     "Work",
