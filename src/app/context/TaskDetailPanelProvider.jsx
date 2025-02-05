@@ -41,7 +41,7 @@ import { deleteTasks, updateTask } from "../redux/slice/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Clock } from "@mui/x-date-pickers/TimeClock/Clock";
 import { ClockIcon } from "@mui/x-date-pickers";
-import { UpdateTaskDrawer } from "../component/AddTask";
+import { UpdateTaskButton, UpdateTaskDrawer } from "../component/AddTask";
 
 export const TaskDetailPanelContext = createContext();
 export const taskPaneViewHandler = createContext();
@@ -65,7 +65,6 @@ export default function TaskDetailPanelProvider({ children }) {
     const handleCloseActionModal = () => setOpenActionModal(false);
     const taskCRUDStatus = useSelector((state) => state.TASK.taskCRUD);
     const displatch = useDispatch();
-
     const [markdown, setMarkdown] = useState("");
     return (
         <>
@@ -200,7 +199,7 @@ export default function TaskDetailPanelProvider({ children }) {
                             >
                                 <Delete />
                             </IconButton>
-                            <UpdateTaskDrawer task={info} />
+                            <UpdateTaskButton task={info} handleClose={handleClose} />
                         </Box>
                         <Box className="flex gap-2 *:flex-shrink-0 *:flex-grow-0">
                             <Box className="flex gap-1 max-md:flex-col">
