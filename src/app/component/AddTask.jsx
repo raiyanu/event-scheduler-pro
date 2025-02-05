@@ -5,6 +5,7 @@ import {
     AddCircleOutline,
     AddCircleSharp,
     Close,
+    Edit,
     MoreVert,
 } from "@mui/icons-material";
 import {
@@ -24,9 +25,9 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import { useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
@@ -40,10 +41,15 @@ import { useFormik } from "formik";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import EmojiPicker from "emoji-picker-react";
-import { DatePicker, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+    DatePicker,
+    DateTimePicker,
+    LocalizationProvider,
+} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
-import { addTasks } from "../redux/slice/taskSlice";
+import { addTasks, fetchTasks, updateTask } from "../redux/slice/taskSlice";
+import { taskPaneViewHandler } from "../context/TaskDetailPanelProvider";
 
 export function AddTaskLineCard() {
     const [date, setDate] = useState(null);
@@ -69,15 +75,27 @@ export function AddTaskLineCard() {
     );
 }
 
-export default function AddTaskContainer() {
+
+const AddTaskContainer = memo(function AddTaskContainer() {
     return <AddTask />;
-}
+});
 
-export function AddTask() {
-    return <SwipeableTemporaryDrawer />;
-}
+const AddTask = memo(function AddTask() {
+    return <SwipeableDrawerContainer />;
+});
 
-export function SwipeableTemporaryDrawer() {
+const UpdateTaskDrawer = memo(function UpdateTaskDrawer({ task }) {
+    return <SwipeableDrawerContainer task={task} />;
+});
+
+export { AddTaskContainer, AddTask, UpdateTaskDrawer };
+
+export function SwipeableDrawerContainer({ task }) {
+    console.log(task)
+    const updating = !task ? true : false;
+    if (!task) {
+        task = {};
+    }
     const [drawerState, setDrawerState] = useState(false);
     const toggleDrawer = (open) => (event) => {
         if (
@@ -92,16 +110,30 @@ export function SwipeableTemporaryDrawer() {
 
     return (
         <Box>
-            <Button
-                onClick={toggleDrawer(true)}
-                variant="contained"
-                className="px-3 py-2"
-            >
-                <Add className="fill-white text-xl" />
-                <Typography variant="button" className="text-white">
-                    Add Task
-                </Typography>
-            </Button>
+            {updating ? (
+                <Button
+                    onClick={toggleDrawer(true)}
+                    variant="contained"
+                    className="px-3 py-2"
+                >
+                    <Add className="fill-white text-xl" />
+                    <Typography variant="button" className="text-white">
+                        Add Task
+                    </Typography>
+                </Button>
+            ) : (
+                <IconButton
+                    onClick={(event) => {
+                        // handleTaskModalClose();
+                        toggleDrawer(true)(event);
+                    }}
+                    variant="contained"
+                    color="warning"
+                    autoFocus
+                >
+                    <Edit />
+                </IconButton>
+            )}
             <SwipeableDrawer
                 anchor={"bottom"}
                 open={drawerState}
@@ -119,6 +151,7 @@ export function SwipeableTemporaryDrawer() {
                         backdropFilter: "blur(10px)",
                         backgroundColor: "rgba(0,0,0,0.5)",
                     },
+                    zIndex: 1400,
                 }}
             >
                 <Paper
@@ -130,37 +163,38 @@ export function SwipeableTemporaryDrawer() {
                         maxWidth: "700px",
                     }}
                 >
-                    <DrawerContent toggleDrawer={toggleDrawer} />
+                    <DrawerContent task={task} updating={updating} toggleDrawer={toggleDrawer} />
                 </Paper>
             </SwipeableDrawer>
         </Box>
     );
 }
 
-export const DrawerContent = ({ toggleDrawer }) => {
+export const DrawerContent = ({ toggleDrawer, updating, task }) => {
+    const { handleModalClose } = useContext(taskPaneViewHandler);
     const dispatch = useDispatch();
+    console.log(task)
     const formik = useFormik({
         initialValues: {
-            title: "",
-            description: "",
-            priority: "",
-            startTime: null,
-            XstartTime: null,
-            endTime: null,
-            XendTime: null,
-            importance: "",
-            icon: "😉",
-            difficulty: "",
-            createdAt: null,
-            status: "",
-            tags: [],
+            title: task.title ? task.title : "",
+            description: task.description ? task.description : "",
+            priority: task.priority ? task.priority : "",
+            XstartTime: task.startTime?.seconds ? dayjs(task.startTime.seconds * 1000) : null,
+            XendTime: task.endTime?.seconds ? dayjs(task.endTime.seconds * 1000) : null,
+            importance: task.importance ? task.importance : "",
+            icon: task.icon ? task.icon : "😉",
+            difficulty: task.difficulty ? task.difficulty : "",
+            createdAt: task.createdAt ? task.createdAt : null,
+            status: task.status ? task.status : "",
+            tags: task.tags ? task.tags : [],
         },
         onSubmit: async (values) => {
             console.log(values);
             let startTime = values.XstartTime;
+
             values.startTime = {
                 seconds: Math.floor(startTime / 1000),
-                nanoseconds: startTime * 1000000,
+                nanoseconds: (startTime % 1000) * 1000000,
             };
 
             values.createdAt = {
@@ -168,18 +202,24 @@ export const DrawerContent = ({ toggleDrawer }) => {
                 nanoseconds: new Date() * 1000000,
             };
 
-            values.removedAt = {
-                seconds: null,
-                nanoseconds: null,
-            };
-
             let endTime = values.XendTime;
             values.endTime = {
                 seconds: Math.floor(endTime / 1000),
-                nanoseconds: endTime * 1000000,
+                nanoseconds: (endTime % 1000) * 1000000,
             };
             console.log(values);
-            await dispatch(addTasks(values));
+            if (task.id) {
+                values.id = task.id;
+
+                console.log("updating");
+                await dispatch(updateTask({ id: task.id, task: values }));
+                await dispatch(fetchTasks());
+                handleModalClose();
+                toggleDrawer(false)();
+            } else {
+                console.log("adding");
+                await dispatch(addTasks(values));
+            }
             formik.resetForm();
             toggleDrawer(false)();
         },
@@ -191,7 +231,7 @@ export const DrawerContent = ({ toggleDrawer }) => {
                 <Box>
                     <Box className="flex w-full items-start justify-between">
                         <Typography variant="h5" className="p-3">
-                            Add Task
+                            {updating ? "Add Task" : "Update Task"}
                         </Typography>
                         <IconButton onClick={toggleDrawer(false)}>
                             <Close />
@@ -202,7 +242,7 @@ export const DrawerContent = ({ toggleDrawer }) => {
                 {/* Body */}
                 <Box className="overflow-y-hidden">
                     <Box className="h-full overflow-y-scroll">
-                        <AddTaskForm formik={formik} />
+                        <TaskForm formik={formik} />
                     </Box>
                 </Box>
                 {/* Footer */}
@@ -212,9 +252,9 @@ export const DrawerContent = ({ toggleDrawer }) => {
                         <Button variant="text" onClick={toggleDrawer(false)}>
                             Cancel
                         </Button>
-                        <Button variant="contained"
-                            onClick={formik.handleSubmit}
-                        >Add Task</Button>
+                        <Button variant="contained" onClick={formik.handleSubmit}>
+                            {updating ? "Add Task" : "Update Task"}
+                        </Button>
                     </Box>
                 </Box>
             </Box>
@@ -222,7 +262,7 @@ export const DrawerContent = ({ toggleDrawer }) => {
     );
 };
 
-const AddTaskForm = ({ formik }) => {
+const TaskForm = ({ formik }) => {
     const [EmojiState, setEmojiState] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -234,18 +274,19 @@ const AddTaskForm = ({ formik }) => {
     };
     return (
         <Box className="grid gap-7 p-2">
-            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+            <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                 <Box className="flex items-center">
                     <IconButton
                         id="basic-button"
-                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-controls={open ? "basic-menu" : undefined}
                         aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
+                        aria-expanded={open ? "true" : undefined}
                         className="aspect-square align-middle text-lg"
                         onClick={(event) => {
                             handleClick(event);
-                            setEmojiState(true)
-                        }}>
+                            setEmojiState(true);
+                        }}
+                    >
                         {formik.values.icon}
                     </IconButton>
                     <Menu
@@ -254,16 +295,16 @@ const AddTaskForm = ({ formik }) => {
                         open={open}
                         onClose={handleClose}
                         MenuListProps={{
-                            'aria-labelledby': 'basic-button',
+                            "aria-labelledby": "basic-button",
                         }}
                     >
                         <EmojiPicker
                             open={EmojiState}
                             onEmojiClick={(event) => {
-                                console.log(event.emoji)
-                                formik.setFieldValue("icon", event.emoji)
-                                setEmojiState(false)
-                                handleClose()
+                                console.log(event.emoji);
+                                formik.setFieldValue("icon", event.emoji);
+                                setEmojiState(false);
+                                handleClose();
                             }}
                         />
                     </Menu>
@@ -296,7 +337,9 @@ const AddTaskForm = ({ formik }) => {
             />
             <Box className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                 <FormControl variant="standard" sx={{}}>
-                    <InputLabel id="demo-simple-select-standard-label">Priority</InputLabel>
+                    <InputLabel id="demo-simple-select-standard-label">
+                        Priority
+                    </InputLabel>
                     <Select
                         labelId="demo-simple-select-standard-label"
                         id="demo-simple-select-standard"
@@ -313,7 +356,9 @@ const AddTaskForm = ({ formik }) => {
                     </Select>
                 </FormControl>
                 <FormControl variant="standard" sx={{}}>
-                    <InputLabel id="demo-simple-select-standard-label">Importance</InputLabel>
+                    <InputLabel id="demo-simple-select-standard-label">
+                        Importance
+                    </InputLabel>
                     <Select
                         id="importance"
                         name="importance"
@@ -321,7 +366,9 @@ const AddTaskForm = ({ formik }) => {
                         label="Importance"
                         value={formik.values.importance}
                         onChange={formik.handleChange}
-                        error={formik.touched.importance && Boolean(formik.errors.importance)}
+                        error={
+                            formik.touched.importance && Boolean(formik.errors.importance)
+                        }
                         helperText={formik.touched.importance && formik.errors.importance}
                     >
                         <MenuItem value={null}>none</MenuItem>
@@ -332,42 +379,48 @@ const AddTaskForm = ({ formik }) => {
                     </Select>
                 </FormControl>
             </Box>
-            <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
-            </Box>
+            <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2"></Box>
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
                 <DateTimePicker
-                    disablePast
+                    // disablePast T// ODO: enable this feature depending on the task status 
                     name="XstartTime"
                     label="Start Time"
                     format="DD/MM/YYYY-hh:MM"
-                    onChange={(value) => formik.setFieldValue("XstartTime", value.toDate(), true)}
+                    defaultValue={formik.values.XstartTime}
+                    onChange={(value) =>
+                        formik.setFieldValue("XstartTime", value.toDate(), true)
+                    }
                     slotProps={{
                         textField: {
                             variant: "outlined",
-                            error: formik.touched.XstartTime && Boolean(formik.errors.XstartTime),
-                            helperText: formik.touched.XstartTime && formik.errors.XstartTime
-                        }
+                            error:
+                                formik.touched.XstartTime && Boolean(formik.errors.XstartTime),
+                            helperText: formik.touched.XstartTime && formik.errors.XstartTime,
+                        },
                     }}
-
                 />
                 <DateTimePicker
-                    disablePast
-                    label="XendTime"
+                    // disablePast // TODO: enable this feature depending on the task status 
+                    label="End Time"
                     format="DD/MM/YYYY-hh:MM"
-                    onChange={(value) => formik.setFieldValue("XendTime", value.toDate(), true)}
+                    defaultValue={formik.values.XendTime}
+                    onChange={(value) =>
+                        formik.setFieldValue("XendTime", value.toDate(), true)
+                    }
                     slotProps={{
                         textField: {
                             variant: "outlined",
                             error: formik.touched.XendTime && Boolean(formik.errors.XendTime),
-                            helperText: formik.touched.XendTime && formik.errors.XendTime
-                        }
+                            helperText: formik.touched.XendTime && formik.errors.XendTime,
+                        },
                     }}
                 />
             </Box>
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
-
                 <FormControl>
-                    <FormLabel id="demo-row-radio-buttons-group-label">Difficulty</FormLabel>
+                    <FormLabel id="demo-row-radio-buttons-group-label">
+                        Difficulty
+                    </FormLabel>
                     <RadioGroup
                         row
                         id="difficulty"
@@ -377,11 +430,17 @@ const AddTaskForm = ({ formik }) => {
                         aria-labelledby="demo-row-radio-buttons-group-label"
                         value={formik.values.difficulty}
                         onChange={formik.handleChange}
-                        error={formik.touched.difficulty && Boolean(formik.errors.difficulty)}
+                        error={
+                            formik.touched.difficulty && Boolean(formik.errors.difficulty)
+                        }
                         helperText={formik.touched.difficulty && formik.errors.difficulty}
                     >
                         <FormControlLabel value="easy" control={<Radio />} label="Easy" />
-                        <FormControlLabel value="medium" control={<Radio />} label="Medium" />
+                        <FormControlLabel
+                            value="medium"
+                            control={<Radio />}
+                            label="Medium"
+                        />
                         <FormControlLabel value="hard" control={<Radio />} label="Hard" />
                     </RadioGroup>
                 </FormControl>
@@ -398,8 +457,16 @@ const AddTaskForm = ({ formik }) => {
                         error={formik.touched.status && Boolean(formik.errors.status)}
                         helperText={formik.touched.status && formik.errors.status}
                     >
-                        <FormControlLabel value="to-start" control={<Radio />} label="To Start" />
-                        <FormControlLabel value="progress" control={<Radio />} label="progress" />
+                        <FormControlLabel
+                            value="to-start"
+                            control={<Radio />}
+                            label="To Start"
+                        />
+                        <FormControlLabel
+                            value="progress"
+                            control={<Radio />}
+                            label="progress"
+                        />
                         <FormControlLabel value="done" control={<Radio />} label="Done" />
                     </RadioGroup>
                 </FormControl>
@@ -438,7 +505,6 @@ const AddTaskForm = ({ formik }) => {
         </Box>
     );
 };
-
 
 const tagIdeas = [
     "Work",
@@ -510,5 +576,5 @@ const tagIdeas = [
     "Brunch",
     "Snack",
     "Coffee Break",
-    "Tea Break"
-]
+    "Tea Break",
+];

@@ -18,9 +18,18 @@ import {
     MenuItem,
     Select,
     Stack,
+    Tooltip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { Delete, Edit, Info } from "@mui/icons-material";
+import {
+    Delete,
+    Edit,
+    HourglassBottom,
+    Info,
+    PushPin,
+    Tag,
+    WorkspacePremium,
+} from "@mui/icons-material";
 import { useDialogs } from "@toolpad/core";
 import PropTypes from "prop-types";
 import * as React from "react";
@@ -32,18 +41,17 @@ import { deleteTasks, updateTask } from "../redux/slice/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Clock } from "@mui/x-date-pickers/TimeClock/Clock";
 import { ClockIcon } from "@mui/x-date-pickers";
+import { UpdateTaskDrawer } from "../component/AddTask";
 
 export const TaskDetailPanelContext = createContext();
-
+export const taskPaneViewHandler = createContext();
 export default function TaskDetailPanelProvider({ children }) {
     const [info, setInfo] = useState({});
     const [open, setOpen] = useState(false);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.up("300px"));
     const handleClickOpen = (INFO) => {
-        if (!info) {
-            return;
-        }
+        if (!info) return;
         setInfo(INFO);
         setOpen(true);
     };
@@ -61,247 +69,255 @@ export default function TaskDetailPanelProvider({ children }) {
     const [markdown, setMarkdown] = useState("");
     return (
         <>
-            <TaskDetailPanelContext.Provider value={{ handleClickOpen }}>
-                {children}
-            </TaskDetailPanelContext.Provider>
-            <Dialog
-                fullScreen={fullScreen}
-                maxWidth="lg"
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="responsive-dialog-title"
-                sx={{
-                    ".MuiDialog-paper": {
-                        minWidth: "460px",
-                        maxWidth: "600px",
+            <taskPaneViewHandler.Provider
+                value={{
+                    handleModalClose: () => {
+                        handleClose();
                     },
                 }}
             >
-                <DialogTitle id="responsive-dialog-title" className="flex items-center">
-                    <span className="text-3xl">{info?.icon ? info.icon : "--"}</span>
-                    <span className="text-xl">{info?.title ? info.title : "--"}</span>
-                </DialogTitle>
-                <IconButton
-                    aria-label="close"
-                    onClick={handleClose}
-                    sx={(theme) => ({
-                        position: "absolute",
-                        right: 8,
-                        top: 8,
-                        color: theme.palette.grey[500],
-                    })}
+                <TaskDetailPanelContext.Provider value={{ handleClickOpen }}>
+                    {children}
+                </TaskDetailPanelContext.Provider>
+                <Dialog
+                    fullScreen={fullScreen}
+                    maxWidth="lg"
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="responsive-dialog-title"
+                    sx={{
+                        ".MuiDialog-paper": {
+                            minWidth: "50%",
+                            maxWidth: "600px",
+                        },
+                    }}
                 >
-                    <CloseIcon />
-                </IconButton>
-                <DialogContent className="px-6 py-0 *:mt-3">
-                    <Box className="flex items-center gap-2">
-                        <ClockIcon />
-                        <Box className="flex flex-shrink-0">
-                            <Typography>
-                                {info?.startTime
-                                    ? formatDate(new Date(info.startTime.seconds * 1000))
-                                    : "--"}
+                    <Box>
+                        <DialogTitle
+                            id="responsive-dialog-title"
+                            className="mr-[1.5rem] flex items-center gap-2 max-md:items-start"
+                        >
+                            <span className="text-3xl max-md:mt-1 max-md:text-xl">{info?.icon ? info.icon : "--"}</span>
+                            <span className="text-xl max-md:text-base">{info?.title ? info.title : "--"}</span>
+                        </DialogTitle>
+                        <IconButton
+                            autoFocus
+                            aria-label="close"
+                            onClick={handleClose}
+                            sx={(theme) => ({
+                                position: "absolute",
+                                right: 8,
+                                top: 8,
+                                color: theme.palette.grey[500],
+                            })}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
+                    <DialogContent className="px-6 py-0 *:mt-3">
+                        <Box className="flex max-w-full items-center gap-2">
+                            <ClockIcon />
+                            <Box className="flex flex-shrink-0 flex-wrap max-md:flex-col">
+                                <Typography>
+                                    {info?.startTime
+                                        ? formatDate(new Date(info.startTime.seconds * 1000))
+                                        : "--"}
+                                </Typography>
+                                <Divider
+                                    className="max-md:hidden"
+                                    orientation="vertical"
+                                    sx={{ height: "1.5rem", marginInline: "10px" }}
+                                />
+                                <Typography>
+                                    {info?.endTime
+                                        ? formatDate(new Date(info.endTime.seconds * 1000))
+                                        : "--"}
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <DialogContentText className="p-0 *:mt-2" variant="body1">
+                            {info?.description ? info.description : "--"}
+                        </DialogContentText>
+                        <Box className="grid grid-cols-2">
+                            <Typography variant="">
+                                <Tooltip title="Difficulty">
+                                    <WorkspacePremium />{" "}
+                                    {info?.difficulty ? info.difficulty : "--"}
+                                </Tooltip>
                             </Typography>
-                            <Divider
-                                orientation="vertical"
-                                sx={{ height: "1.5rem", marginInline: "10px" }}
-                            />
-                            <Typography>
-                                {info?.endTime
-                                    ? formatDate(new Date(info.endTime.seconds * 1000))
-                                    : "--"}
+                            <Typography variant="">
+                                <Tooltip title="Importance">
+                                    <Ribbon /> {info?.importance ? info.importance : "--"}
+                                </Tooltip>
                             </Typography>
                         </Box>
-                    </Box>
-                    <DialogContentText className="p-0 *:mt-2" variant="body1">
-                        {info?.description ? info.description : "--"}
-                    </DialogContentText>
-                    <Box className="grid grid-cols-2">
-                        <Typography variant="">
-                            Difficulty: {info?.difficulty ? info.difficulty : "--"}
-                        </Typography>
-                        <Typography variant="">
-                            Importance: {info?.importance ? info.importance : "--"}
-                        </Typography>
-                    </Box>
-                    <Box className="grid grid-cols-2">
-                        <Typography variant="">
-                            Priority: {info?.priority ? info.priority : "--"}
-                        </Typography>
-                        <Typography variant="">
-                            status: {info?.status ? friendlyStatus(info.status) : "--"}
-                        </Typography>
-                    </Box>
-                    {/* <Box>
+                        <Box className="grid grid-cols-2">
+                            <Typography variant="">
+                                <Tooltip title="Priority">
+                                    <PushPin /> {info?.priority ? info.priority : "--"}
+                                </Tooltip>
+                            </Typography>
+                            <Typography>
+                                <Tooltip title="Status">
+                                    <HourglassBottom />{" "}
+                                    {info?.status ? friendlyStatus(info.status) : "--"}
+                                </Tooltip>
+                            </Typography>
+                        </Box>
+                        {/* <Box>
                         <Typography variant="button">
                             Created At: 
                             {info?.createdAt ? new Date(info.createdAt.seconds * 1000).toLocaleString() : "--"}
                         </Typography>
                     </Box> */}
-                    <Box className="flex flex-wrap gap-2">
-                        {info.tags &&
-                            info.tags.length >= 0 &&
-                            info.tags.map((tag, index) => (
-                                <Chip
-                                    label={tag}
-                                    key={index.toString() + "-myTaskElementTags"}
-                                    variant="outlined"
-                                    color="warning"
-                                    size="small"
-                                />
-                            ))}
-                    </Box>
-                </DialogContent>
-                <DialogActions className="mt-4 justify-between">
-                    <Box className="justify-between">
-                        <IconButton
-                            onClick={() => {
-                                handleClose();
-                                handleOpenActionModal();
-                            }}
-                            variant="contained"
-                            color="warning"
-                            autoFocus
-                        >
-                            <Delete />
-                        </IconButton>
-                        <IconButton
-                            onClick={() => {
-                                handleClose();
-                                handleOpenActionModal();
-                            }}
-                            variant="contained"
-                            color="warning"
-                            autoFocus
-                        >
-                            <Edit />
-                        </IconButton>
-                    </Box>
-                    <Box className="flex gap-2 *:flex-shrink-0 *:flex-grow-0">
-                        <Box className="flex gap-1">
-                            <FormControl sx={{ minWidth: 80 }} fullWidth>
-                                <InputLabel
-                                    id="demo-simple-select-label"
-                                    sx={{
-                                        "&:not(.Mui-focused):not(.MuiInputLabel-shrink)": {
-                                            transform: "translate(15px, 10px) scale(1)",
-                                        },
-                                    }}
-                                >
-                                    Mark
-                                </InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    label="Mark"
-                                    value={markdown}
-                                    onChange={(e) => setMarkdown(e.target.value)}
-                                    size="small"
-                                    className="p-0"
-                                >
-                                    <MenuItem value={"to-start"}>To-start</MenuItem>
-                                    <MenuItem value={"progress"}>Progress</MenuItem>
-                                    <MenuItem value={"done"}>Done</MenuItem>
-                                </Select>
-                            </FormControl>
-                            {markdown !== "" && (
-                                <Button
-                                    className="h-10"
-                                    onClick={async () => {
-                                        await displatch(
-                                            updateTask({ id: info.id, task: { status: markdown } })
-                                        );
-                                        // handleClose();
-                                    }}
-                                >
-                                    Updated
-                                </Button>
-                            )}
+                        <Box className="flex gap-2">
+                            <Tag />
+                            <Box className="flex flex-wrap gap-2">
+                                {info.tags &&
+                                    info.tags.length >= 0 &&
+                                    info.tags.map((tag, index) => (
+                                        <Chip
+                                            label={tag}
+                                            key={index.toString() + "-myTaskElementTags"}
+                                            variant="outlined"
+                                            color="warning"
+                                            size="small"
+                                        />
+                                    ))}
+                            </Box>
                         </Box>
-
-                        <Button
-                            onClick={handleClose}
-                            variant="contained"
-                            color="warning"
-                            autoFocus
-                            className="h-10"
-                        >
-                            Close
-                        </Button>
-                    </Box>
-                </DialogActions>
-            </Dialog>
-            <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                open={openActionModal}
-                onClose={handleCloseActionModal}
-                closeAfterTransition
-                slots={{ backdrop: Backdrop }}
-                slotProps={{
-                    backdrop: {
-                        timeout: 500,
-                    },
-                }}
-            >
-                <Fade in={openActionModal}>
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            maxWidth: 400,
-                            width: "100%",
-                            // bgcolor: 'background.paper',
-                            // boxShadow: 24,
-                        }}
-                    >
-                        <Alert
-                            color="error"
+                    </DialogContent>
+                    <DialogActions className="mt-4 justify-between">
+                        <Box className="flex justify-between">
+                            <IconButton
+                                onClick={() => {
+                                    handleClose();
+                                    handleOpenActionModal();
+                                }}
+                                variant="contained"
+                                color="warning"
+                                autoFocus
+                            >
+                                <Delete />
+                            </IconButton>
+                            <UpdateTaskDrawer task={info} />
+                        </Box>
+                        <Box className="flex gap-2 *:flex-shrink-0 *:flex-grow-0">
+                            <Box className="flex gap-1 max-md:flex-col">
+                                <FormControl sx={{ minWidth: 80 }} fullWidth>
+                                    <InputLabel
+                                        id="demo-simple-select-label"
+                                        sx={{
+                                            "&:not(.Mui-focused):not(.MuiInputLabel-shrink)": {
+                                                transform: "translate(15px, 10px) scale(1)",
+                                            },
+                                        }}
+                                    >
+                                        Mark
+                                    </InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        label="Mark"
+                                        value={markdown}
+                                        onChange={(e) => setMarkdown(e.target.value)}
+                                        size="small"
+                                        className="p-0"
+                                    >
+                                        <MenuItem value={"to-start"}>To-start</MenuItem>
+                                        <MenuItem value={"progress"}>Progress</MenuItem>
+                                        <MenuItem value={"done"}>Done</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                {markdown !== "" && (
+                                    <Button
+                                        className="h-10"
+                                        onClick={async () => {
+                                            await displatch(
+                                                updateTask({ id: info.id, task: { status: markdown } })
+                                            );
+                                            // handleClose();
+                                        }}
+                                    >
+                                        Updated
+                                    </Button>
+                                )}
+                            </Box>
+                        </Box>
+                    </DialogActions>
+                </Dialog>
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    open={openActionModal}
+                    onClose={handleCloseActionModal}
+                    closeAfterTransition
+                    slots={{ backdrop: Backdrop }}
+                    slotProps={{
+                        backdrop: {
+                            timeout: 500,
+                        },
+                    }}
+                >
+                    <Fade in={openActionModal}>
+                        <Box
                             sx={{
-                                height: "100%",
-                                p: 2,
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                transform: "translate(-50%, -50%)",
+                                maxWidth: 400,
+                                width: "100%",
+                                // bgcolor: 'background.paper',
+                                // boxShadow: 24,
                             }}
                         >
-                            <Typography variant="h6" component="h2">
-                                Are you sure you want to delete this task?
-                            </Typography>
-                            <Box
-                                direction="row"
-                                spacing={2}
+                            <Alert
+                                color="error"
                                 sx={{
-                                    mt: 2,
-                                    display: "flex",
-                                    flexDirection: "row-reverse",
-                                    gap: "1rem",
+                                    height: "100%",
+                                    p: 2,
                                 }}
                             >
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={async () => {
-                                        await displatch(deleteTasks(info.id));
-                                        handleCloseActionModal();
-                                        handleClose();
+                                <Typography variant="h6" component="h2">
+                                    Are you sure you want to delete this task?
+                                </Typography>
+                                <Box
+                                    direction="row"
+                                    spacing={2}
+                                    sx={{
+                                        mt: 2,
+                                        display: "flex",
+                                        flexDirection: "row-reverse",
+                                        gap: "1rem",
                                     }}
                                 >
-                                    Delete
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="warning"
-                                    onClick={() => {
-                                        handleCloseActionModal();
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                            </Box>
-                        </Alert>
-                    </Box>
-                </Fade>
-            </Modal>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        onClick={async () => {
+                                            await displatch(deleteTasks(info.id));
+                                            handleCloseActionModal();
+                                            handleClose();
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="warning"
+                                        onClick={() => {
+                                            handleCloseActionModal();
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </Box>
+                            </Alert>
+                        </Box>
+                    </Fade>
+                </Modal>
+            </taskPaneViewHandler.Provider>
         </>
     );
 }
@@ -321,10 +337,21 @@ export function friendlyStatus(status) {
 
 export function formatDate(date) {
     const options = {
+        year: "2-digit",
         day: "numeric",
         month: "short",
         hour: "numeric",
         minute: "numeric",
     };
-    return new Date(date).toLocaleString("en-GB", options).replace(",", " :");
+    return new Date(date)
+        .toLocaleString("en-GB", { ...options, hour12: true })
+        .replace(",", " ")
+        .replace(" am", "AM")
+        .replace(" pm", "PM");
 }
+
+export const Ribbon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="inline-block h-5 w-5" viewBox="0 0 20 20">
+        <path d="M16.574 16.338c-.757-1.051-2.851-3.824-4.57-6.106.696-.999 1.251-1.815 1.505-2.242 1.545-2.594.874-4.26.022-5.67C12.677.909 12.542.094 10 .094c-2.543 0-2.678.815-3.531 2.227-.854 1.41-1.524 3.076.021 5.67.254.426.809 1.243 1.506 2.242-1.72 2.281-3.814 5.055-4.571 6.106-.176.244-.16.664.009 1.082.13.322.63 1.762.752 2.064.156.389.664.67 1.082.092.241-.334 2.582-3.525 4.732-6.522 2.149 2.996 4.491 6.188 4.732 6.522.417.578.926.297 1.082-.092.122-.303.622-1.742.752-2.064.167-.419.184-.839.008-1.083zm-6.94-9.275C8.566 5.579 7.802 3.852 7.802 3.852s.42-.758 2.198-.758 2.198.758 2.198.758-.766 1.727-1.833 3.211L10 7.56a40.64 40.64 0 0 1-.366-.497z" />
+    </svg>
+);

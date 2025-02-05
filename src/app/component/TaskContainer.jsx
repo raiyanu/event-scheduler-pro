@@ -22,19 +22,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchTasks } from "../redux/slice/taskSlice";
 import { Refresh } from "@mui/icons-material";
 import { TaskDetailPanelContext } from "../context/TaskDetailPanelProvider";
+import { format, isToday, isTomorrow, isYesterday } from 'date-fns';
 
 
-const FriendlyDate = (nanoseconds) => {
-    const staticDate = new Date(nanoseconds / 1000000);
-    const now = new Date();
-    const diff = staticDate - now;
-    const oneDay = 24 * 60 * 60 * 1000;
-    if (diff < oneDay && staticDate.getDate() === now.getDate()) {
-        return `Today at ${staticDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
-    } else if (diff < 2 * oneDay && staticDate.getDate() === now.getDate() + 1) {
-        return `Tomorrow at ${staticDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+
+const FriendlyDate = (seconds) => {
+    const date = new Date(seconds * 1000);
+    if (isToday(date)) {
+        return `Today ${format(date, 'p')}`;
+    } else if (isTomorrow(date)) {
+        return `Tomorrow ${format(date, 'p')}`;
+    } else if (isYesterday(date)) {
+        return `Yesterday ${format(date, 'p')}`;
     } else {
-        return `${staticDate.toLocaleDateString()} - ${staticDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+        return format(date, 'd MMM p');
     }
 };
 
@@ -211,7 +212,7 @@ export const MyListItem = ({ info }) => {
     const [date, setDate] = useState("");
     const { handleClickOpen } = useContext(TaskDetailPanelContext);
     useEffect(() => {
-        setDate(FriendlyDate(info.startTime.nanoseconds));
+        setDate(FriendlyDate(info.startTime.seconds));
     }, []);
     return (
         <ListItem alignItems="flex-start" className="p-0">

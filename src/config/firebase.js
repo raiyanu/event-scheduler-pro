@@ -282,3 +282,17 @@ export const updateTaskDoc = async (taskId, task) => {
         return { ok: false, message: error.message };
     }
 };
+
+export const getTask = async (taskId) => {
+    if (!auth.currentUser) {
+        return { ok: false, message: "User not authenticated" };
+    }
+    try {
+        const taskRef = doc(db, "users", auth.currentUser.uid, "tasks", taskId);
+        const task = await getDoc(taskRef);
+        return { ...task.data(), id: task.id };
+    } catch (error) {
+        console.error("Error getting task:", error.message);
+        return { ok: false, message: error.message };
+    }
+};
