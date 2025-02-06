@@ -71,7 +71,6 @@ const taskSlice = createSlice({
             })
             .addCase(fetchTasks.fulfilled, (state, action) => {
                 state.tasks = action.payload;
-                console.log(action.payload[0]);
                 state.taskLoading = "loaded";
             })
             .addCase(fetchTasks.rejected, (state, action) => {

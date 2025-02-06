@@ -169,10 +169,50 @@ export const UpdateTaskButton = ({ handleClose, task }) => {
     );
 };
 
-export function SwipeableDrawerContainer({ task, drawerState, setTask, setDrawerAction }) {
-    useEffect(() => {
-        console.log(task);
-    }, [task]);
+export function SwipeableDrawerContainer() {
+    const { task, drawerState, setTask, setDrawerAction, toggleDrawer } = useContext(TaskCrudDrawerContext);
+    const dispatch = useDispatch();
+    const formik = useFormik({
+        initialValues: {
+            title: "",
+            description: "",
+            priority: "",
+            startTime: dayjs(),
+            endTime: dayjs(),
+            importance: "",
+            icon: "😉",
+            difficulty: "",
+            createdAt: null,
+            status: "",
+            tags: [],
+        },
+        onSubmit: async (values) => {
+            console.log("values before mod: ", values);
+            console.log(values);
+
+            let startTime = values.startTime;
+            values.startTime = {
+                seconds: Math.floor(startTime / 1000),
+                nanoseconds: (startTime % 1000) * 1000000,
+            };
+
+            values.createdAt = {
+                seconds: Math.floor(new Date() / 1000),
+                nanoseconds: new Date() * 1000000,
+            };
+
+            let endTime = values.endTime;
+            values.endTime = {
+                seconds: Math.floor(endTime / 1000),
+                nanoseconds: (endTime % 1000) * 1000000,
+            };
+            console.log("values after mod: ", values);
+            await dispatch(addTasks(values));
+            formik.resetForm();
+            toggleDrawer(false)();
+        },
+    });
+
     return (
         <SwipeableDrawer
             anchor={"bottom"}
@@ -206,229 +246,56 @@ export function SwipeableDrawerContainer({ task, drawerState, setTask, setDrawer
                     maxWidth: "700px",
                 }}
             >
-                {task?.id ? (
-                    <DrawerUpdateContent task={task} />
-                ) : (
-                    <DrawerAddContent />
-                )}
+
+                <>
+                    <Box className="grid h-full grid-flow-row grid-rows-[50px_1fr_50px] gap-4">
+                        {/* Header */}
+                        <Box>
+                            <Box className="flex w-full items-start justify-between">
+                                <Typography variant="h5" className="p-3">
+                                    Add Task
+                                </Typography>
+                                <IconButton
+                                    onClick={(event) => {
+                                        toggleDrawer(false, event);
+                                    }}
+                                >
+                                    <Close />
+                                </IconButton>
+                            </Box>
+                            <Divider />
+                        </Box>
+                        {/* Body */}
+                        <Box className="overflow-y-hidden">
+                            <Box className="h-full overflow-y-scroll">
+                                <TaskForm formik={formik} />
+                            </Box>
+                        </Box>
+                        {/* Footer */}
+                        <Box>
+                            <Divider />
+                            <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
+                                <Button
+                                    variant="text"
+                                    onClick={(event) => {
+                                        toggleDrawer(false, event);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button variant="contained" onClick={formik.handleSubmit}>
+                                    Add Task
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Box>
+                </>
             </Paper>
         </SwipeableDrawer>
     );
 }
 
-export const DrawerUpdateContent = ({ updating }) => {
-    const { drawerAction, task, setTask, toggleDrawer } = useContext(TaskCrudDrawerContext);
-    const dispatch = useDispatch();
-    if (drawerAction === "update") {
-        updating = true;
-    }
-    const formik = useFormik({
-        initialValues: {
-            title: task?.title ? task?.title : "",
-            description: task?.description ? task?.description : "",
-            priority: task?.priority ? task?.priority : "",
-            XstartTime: task?.startTime?.seconds
-                ? dayjs(task?.startTime.seconds * 1000)
-                : null,
-            XendTime: task?.endTime?.seconds
-                ? dayjs(task?.endTime.seconds * 1000)
-                : null,
-            importance: task?.importance ? task?.importance : "",
-            icon: task?.icon ? task?.icon : "😉",
-            difficulty: task?.difficulty ? task?.difficulty : "",
-            createdAt: task?.createdAt ? task?.createdAt : null,
-            status: task?.status ? task?.status : "",
-            tags: task?.tags ? task?.tags : [],
-        },
-        onSubmit: async (values) => {
-            console.log("values before mod: ", values);
-            console.log(values);
-            let startTime = values.XstartTime;
-            values.startTime = {
-                seconds: Math.floor(startTime / 1000),
-                nanoseconds: (startTime % 1000) * 1000000,
-            };
-
-            values.createdAt = {
-                seconds: Math.floor(new Date() / 1000),
-                nanoseconds: new Date() * 1000000,
-            };
-
-            let endTime = values.XendTime;
-            values.endTime = {
-                seconds: Math.floor(endTime / 1000),
-                nanoseconds: (endTime % 1000) * 1000000,
-            };
-            values.id = task.id;
-            console.log("values after mod: ", values);
-            console.log("updating");
-            await dispatch(updateTask({ id: task.id, task: values }));
-            await dispatch(fetchTasks());
-            toggleDrawer(false)();
-            formik.resetForm();
-        },
-    });
-
-    useEffect(() => {
-        formik.setValues({
-            title: task?.title ? task?.title : "",
-            description: task?.description ? task?.description : "",
-            priority: task?.priority ? task?.priority : "",
-            XstartTime: task?.startTime?.seconds
-                ? dayjs(task?.startTime.seconds * 1000)
-                : null,
-            XendTime: task?.endTime?.seconds
-                ? dayjs(task?.endTime.seconds * 1000)
-                : null,
-            importance: task?.importance ? task?.importance : "",
-            icon: task?.icon ? task?.icon : "😉",
-            difficulty: task?.difficulty ? task?.difficulty : "",
-            createdAt: task?.createdAt ? task?.createdAt : null,
-            status: task?.status ? task?.status : "",
-            tags: task?.tags ? task?.tags : [],
-        });
-        console.log("reset: ", formik.values);
-    }, [task]);
-
-    return (
-        <>
-            <Box className="grid h-full grid-flow-row grid-rows-[50px_1fr_50px] gap-4">
-                {/* Header */}
-                <Box>
-                    <Box className="flex w-full items-start justify-between">
-                        <Typography variant="h5" className="p-3">
-                            Update Task
-                        </Typography>
-                        <IconButton
-                            onClick={(event) => {
-                                toggleDrawer(false, event);
-                            }}
-                        >
-                            <Close />
-                        </IconButton>
-                    </Box>
-                    <Divider />
-                </Box>
-                {/* Body */}
-                <Box className="overflow-y-hidden">
-                    <Box className="h-full overflow-y-scroll">
-                        <TaskForm formik={formik} task={task} />
-                    </Box>
-                </Box>
-                {/* Footer */}
-                <Box>
-                    <Divider />
-                    <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
-                        <Button
-                            variant="text"
-                            onClick={(event) => {
-                                toggleDrawer(false, event);
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button variant="contained" onClick={formik.handleSubmit}>
-                            "Update Task"
-                        </Button>
-                    </Box>
-                </Box>
-            </Box>
-        </>
-    );
-};
-
-export const DrawerAddContent = ({ }) => {
-    const { drawerAction, toggleDrawer } = useContext(TaskCrudDrawerContext);
-    const dispatch = useDispatch();
-    const formik = useFormik({
-        initialValues: {
-            title: "",
-            description: "",
-            priority: "",
-            XstartTime: null,
-            XendTime: null,
-            importance: "",
-            icon: "😉",
-            difficulty: "",
-            createdAt: null,
-            status: "",
-            tags: [],
-        },
-        onSubmit: async (values) => {
-            console.log(values);
-            let startTime = values.XstartTime;
-
-            values.startTime = {
-                seconds: Math.floor(startTime / 1000),
-                nanoseconds: (startTime % 1000) * 1000000,
-            };
-
-            values.createdAt = {
-                seconds: Math.floor(new Date() / 1000),
-                nanoseconds: new Date() * 1000000,
-            };
-
-            let endTime = values.XendTime;
-            values.endTime = {
-                seconds: Math.floor(endTime / 1000),
-                nanoseconds: (endTime % 1000) * 1000000,
-            };
-            console.log(values);
-            console.log("adding");
-            await dispatch(addTasks(values));
-            formik.resetForm();
-            toggleDrawer(false)();
-        },
-    });
-
-    return (
-        <>
-            <Box className="grid h-full grid-flow-row grid-rows-[50px_1fr_50px] gap-4">
-                {/* Header */}
-                <Box>
-                    <Box className="flex w-full items-start justify-between">
-                        <Typography variant="h5" className="p-3">
-                            Add Task
-                        </Typography>
-                        <IconButton
-                            onClick={(event) => {
-                                toggleDrawer(false, event);
-                            }}
-                        >
-                            <Close />
-                        </IconButton>
-                    </Box>
-                    <Divider />
-                </Box>
-                {/* Body */}
-                <Box className="overflow-y-hidden">
-                    <Box className="h-full overflow-y-scroll">
-                        <TaskForm formik={formik} />
-                    </Box>
-                </Box>
-                {/* Footer */}
-                <Box>
-                    <Divider />
-                    <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
-                        <Button
-                            variant="text"
-                            onClick={(event) => {
-                                toggleDrawer(false, event);
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button variant="contained" onClick={formik.handleSubmit}>
-                            Add Task
-                        </Button>
-                    </Box>
-                </Box>
-            </Box>
-        </>
-    );
-};
-
-const TaskForm = ({ formik }) => {
+export const TaskForm = ({ formik }) => {
     const [EmojiState, setEmojiState] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -549,35 +416,36 @@ const TaskForm = ({ formik }) => {
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
                 <DateTimePicker
                     // disablePast T// ODO: enable this feature depending on the task status
-                    name="XstartTime"
+                    name="startTime"
                     label="Start Time"
                     format="DD/MM/YYYY-hh:MM"
-                    defaultValue={formik.values.XstartTime}
+                    defaultValue={formik.values.startTime}
                     onChange={(value) =>
-                        formik.setFieldValue("XstartTime", value.toDate(), true)
+                        formik.setFieldValue("startTime", value.toDate(), true)
                     }
                     slotProps={{
                         textField: {
                             variant: "outlined",
                             error:
-                                formik.touched.XstartTime && Boolean(formik.errors.XstartTime),
-                            helperText: formik.touched.XstartTime && formik.errors.XstartTime,
+                                formik.touched.startTime && Boolean(formik.errors.startTime),
+                            helperText: formik.touched.startTime && formik.errors.startTime,
                         },
                     }}
                 />
                 <DateTimePicker
                     // disablePast // TODO: enable this feature depending on the task status
                     label="End Time"
+                    name="endTime"
                     format="DD/MM/YYYY-hh:MM"
-                    defaultValue={formik.values.XendTime}
+                    defaultValue={formik.values.endTime}
                     onChange={(value) =>
-                        formik.setFieldValue("XendTime", value.toDate(), true)
+                        formik.setFieldValue("endTime", value.toDate(), true)
                     }
                     slotProps={{
                         textField: {
                             variant: "outlined",
-                            error: formik.touched.XendTime && Boolean(formik.errors.XendTime),
-                            helperText: formik.touched.XendTime && formik.errors.XendTime,
+                            error: formik.touched.endTime && Boolean(formik.errors.endTime),
+                            helperText: formik.touched.endTime && formik.errors.endTime,
                         },
                     }}
                 />
@@ -672,7 +540,8 @@ const TaskForm = ({ formik }) => {
     );
 };
 
-const tagIdeas = [
+
+export const tagIdeas = [
     "Work",
     "Personal",
     "Urgent",

@@ -334,20 +334,6 @@ export function friendlyStatus(status) {
     }
 }
 
-export function formatDate(date) {
-    const options = {
-        year: "2-digit",
-        day: "numeric",
-        month: "short",
-        hour: "numeric",
-        minute: "numeric",
-    };
-    return new Date(date)
-        .toLocaleString("en-GB", { ...options, hour12: true })
-        .replace(",", " ")
-        .replace(" am", "AM")
-        .replace(" pm", "PM");
-}
 
 export const Ribbon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="inline-block h-5 w-5" viewBox="0 0 20 20">
