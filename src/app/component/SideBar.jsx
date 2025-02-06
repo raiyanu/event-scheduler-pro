@@ -4,26 +4,20 @@ import Button from "@mui/material/Button";
 import PropTypes from "prop-types";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { NextAppProvider } from "@toolpad/core/nextjs";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useEffect, useMemo, useState } from "react";
-import { Home, Task } from "@mui/icons-material";
+import { CalendarMonth, Home, Task } from "@mui/icons-material";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { getUser, isLogged, logout } from "../redux/slice/userSlice";
-import store from "../redux/store";
-import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { Theme } from "../context/ThemeContext";
 import { auth } from "@/config/firebase";
 import {
-    Avatar,
-    ButtonGroup,
-    Divider,
+    Avatar, Divider,
     ListItemIcon,
     ListItemText,
     MenuItem,
-    MenuList,
+    MenuList
 } from "@mui/material";
 import {
     Account,
@@ -98,6 +92,12 @@ export default function SideBarProvider(props) {
                     icon: <Task />,
                     pattern: "agenda",
                 },
+                {
+                    segment: "calendar",
+                    title: "Calendar",
+                    icon: <CalendarMonth />,
+                    pattern: "calendar",
+                }
             ]}
             window={demoWindow}
         >

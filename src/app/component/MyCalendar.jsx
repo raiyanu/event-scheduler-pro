@@ -1,9 +1,10 @@
 "use client";
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
-import PropTypes from 'prop-types'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import PropTypes, { arrayOf } from 'prop-types'
 import { Calendar, Views, DateLocalizer, momentLocalizer } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const localizer = momentLocalizer(moment);
@@ -41,14 +42,32 @@ const adjEvents = myEventsList.map((it, ind) => ({
 
 const formatName = (name, count) => `${name} ID ${count}`
 
+
 export default function CalendarMain() {
-  const [myEvents, setMyEvents] = useState(adjEvents)
+  const [myEvents, setMyEvents] = useState([])
   const [draggedEvent, setDraggedEvent] = useState()
   const [displayDragItemInCell, setDisplayDragItemInCell] = useState(true)
   const [counters, setCounters] = useState({ item1: 0, item2: 0 })
+  const tasks = useSelector(state => state.TASK.tasks)
   useEffect(() => {
-    console.log("hey: ", myEvents)
-  }, [myEvents])
+    (async () => {
+      console.log(tasks)
+      const updatedTasks = tasks.map((task) => {
+        let start = new Date(task.startTime.seconds * 1000),
+          end = new Date(task.endTime.seconds * 1000);
+        return {
+          id: task.id,
+          title: task.title,
+          start,
+          end,
+          isDraggable: task.isDraggable,
+          allDay: start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 0 && end.getMinutes() === 0
+        }
+      })
+      setMyEvents(updatedTasks)
+      console.log(updatedTasks)
+    })();
+  }, [tasks])
 
   const eventPropGetter = useCallback(
     (event) => ({
@@ -155,7 +174,7 @@ export default function CalendarMain() {
     [setMyEvents]
   )
 
-  const defaultDate = useMemo(() => new Date(2015, 3, 12), [])
+  const defaultDate = useMemo(() => new Date(), [])
 
   return (
     <>

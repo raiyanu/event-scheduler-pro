@@ -55,8 +55,6 @@ import EmojiPicker from "emoji-picker-react";
 import { ClockIcon, DateTimePicker } from "@mui/x-date-pickers";
 import Image from "next/image";
 
-
-
 const FriendlyDate = (input) => {
     const date = new Date(input.seconds);
     if (isToday(date)) {
@@ -136,46 +134,7 @@ export default function TaskContainer() {
                 }}
                 className="relative"
             >
-                <Box className="sticky left-0 top-0 flex justify-between">
-                    <CustomTabContainer
-                        value={value}
-                        onChange={(event, newValue) => {
-                            setValue(newValue);
-                        }}
-                        aria-label="basic tabs example"
-                        variant="scrollable"
-                        scrollButtons="auto"
-                        allowScrollButtonsMobile
-                    >
-                        <CustomTab label="Yesterday" {...taskNavTabPropsGenerator(0)} />
-                        <CustomTab label="Today" {...taskNavTabPropsGenerator(1)} />
-                        <CustomTab label="Tomorrow" {...taskNavTabPropsGenerator(2)} />
-                    </CustomTabContainer>
-
-                    <IconButton
-                        aria-label="RefreshTask"
-                        color="primary"
-                        sx={{
-                            height: "26px",
-                            marginBlock: "auto",
-                            width: "fit-content",
-                            maxWidth: "28px",
-                            padding: 0,
-                        }}
-                        onClick={loadTask}
-                    >
-                        <Refresh />
-                    </IconButton>
-                </Box>
-                <CustomTabPanel value={value} index={0}>
-                    Yesterday
-                </CustomTabPanel>
-                <CustomTabPanel value={value} index={1} className="*:p-0">
-                    <TaskList />
-                </CustomTabPanel>
-                <CustomTabPanel value={value} index={2}>
-                    Tomorrow
-                </CustomTabPanel>
+                <TaskList />
             </Box>
         </Box>
     );
@@ -744,6 +703,61 @@ export const Ribbon = () => (
         <path d="M16.574 16.338c-.757-1.051-2.851-3.824-4.57-6.106.696-.999 1.251-1.815 1.505-2.242 1.545-2.594.874-4.26.022-5.67C12.677.909 12.542.094 10 .094c-2.543 0-2.678.815-3.531 2.227-.854 1.41-1.524 3.076.021 5.67.254.426.809 1.243 1.506 2.242-1.72 2.281-3.814 5.055-4.571 6.106-.176.244-.16.664.009 1.082.13.322.63 1.762.752 2.064.156.389.664.67 1.082.092.241-.334 2.582-3.525 4.732-6.522 2.149 2.996 4.491 6.188 4.732 6.522.417.578.926.297 1.082-.092.122-.303.622-1.742.752-2.064.167-.419.184-.839.008-1.083zm-6.94-9.275C8.566 5.579 7.802 3.852 7.802 3.852s.42-.758 2.198-.758 2.198.758 2.198.758-.766 1.727-1.833 3.211L10 7.56a40.64 40.64 0 0 1-.366-.497z" />
     </svg>
 );
+
+
+// Code for multiple task with tabbed
+{/* <Box
+    sx={{
+        width: "100%",
+        overflowY: isLoading === "loading" ? "hidden" : "",
+        maxHeight: isLoading === "loading" ? "100px" : "",
+    }}
+    className="relative"
+>
+    <Box className="sticky left-0 top-0 flex justify-between">
+        <CustomTabContainer
+            value={value}
+            onChange={(event, newValue) => {
+                setValue(newValue);
+            }}
+            aria-label="basic tabs example"
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+        >
+            <CustomTab label="Yesterday" {...taskNavTabPropsGenerator(0)} />
+            <CustomTab label="Today" {...taskNavTabPropsGenerator(1)} />
+            <CustomTab label="Tomorrow" {...taskNavTabPropsGenerator(2)} />
+        </CustomTabContainer>
+
+        <IconButton
+            aria-label="RefreshTask"
+            color="primary"
+            sx={{
+                height: "26px",
+                marginBlock: "auto",
+                width: "fit-content",
+                maxWidth: "28px",
+                padding: 0,
+            }}
+            onClick={loadTask}
+        >
+            <Refresh />
+        </IconButton>
+    </Box>
+    <CustomTabPanel value={value} index={0}>
+        Yesterday
+    </CustomTabPanel>
+    <CustomTabPanel value={value} index={1} className="*:p-0">
+        <TaskList />
+    </CustomTabPanel>
+    <CustomTabPanel value={value} index={2}>
+        Tomorrow
+    </CustomTabPanel>
+</Box> */}
+
+
+
 
 
 // const TaskForm = ({ formik }) => {
