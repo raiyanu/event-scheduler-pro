@@ -39,7 +39,7 @@
   right: 0;
 }
 .rbc-day-slot .rbc-event, .rbc-day-slot .rbc-background-event {
-  border: 1px solid rgb(37.7432432432, 89.3513513514, 133.2567567568);
+  border: 1px solid rgb(208, 149.9920318725, 0);
   display: flex;
   max-height: 100%;
   min-height: 20px;
