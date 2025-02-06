@@ -62,16 +62,12 @@ const AddTaskContainer = memo(function AddTaskContainer() {
     return <SwipeableDrawerContainer />;
 });
 
-const UpdateTaskDrawer = memo(function UpdateTaskDrawer({ task }) {
-    return <SwipeableDrawerContainer task={task} />;
-});
 
-
-const TaskCrudDrawerContext = createContext(null);
+export const TaskCrudDrawerContext = createContext(null);
 
 export const TaskCrudDrawerProvider = ({ children }) => {
     const [drawerState, setDrawerState] = useState(false);
-    const [task, setTask] = useState(null);
+    const [task, setTask] = useState({});
     const toggleDrawer = (open, event) => {
         if (
             event &&
@@ -82,52 +78,8 @@ export const TaskCrudDrawerProvider = ({ children }) => {
         }
         setDrawerState(open);
     };
-    return (
-        <>
-            <TaskCrudDrawerContext.Provider
-                value={{
-                    task,
-                    toggleDrawer,
-                    drawerState,
-                    setTask,
-                }}
-            >
-                {children}
-                <SwipeableDrawerContainer
-                    task={task}
-                    drawerState={drawerState}
-                    setTask={setTask}
-                />
-            </TaskCrudDrawerContext.Provider>
-        </>
-    );
-};
-
-export { AddTaskContainer, UpdateTaskDrawer };
-
-export const AddTaskButton = () => {
-    const { toggleDrawer, setTask } = useContext(TaskCrudDrawerContext);
-    return (
-        <Button
-            onClick={(event) => {
-                toggleDrawer(true, event);
-                setTask(null);
-
-            }}
-            variant="contained"
-            className="px-3 py-2"
-        >
-            <Add className="fill-white text-xl" />
-            <Typography variant="button" className="text-white">
-                Add Task
-            </Typography>
-        </Button>
-    );
-};
 
 
-export function SwipeableDrawerContainer() {
-    const { drawerState, toggleDrawer } = useContext(TaskCrudDrawerContext);
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
@@ -170,87 +122,132 @@ export function SwipeableDrawerContainer() {
         },
     });
 
+    const addTaskWithPreTime = async (payload) => {
+        console.log("Payload: ", payload);
+
+        await formik.setFieldValue("startTime", dayjs(payload.startTime));
+        await formik.setFieldValue("endTime", dayjs(payload.endTime)); // progress :TODO
+        console.log("After setFieldValue, formik.values: ", formik.values);
+        console.log("After setFieldValue, formik.values: ", formik.values);
+    };
+
     return (
-        <SwipeableDrawer
-            anchor={"bottom"}
-            open={drawerState}
-            onClose={(event) => {
-                toggleDrawer(false, event);
-            }}
-            onOpen={(event) => {
-                toggleDrawer(true, event);
-            }}
-            sx={{
-                "& .MuiDrawer-paper": {
-                    width: "100%",
-                    maxWidth: "700px",
-                    minWidth: "300px",
-                    marginInline: "auto",
-                },
-                "& .MuiDrawer-modal": {
-                    backdropFilter: "blur(10px)",
-                    backgroundColor: "rgba(0,0,0,0.5)",
-                },
-                zIndex: (theme) => theme.zIndex.drawer + 1,
-            }}
-        >
-            <Paper
-                sx={{
-                    width: "100%",
-                    height: "80vh",
-                    p: "1rem",
-                    marginInline: "auto",
-                    maxWidth: "700px",
+        <>
+            <TaskCrudDrawerContext.Provider
+                value={{
+                    task,
+                    toggleDrawer,
+                    drawerState,
+                    setTask,
+                    addTaskWithPreTime
                 }}
             >
+                {children}
 
-                <>
-                    <Box className="grid h-full grid-flow-row grid-rows-[50px_1fr_50px] gap-4">
-                        {/* Header */}
-                        <Box>
-                            <Box className="flex w-full items-start justify-between">
-                                <Typography variant="h5" className="p-3">
-                                    Add Task
-                                </Typography>
-                                <IconButton
-                                    onClick={(event) => {
-                                        toggleDrawer(false, event);
-                                    }}
-                                >
-                                    <Close />
-                                </IconButton>
+                <SwipeableDrawer
+                    anchor={"bottom"}
+                    open={drawerState}
+                    onClose={(event) => {
+                        toggleDrawer(false, event);
+                    }}
+                    onOpen={(event) => {
+                        toggleDrawer(true, event);
+                    }}
+                    sx={{
+                        "& .MuiDrawer-paper": {
+                            width: "100%",
+                            maxWidth: "700px",
+                            minWidth: "300px",
+                            marginInline: "auto",
+                        },
+                        "& .MuiDrawer-modal": {
+                            backdropFilter: "blur(10px)",
+                            backgroundColor: "rgba(0,0,0,0.5)",
+                        },
+                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                    }}
+                >
+                    <Paper
+                        sx={{
+                            width: "100%",
+                            height: "80vh",
+                            p: "1rem",
+                            marginInline: "auto",
+                            maxWidth: "700px",
+                        }}
+                    >
+
+                        <>
+                            <Box className="grid h-full grid-flow-row grid-rows-[50px_1fr_50px] gap-4">
+                                {/* Header */}
+                                <Box>
+                                    <Box className="flex w-full items-start justify-between">
+                                        <Typography variant="h5" className="p-3">
+                                            Add Task
+                                        </Typography>
+                                        <IconButton
+                                            onClick={(event) => {
+                                                toggleDrawer(false, event);
+                                            }}
+                                        >
+                                            <Close />
+                                        </IconButton>
+                                    </Box>
+                                    <Divider />
+                                </Box>
+                                {/* Body */}
+                                <Box className="overflow-y-hidden">
+                                    <Box className="h-full overflow-y-scroll">
+                                        <TaskForm formik={formik} />
+                                    </Box>
+                                </Box>
+                                {/* Footer */}
+                                <Box>
+                                    <Divider />
+                                    <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
+                                        <Button
+                                            variant="text"
+                                            onClick={(event) => {
+                                                toggleDrawer(false, event);
+                                            }}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button variant="contained" onClick={formik.handleSubmit}>
+                                            Add Task
+                                        </Button>
+                                    </Box>
+                                </Box>
                             </Box>
-                            <Divider />
-                        </Box>
-                        {/* Body */}
-                        <Box className="overflow-y-hidden">
-                            <Box className="h-full overflow-y-scroll">
-                                <TaskForm formik={formik} />
-                            </Box>
-                        </Box>
-                        {/* Footer */}
-                        <Box>
-                            <Divider />
-                            <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
-                                <Button
-                                    variant="text"
-                                    onClick={(event) => {
-                                        toggleDrawer(false, event);
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button variant="contained" onClick={formik.handleSubmit}>
-                                    Add Task
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Box>
-                </>
-            </Paper>
-        </SwipeableDrawer>
+                        </>
+                    </Paper>
+                </SwipeableDrawer>
+            </TaskCrudDrawerContext.Provider>
+        </>
     );
-}
+};
+
+export { AddTaskContainer };
+
+export const AddTaskButton = () => {
+    const { toggleDrawer, setTask } = useContext(TaskCrudDrawerContext);
+    return (
+        <Button
+            onClick={(event) => {
+                toggleDrawer(true, event);
+                setTask(null);
+
+            }}
+            variant="contained"
+            className="px-3 py-2"
+        >
+            <Add className="fill-white text-xl" />
+            <Typography variant="button" className="text-white">
+                Add Task
+            </Typography>
+        </Button>
+    );
+};
 
 export const TaskForm = ({ formik }) => {
     const [EmojiState, setEmojiState] = useState(false);
@@ -377,6 +374,9 @@ export const TaskForm = ({ formik }) => {
                     label="Start Time"
                     format="DD/MM/YYYY-hh:MM"
                     defaultValue={formik.values.startTime}
+                    value={formik.values.startTime}
+                    // value={dayjs(formData.values.startTime)}
+                    onError={(reason, value) => { }}
                     onChange={(value) =>
                         formik.setFieldValue("startTime", value.toDate(), true)
                     }
@@ -393,8 +393,10 @@ export const TaskForm = ({ formik }) => {
                     // disablePast // TODO: enable this feature depending on the task status
                     label="End Time"
                     name="endTime"
+                    onError={(reason, value) => { }}
                     format="DD/MM/YYYY-hh:MM"
                     defaultValue={formik.values.endTime}
+                    value={formik.values.endTime}
                     onChange={(value) =>
                         formik.setFieldValue("endTime", value.toDate(), true)
                     }

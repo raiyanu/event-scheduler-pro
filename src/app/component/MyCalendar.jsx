@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Calendar, Views, DateLocalizer, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { UpdateTask } from './TaskContainer';
 import { Modal, Paper } from '@mui/material';
 import { updateTask } from '../redux/slice/taskSlice';
+import { TaskCrudDrawerContext } from './AddTask';
 
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const localizer = momentLocalizer(moment);
@@ -52,6 +53,7 @@ export default function CalendarMain() {
   const [displayDragItemInCell, setDisplayDragItemInCell] = useState(true)
   const [counters, setCounters] = useState({ item1: 0, item2: 0 })
   const tasks = useSelector(state => state.TASK.tasks)
+  const { task: newTask, toggleDrawer, drawerState, setTask: setNewTask, addTaskWithPreTime } = useContext(TaskCrudDrawerContext);
   const [task, setTask] = useState({})
   const dispatch = useDispatch()
   useEffect(() => {
@@ -81,6 +83,7 @@ export default function CalendarMain() {
     }),
     []
   )
+
   const handleDragStart = useCallback((event) => {
     setDraggedEvent(event)
     console.log(event)
@@ -190,6 +193,11 @@ export default function CalendarMain() {
     },
     [setMyEvents]
   )
+  const handleSlotSelect = useCallback(async (event) => {
+    await addTaskWithPreTime({ startTime: event.start, endTime: event.end })
+    toggleDrawer(true)
+    // setNewTask({ ...newTask, startTime: event.start, endTime: event.end })
+  }, [])
 
   const defaultDate = useMemo(() => new Date(), [])
 
@@ -214,7 +222,7 @@ export default function CalendarMain() {
           onEventDrop={moveEvent}
           onEventResize={resizeEvent}
           onSelectEvent={handleSelectEvent}
-          onSelectSlot={newEvent}
+          onSelectSlot={handleSlotSelect}
           onDoubleClickEvent={newEvent}
           resizable
           selectable
