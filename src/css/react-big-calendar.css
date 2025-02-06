@@ -298,11 +298,11 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-event.rbc-selected,
 .rbc-day-slot .rbc-selected.rbc-background-event {
-	background-color: #265985;
+	background-color: #ffb904;
 }
 .rbc-event:focus,
 .rbc-day-slot .rbc-background-event:focus {
-	outline: 5px auto #3b99fc;
+	outline: 5px auto #ffb904;
 }
 
 .rbc-event-label {
@@ -604,7 +604,7 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-day-slot .rbc-event,
 .rbc-day-slot .rbc-background-event {
-	border: 1px solid #265985;
+	border: 1px solid #ffb904;
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
