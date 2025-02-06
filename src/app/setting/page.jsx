@@ -69,6 +69,29 @@ const UserSettingsContainer = () => {
 const UserSettings = ({ isEditing, setIsEditing }) => {
     const userInfo = useSelector((state) => state.AUTH.user);
     const formik = useFormik(userSettingActionFormConfig(userInfo));
+
+    const data = [
+        {
+            name: "username",
+            label: "Username",
+            displayValue: userInfo.username ? userInfo.username : "No Username",
+        },
+        {
+            name: "firstName",
+            label: "First Name",
+            displayValue: userInfo.firstName ? userInfo.firstName : "Not provided",
+        },
+        {
+            name: "lastName",
+            label: "Last Name",
+            displayValue: userInfo.lastName ? userInfo.lastName : "Not provided",
+        },
+        {
+            name: "phone",
+            label: "Phone",
+            displayValue: userInfo.phone ? userInfo.phone : "No Phone",
+        },
+    ];
     return (
         <Box className="mx-2 h-full lg:mx-8">
             <Typography variant="subtitle1" color="textSecondary" className="my-4">
@@ -115,93 +138,32 @@ const UserSettings = ({ isEditing, setIsEditing }) => {
             </Box>
             <Box sx={{ flexGrow: 1, marginTop: "2rem" }}>
                 <Box className="flex grid-cols-[1fr_1fr] flex-col gap-6 lg:grid">
-                    <Box className="col-span-2">
-                        <Box className="flex items-center"></Box>
-                        {isEditing ? (
-                            <TextField
-                                variant="outlined"
-                                label="Username"
-                                name="username"
-                                value={formik.values.username}
-                                onChange={formik.handleChange}
-                            />
-                        ) : (
-                            <>
-                                <Typography variant="subtitle2" color="textSecondary">
-                                    Username
-                                </Typography>
-                                <Typography variant="h5" color="textPrimary" className="">
-                                    {userInfo.username ? userInfo.username : "No Username"}
-                                </Typography>
-                            </>
-                        )}
-                    </Box>
-                    <Box>
-                        {isEditing ? (
-                            <TextField
-                                variant="outlined"
-                                label="First Name"
-                                name="firstName"
-                                value={formik.values.firstName}
-                                onChange={formik.handleChange}
-                            />
-                        ) : (
-                            <>
-                                <Box className="flex items-center">
-                                    <Typography variant="subtitle2" color="textSecondary">
-                                        First Name
-                                    </Typography>
-                                </Box>
-                                <Typography variant="h5" color="textPrimary" className="">
-                                    {userInfo.firstName ? userInfo.firstName : "Not provided"}
-                                </Typography>
-                            </>
-                        )}
-                    </Box>
-                    <Box>
-                        {isEditing ? (
-                            <TextField
-                                variant="outlined"
-                                label="Last Name"
-                                name="lastName"
-                                value={formik.values.lastName}
-                                onChange={formik.handleChange}
-                            />
-                        ) : (
-                            <>
-                                <Box className="flex items-center">
-                                    <Typography variant="subtitle2" color="textSecondary">
-                                        Last Name
-                                    </Typography>
-                                </Box>
-                                <Typography variant="h5" color="textPrimary" className="">
-                                    {userInfo.lastName ? userInfo.lastName : "Not provided"}
-                                </Typography>
-                            </>
-                        )}
-                    </Box>
-                    <Box>
-                        {isEditing ? (
-                            <TextField
-                                variant="outlined"
-                                label="Phone"
-                                name="phone"
-                                value={formik.values.phone}
-                                onChange={formik.handleChange}
-                            />
-                        ) : (
-                            <>
-                                <Box className="flex items-center">
-                                    <Typography variant="subtitle2" color="textSecondary">
-                                        Phone
-                                    </Typography>
-                                </Box>
-                                <Typography variant="h5" color="textPrimary" className="">
-                                    {userInfo.phone ? userInfo.phone : "No Phone"}
-                                </Typography>
-                            </>
-                        )}
-                    </Box>
+                    {data?.map((item, index) => {
+                        return (
+                            <Box key={index}>
+                                {isEditing ? (
+                                    <TextField
+                                        variant="outlined"
+                                        label={item.label}
+                                        name={item.name}
+                                        value={formik.values[item.name]}
+                                        onChange={formik.handleChange}
+                                    />
+                                ) : (
+                                    <>
+                                        <Box className="flex items-center">
+                                            <Typography variant="subtitle2" color="textSecondary">
+                                                {item.label}
+                                            </Typography>
+                                        </Box>
+                                        <Typography variant="h5" color="textPrimary" className="">
+                                            {item.displayValue}
+                                        </Typography>
+                                    </>
+                                )}
+                            </Box>
+                        );
+                    })}
                     <Box>
                         <Box className="flex items-center">
                             <Typography variant="subtitle2" color="textSecondary">
