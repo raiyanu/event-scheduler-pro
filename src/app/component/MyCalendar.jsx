@@ -1,10 +1,13 @@
 "use client";
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import PropTypes, { arrayOf } from 'prop-types'
-import { Calendar, Views, DateLocalizer, momentLocalizer } from 'react-big-calendar'
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
+import { Calendar, Views, DateLocalizer, momentLocalizer } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { UpdateTask } from './TaskContainer';
+import { Modal, Paper } from '@mui/material';
+import { updateTask } from '../redux/slice/taskSlice';
 
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const localizer = momentLocalizer(moment);
@@ -49,6 +52,8 @@ export default function CalendarMain() {
   const [displayDragItemInCell, setDisplayDragItemInCell] = useState(true)
   const [counters, setCounters] = useState({ item1: 0, item2: 0 })
   const tasks = useSelector(state => state.TASK.tasks)
+  const [task, setTask] = useState({})
+  const dispatch = useDispatch()
   useEffect(() => {
     (async () => {
       console.log(tasks)
@@ -56,11 +61,10 @@ export default function CalendarMain() {
         let start = new Date(task.startTime.seconds * 1000),
           end = new Date(task.endTime.seconds * 1000);
         return {
-          id: task.id,
-          title: task.title,
+          ...task,
           start,
           end,
-          isDraggable: task.isDraggable,
+          isDraggable: true,
           allDay: start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 0 && end.getMinutes() === 0
         }
       })
@@ -77,7 +81,10 @@ export default function CalendarMain() {
     }),
     []
   )
-  const handleDragStart = useCallback((event) => setDraggedEvent(event), [])
+  const handleDragStart = useCallback((event) => {
+    setDraggedEvent(event)
+    console.log(event)
+  }, [])
 
   const dragFromOutsideItem = useCallback(() => draggedEvent === 'undroppable' ? null : draggedEvent, [draggedEvent])
 
@@ -111,7 +118,10 @@ export default function CalendarMain() {
       setMyEvents((prev) => {
         const existing = prev.find((ev) => ev.id === event.id) ?? {}
         const filtered = prev.filter((ev) => ev.id !== event.id)
-        return [...filtered, { ...existing, start, end, allDay }]
+        const updatedEvent = [...filtered, { ...existing, start, end, allDay }]
+        console.log(updatedEvent)
+        dispatch(updateTask({ id: event.id, task: { ...existing, id: event.id, startTime: start, endTime: end } }))
+        return updatedEvent;
       })
     },
     [setMyEvents]
@@ -132,7 +142,11 @@ export default function CalendarMain() {
   )
 
   const handleSelectEvent = useCallback(
-    (event) => window.alert(event.title),
+    (event) => {
+      console.log(event)
+      setTask(event)
+      handleEditModalOpen(event)
+    },
     []
   )
 
@@ -168,7 +182,10 @@ export default function CalendarMain() {
       setMyEvents((prev) => {
         const existing = prev.find((ev) => ev.id === event.id) ?? {}
         const filtered = prev.filter((ev) => ev.id !== event.id)
-        return [...filtered, { ...existing, start, end }]
+        const updatedEvent = [...filtered, { ...existing, start, end }]
+        console.log(updatedEvent)
+        dispatch(updateTask({ id: event.id, task: { ...existing, id: event.id, startTime: start, endTime: end } }))
+        return updatedEvent
       })
     },
     [setMyEvents]
@@ -176,6 +193,9 @@ export default function CalendarMain() {
 
   const defaultDate = useMemo(() => new Date(), [])
 
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const handleEditModalOpen = () => setOpenEditModal(true);
+  const handleEditModalClose = () => setOpenEditModal(false);
   return (
     <>
       <div className="h-full">
@@ -200,6 +220,40 @@ export default function CalendarMain() {
           selectable
         />
       </div>
+      <Modal
+        anchor={"bottom"}
+        open={openEditModal}
+        onClose={handleEditModalClose}
+        onOpen={handleEditModalOpen}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          "& .MuiDrawer-paper": {
+            width: "100%",
+            maxWidth: "700px",
+            minWidth: "300px",
+            marginInline: "auto",
+          },
+          "& .MuiDrawer-modal": {
+            backdropFilter: "blur(10px)",
+            backgroundColor: "rgba(0,0,0,0.5)",
+          },
+          zIndex: (theme) => theme.zIndex.modal,
+        }}
+      >
+        <Paper
+          sx={{
+            width: "100%",
+            height: "80vh",
+            p: "1rem",
+            marginInline: "auto",
+            maxWidth: "700px",
+          }}
+        >
+          <UpdateTask task={task} openEditModal={openEditModal} handleEditModalOpen={handleEditModalOpen} handleEditModalClose={handleEditModalClose} />
+        </Paper>
+      </Modal>
     </>
   )
 }

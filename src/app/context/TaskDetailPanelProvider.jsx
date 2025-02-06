@@ -1,4 +1,4 @@
-import { createContext, Fragment, useState } from "react";
+import { createContext, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -16,32 +16,22 @@ import {
     IconButton,
     InputLabel,
     MenuItem,
-    Select,
-    Stack,
-    Tooltip,
+    Select, Tooltip
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
-    Delete,
-    Edit,
-    HourglassBottom,
-    Info,
-    PushPin,
+    Delete, HourglassBottom, PushPin,
     Tag,
-    WorkspacePremium,
+    WorkspacePremium
 } from "@mui/icons-material";
-import { useDialogs } from "@toolpad/core";
-import PropTypes from "prop-types";
-import * as React from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import { deleteTasks, updateTask } from "../redux/slice/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Clock } from "@mui/x-date-pickers/TimeClock/Clock";
 import { ClockIcon } from "@mui/x-date-pickers";
-import { UpdateTaskButton, UpdateTaskDrawer } from "../component/AddTask";
+import { UpdateTaskButton } from "../component/AddTask";
 
 export const TaskDetailPanelContext = createContext();
 export const taskPaneViewHandler = createContext();
@@ -63,7 +53,6 @@ export default function TaskDetailPanelProvider({ children }) {
     const [openActionModal, setOpenActionModal] = useState(false);
     const handleOpenActionModal = () => setOpenActionModal(true);
     const handleCloseActionModal = () => setOpenActionModal(false);
-    const taskCRUDStatus = useSelector((state) => state.TASK.taskCRUD);
     const displatch = useDispatch();
     const [markdown, setMarkdown] = useState("");
     return (
@@ -163,12 +152,6 @@ export default function TaskDetailPanelProvider({ children }) {
                                 </Tooltip>
                             </Typography>
                         </Box>
-                        {/* <Box>
-                        <Typography variant="button">
-                            Created At: 
-                            {info?.createdAt ? new Date(info.createdAt.seconds * 1000).toLocaleString() : "--"}
-                        </Typography>
-                    </Box> */}
                         <Box className="flex gap-2">
                             <Tag />
                             <Box className="flex flex-wrap gap-2">

@@ -1,12 +1,6 @@
 "use client";
 import {
-    Add,
-    AddCircle,
-    AddCircleOutline,
-    AddCircleSharp,
-    Close,
-    Edit,
-    MoreVert,
+    Add, Close
 } from "@mui/icons-material";
 import {
     Box,
@@ -25,31 +19,20 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { createContext, memo, useContext, useEffect, useState } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { useFormik } from "formik";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import EmojiPicker from "emoji-picker-react";
 import {
-    DatePicker,
-    DateTimePicker,
-    LocalizationProvider,
+    DateTimePicker
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
-import { addTasks, fetchTasks, updateTask } from "../redux/slice/taskSlice";
-import { taskPaneViewHandler } from "../context/TaskDetailPanelProvider";
+import { addTasks } from "../redux/slice/taskSlice";
 
 export function AddTaskLineCard() {
     const [date, setDate] = useState(null);
@@ -82,12 +65,13 @@ const AddTaskContainer = memo(function AddTaskContainer() {
 const UpdateTaskDrawer = memo(function UpdateTaskDrawer({ task }) {
     return <SwipeableDrawerContainer task={task} />;
 });
+
+
 const TaskCrudDrawerContext = createContext(null);
 
 export const TaskCrudDrawerProvider = ({ children }) => {
     const [drawerState, setDrawerState] = useState(false);
     const [task, setTask] = useState(null);
-    const [drawerAction, setDrawerAction] = useState("add");
     const toggleDrawer = (open, event) => {
         if (
             event &&
@@ -106,8 +90,6 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                     toggleDrawer,
                     drawerState,
                     setTask,
-                    setDrawerAction,
-                    drawerAction,
                 }}
             >
                 {children}
@@ -115,8 +97,6 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                     task={task}
                     drawerState={drawerState}
                     setTask={setTask}
-                    setDrawerAction={setDrawerAction}
-                    drawerAction={drawerAction}
                 />
             </TaskCrudDrawerContext.Provider>
         </>
@@ -126,13 +106,13 @@ export const TaskCrudDrawerProvider = ({ children }) => {
 export { AddTaskContainer, UpdateTaskDrawer };
 
 export const AddTaskButton = () => {
-    const { toggleDrawer, setDrawerAction, setTask } = useContext(TaskCrudDrawerContext);
+    const { toggleDrawer, setTask } = useContext(TaskCrudDrawerContext);
     return (
         <Button
             onClick={(event) => {
                 toggleDrawer(true, event);
                 setTask(null);
-                setDrawerAction("add");
+
             }}
             variant="contained"
             className="px-3 py-2"
@@ -145,32 +125,9 @@ export const AddTaskButton = () => {
     );
 };
 
-export const UpdateTaskButton = ({ handleClose, task }) => {
-    const { toggleDrawer, setTask, setDrawerAction } = useContext(
-        TaskCrudDrawerContext
-    );
-    useEffect(() => {
-        console.log("task:", task);
-    }, [task]);
-    return (
-        <IconButton
-            onClick={async (event) => {
-                setTask(() => task);
-                toggleDrawer(true, event);
-                handleClose();
-                setDrawerAction("update");
-            }}
-            variant="contained"
-            color="warning"
-            autoFocus
-        >
-            <Edit />
-        </IconButton>
-    );
-};
 
 export function SwipeableDrawerContainer() {
-    const { task, drawerState, setTask, setDrawerAction, toggleDrawer } = useContext(TaskCrudDrawerContext);
+    const { drawerState, toggleDrawer } = useContext(TaskCrudDrawerContext);
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {

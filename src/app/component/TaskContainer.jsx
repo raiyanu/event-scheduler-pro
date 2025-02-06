@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, Fragment, useContext, useMemo } from "react";
+import { useState, useEffect, Fragment, useMemo } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -8,9 +8,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import {
-    Alert,
-    Autocomplete,
-    Backdrop,
+    Alert, Backdrop,
     Box,
     Button,
     Chip,
@@ -21,38 +19,23 @@ import {
     DialogContentText,
     DialogTitle,
     Fade,
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    IconButton,
+    FormControl, IconButton,
     InputLabel,
-    ListItemButton,
-    Menu,
-    MenuItem,
+    ListItemButton, MenuItem,
     Modal,
-    Paper,
-    Radio,
-    RadioGroup,
-    Select,
-    styled,
-    SwipeableDrawer,
-    Tab,
-    Tabs,
-    TextField,
-    Tooltip,
+    Paper, Select,
+    styled, Tooltip,
     useMediaQuery,
-    useTheme,
+    useTheme
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTasks, fetchTasks, updateTask } from "../redux/slice/taskSlice";
-import { Close, Delete, Edit, HourglassBottom, PushPin, Refresh, Tag, WorkspacePremium } from "@mui/icons-material";
-import { TaskDetailPanelContext } from "../context/TaskDetailPanelProvider";
+import { Close, Delete, Edit, HourglassBottom, PushPin, Tag, WorkspacePremium } from "@mui/icons-material";
 import { format, isToday, isTomorrow, isYesterday } from 'date-fns';
-import { tagIdeas, TaskForm, UpdateTaskButton } from "./AddTask";
+import { TaskForm } from "./AddTask";
 import { useFormik } from "formik";
 import dayjs from "dayjs";
-import EmojiPicker from "emoji-picker-react";
-import { ClockIcon, DateTimePicker } from "@mui/x-date-pickers";
+import { ClockIcon } from "@mui/x-date-pickers";
 import Image from "next/image";
 
 const FriendlyDate = (input) => {
@@ -68,12 +51,6 @@ const FriendlyDate = (input) => {
     }
 };
 
-const CustomTabContainer = styled(Tabs)({
-    borderBottom: "1px solid rgba(0, 0, 0, 0)",
-    "& .MuiTabs-indicator": {
-        backgroundColor: "transparent",
-    },
-});
 
 const CustomListContainer = styled(List)({
     borderBottom: "1px solid rgba(0, 0, 0, 0)",
@@ -84,27 +61,9 @@ const CustomListContainer = styled(List)({
     overflowY: "scroll",
 });
 
-const CustomTab = styled((props) => <Tab {...props} />)(({ theme }) => ({
-    color: "rgba(0, 0, 0, 0.85)",
-    color: "text.secondary",
-    opacity: 0.7,
-    "&.Mui-selected": {
-        color: "text.secondary",
-        fontWeight: theme.typography.fontWeightMedium,
-        opacity: 1,
-    },
-    "&.Mui-focusVisible": {
-        backgroundColor: "#d1eaff",
-    },
-}));
 
 export default function TaskContainer() {
-    const [value, setValue] = useState(1);
     const isLoading = useSelector((state) => state.TASK.taskLoading);
-    const dispatch = useDispatch();
-    const loadTask = () => {
-        dispatch(fetchTasks());
-    };
     return (
         <Box className="relative mt-8 grid grid-cols-1 gap-4 px-2 lg:px-0">
             <Backdrop
@@ -179,20 +138,6 @@ export function TaskList() {
     );
 }
 
-function CustomTabPanel(props) {
-    const { children, value, index, ...other } = props;
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-        </div>
-    );
-}
 
 export const MyListItem = ({ info }) => {
     const [open, setOpen] = useState(false);
@@ -653,12 +598,6 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
     );
 };
 
-function taskNavTabPropsGenerator(index) {
-    return {
-        id: `simple-tab-${index}`,
-        "aria-controls": `simple-tabpanel-${index}`,
-    };
-}
 
 function sortTasksByCreatedAt(tasks) {
     const sortedTasks = [...tasks].sort((a, b) => {
@@ -698,11 +637,6 @@ export function friendlyStatus(status) {
     }
 }
 
-export const Ribbon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="inline-block h-5 w-5" viewBox="0 0 20 20">
-        <path d="M16.574 16.338c-.757-1.051-2.851-3.824-4.57-6.106.696-.999 1.251-1.815 1.505-2.242 1.545-2.594.874-4.26.022-5.67C12.677.909 12.542.094 10 .094c-2.543 0-2.678.815-3.531 2.227-.854 1.41-1.524 3.076.021 5.67.254.426.809 1.243 1.506 2.242-1.72 2.281-3.814 5.055-4.571 6.106-.176.244-.16.664.009 1.082.13.322.63 1.762.752 2.064.156.389.664.67 1.082.092.241-.334 2.582-3.525 4.732-6.522 2.149 2.996 4.491 6.188 4.732 6.522.417.578.926.297 1.082-.092.122-.303.622-1.742.752-2.064.167-.419.184-.839.008-1.083zm-6.94-9.275C8.566 5.579 7.802 3.852 7.802 3.852s.42-.758 2.198-.758 2.198.758 2.198.758-.766 1.727-1.833 3.211L10 7.56a40.64 40.64 0 0 1-.366-.497z" />
-    </svg>
-);
 
 
 // Code for multiple task with tabbed
@@ -757,7 +691,48 @@ export const Ribbon = () => (
 </Box> */}
 
 
+// function taskNavTabPropsGenerator(index) {
+//     return {
+//         id: `simple-tab-${index}`,
+//         "aria-controls": `simple-tabpanel-${index}`,
+//     };
+// }
 
+// const CustomTabContainer = styled(Tabs)({
+//     borderBottom: "1px solid rgba(0, 0, 0, 0)",
+//     "& .MuiTabs-indicator": {
+//         backgroundColor: "transparent",
+//     },
+// });
+
+// const CustomTab = styled((props) => <Tab {...props} />)(({ theme }) => ({
+//     color: "rgba(0, 0, 0, 0.85)",
+//     color: "text.secondary",
+//     opacity: 0.7,
+//     "&.Mui-selected": {
+//         color: "text.secondary",
+//         fontWeight: theme.typography.fontWeightMedium,
+//         opacity: 1,
+//     },
+//     "&.Mui-focusVisible": {
+//         backgroundColor: "#d1eaff",
+//     },
+// }));
+
+// function CustomTabPanel(props) {
+//     const { children, value, index, ...other } = props;
+//     return (
+//         <div
+//             role="tabpanel"
+//             hidden={value !== index}
+//             id={`simple-tabpanel-${index}`}
+//             aria-labelledby={`simple-tab-${index}`}
+//             {...other}
+//         >
+//             {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+//         </div>
+//     );
+// }
 
 
 // const TaskForm = ({ formik }) => {
