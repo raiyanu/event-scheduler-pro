@@ -18,7 +18,7 @@ export default function GlobalActionProvider({ children }) {
                         const userFullInfo = fetchedUser.data();
                         setTimeout(async () => {
                             await dispatch(updateUser(extractUserInfo({ ...user, ...userFullInfo })));
-                        }, 2000);
+                        }, 500);
                         dispatch(fetchTasks());
                     } else {
                         console.log("User is signed out");
