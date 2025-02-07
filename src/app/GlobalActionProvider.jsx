@@ -14,7 +14,7 @@ export default function GlobalActionProvider({ children }) {
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         if (user) {
-                            console.log("User is signed in");
+                            console.log("User is signed in: ", user);
                             const fetchedUser = await getUserFullInfo();
                             const userFullInfo = fetchedUser.data();
                             setTimeout(async () => {

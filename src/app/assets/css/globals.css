@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url(../css/styles.css);
-@import url(../css/drag-n-drop-styles.css);
-@import url(../css/react-big-calendar.css);
+@import url(./styles.css);
+@import url(./drag-n-drop-styles.css);
+@import url(./react-big-calendar.css);
 
 :root {
 	--background: #ffffff;
