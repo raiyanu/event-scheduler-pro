@@ -10,22 +10,26 @@ export default function GlobalActionProvider({ children }) {
     const dispatch = useDispatch();
     useEffect(() => {
         (async () => {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
+            try {
+                onAuthStateChanged(auth, async (user) => {
                     if (user) {
-                        console.log("User is signed in");
-                        const fetchedUser = await getUserFullInfo();
-                        const userFullInfo = fetchedUser.data();
-                        setTimeout(async () => {
-                            await dispatch(updateUser(extractUserInfo({ ...user, ...userFullInfo })));
-                        }, 500);
-                        dispatch(fetchTasks());
-                    } else {
-                        console.log("User is signed out");
-                        dispatch(logout())
+                        if (user) {
+                            console.log("User is signed in");
+                            const fetchedUser = await getUserFullInfo();
+                            const userFullInfo = fetchedUser.data();
+                            setTimeout(async () => {
+                                await dispatch(updateUser(extractUserInfo({ ...user, ...userFullInfo })));
+                            }, 500);
+                            dispatch(fetchTasks());
+                        } else {
+                            console.log("User is signed out");
+                            dispatch(logout())
+                        }
                     }
-                }
-            })
+                })
+            } catch (error) {
+                console.log(error)
+            }
         })();
     }, []);
     return (<>{children}</>)

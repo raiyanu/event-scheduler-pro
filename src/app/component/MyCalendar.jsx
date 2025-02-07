@@ -67,7 +67,7 @@ export default function CalendarMain() {
           start,
           end,
           isDraggable: true,
-          allDay: start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 0 && end.getMinutes() === 0
+          allDay: start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 0 && end.getMinutes() === 0,
         }
       })
       setMyEvents(updatedTasks)
@@ -227,6 +227,8 @@ export default function CalendarMain() {
           onDoubleClickEvent={newEvent}
           resizable
           selectable
+          popup
+          titleAccessor={(event) => event?.icon ? event.icon + " " + event.title : event.title + event.title}
         />
       </div>
       <Modal
