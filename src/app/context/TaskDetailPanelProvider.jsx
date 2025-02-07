@@ -35,6 +35,7 @@ import { UpdateTaskButton } from "../component/AddTask";
 
 export const TaskDetailPanelContext = createContext();
 export const taskPaneViewHandler = createContext();
+
 export default function TaskDetailPanelProvider({ children }) {
     const [info, setInfo] = useState({});
     const [open, setOpen] = useState(false);

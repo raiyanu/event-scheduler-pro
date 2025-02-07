@@ -115,8 +115,8 @@ export const TaskCrudDrawerProvider = ({ children }) => {
 
     const addTaskWithPreTime = async (payload) => {
         console.log("Payload: ", payload);
-        await formik.setFieldValue("startTime", dayjs(new Date(payload.startTime)));
-        await formik.setFieldValue("endTime", dayjs(new Date(payload.endTime))); // progress :TODO
+        await formik.setFieldValue("startTime", dayjs(new Date(payload.startTime)).$d);
+        await formik.setFieldValue("endTime", dayjs(new Date(payload.endTime)).$d); // progress :TODO
         console.log("After setFieldValue, formik.values: ", formik.values);
     };
 
@@ -359,14 +359,16 @@ export const TaskForm = ({ formik }) => {
                     // disablePast T// ODO: enable this feature depending on the task status
                     name="startTime"
                     label="Start Time"
+                    onError={(reason, value) => { }}
                     format="DD/MM/YYYY-hh:MM"
+                    minDate={dayjs(new Date(-8640000000000000))}
+                    maxDate={dayjs(new Date(8640000000000000))}
                     defaultValue={formik.values.startTime}
                     // value={formik.values.startTime}
-                    value={dayjs(formik.values.startTime)}
-                    // value={dayjs(formData.values.startTime)}
-                    onError={(reason, value) => { }}
+                    value={formik.values.startTime ? dayjs(formik.values.startTime) : null}
+                    // value={dayjs(formik.values.startTime)}
                     onChange={(date, dateType) => {
-                        formik.setFieldValue([dateType], date.toDate(), true)
+                        formik.setFieldValue("startTime", date.toDate(), false)
                     }}
                     slotProps={{
                         textField: {
@@ -383,11 +385,14 @@ export const TaskForm = ({ formik }) => {
                     name="endTime"
                     onError={(reason, value) => { }}
                     format="DD/MM/YYYY-hh:MM"
+                    minDate={dayjs(new Date(-8640000000000000))}
+                    maxDate={dayjs(new Date(8640000000000000))}
                     defaultValue={formik.values.endTime}
                     // value={formik.values.endTime}
-                    value={dayjs(formik.values.endTime)}
+                    value={formik.values.endTime ? dayjs(formik.values.endTime) : null}
+                    // value={dayjs(formik.values.endTime)}
                     onChange={(date, dateType) => {
-                        formik.setFieldValue([dateType], date.toDate(), true)
+                        formik.setFieldValue("endTime", date.toDate(), false)
                     }}
                     slotProps={{
                         textField: {
