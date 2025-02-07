@@ -247,7 +247,7 @@ export const TaskForm = ({ formik }) => {
         setAnchorEl(null);
     };
     return (
-        <Box className="grid gap-7 p-2">
+        <form onSubmit={formik.handleSubmit} className="grid gap-7 p-2">
             <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                 <Box className="flex items-center">
                     <IconButton
@@ -489,7 +489,7 @@ export const TaskForm = ({ formik }) => {
                     />
                 )}
             />
-        </Box>
+        </form>
     );
 };
 

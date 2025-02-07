@@ -13,38 +13,25 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Link,
-    Modal,
     TextField,
     Typography,
 } from "@mui/material";
 import { Facebook, Google, Instagram } from "@mui/icons-material";
 import { useFormik } from "formik";
-import {
-    AuthWithGoogle,
-    createNewUser,
-    loginUser,
-    auth,
-} from "@/config/firebase";
-import { useAppDispatch } from "../redux/hook";
+import { AuthWithGoogle, auth } from "@/config/firebase";
 import {
     calmAuthenticatingState,
-    login,
-    logout,
     setLoginStatus,
     userLogin,
     userSignUp,
 } from "../redux/slice/userSlice";
-import { useDispatch, useSelector, useStore } from "react-redux";
-import store from "../redux/store";
+import { useDispatch, useSelector } from "react-redux";
 import {
-    getAuth,
     GoogleAuthProvider,
     onAuthStateChanged,
     signInWithPopup,
 } from "firebase/auth";
-import { authStateChangeHandler } from "../lib/authStateChangeHandler";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -125,9 +112,6 @@ const Login = memo(() => {
     const authenticatingError = useSelector(
         (state) => state.AUTH.authenticatingError
     );
-    const authenticatingState = useSelector(
-        (state) => state.AUTH.authenticatingState
-    );
     const formik = useFormik({
         initialValues: {
             email: "abc@gmail.com",
@@ -145,52 +129,57 @@ const Login = memo(() => {
         },
     });
     return (
-        <Box className="flex flex-col gap-4">
-            <Box className="flex flex-col gap-4 *:!bg-transparent">
-                <TextField
-                    id="standard-basic"
-                    label="EMAIL"
-                    variant="standard"
-                    type="email"
-                    name="email"
-                    onChange={formik.handleChange}
-                    value={formik.values.email}
-                />
-                <TextField
-                    id="standard-password-input"
-                    label="Password"
-                    type="password"
-                    variant="standard"
-                    name="password"
-                    onChange={formik.handleChange}
-                    value={formik.values.password}
-                />
+        <form onSubmit={() => {
+            formik.submitForm()
+        }}>
+            <Box className="flex flex-col gap-4">
+                <Box className="flex flex-col gap-4 *:!bg-transparent">
+                    <TextField
+                        id="standard-basic"
+                        label="EMAIL"
+                        variant="standard"
+                        type="email"
+                        name="email"
+                        onChange={formik.handleChange}
+                        value={formik.values.email}
+                    />
+                    <TextField
+                        id="standard-password-input"
+                        label="Password"
+                        type="password"
+                        variant="standard"
+                        name="password"
+                        onChange={formik.handleChange}
+                        value={formik.values.password}
+                    />
+                </Box>
+                <Typography variant="caption" className="text-right text-red-600">
+                    {authenticatingError}
+                </Typography>
+                <Button
+                    variant="contained"
+                    className="w-full"
+                    onClick={formik.handleSubmit}
+                    disabled={formik.isSubmitting}
+                    type="submit"
+                >
+                    {formik.isSubmitting ? (
+                        <CircularProgress color="warning" className="mr-2" size={18} />
+                    ) : (
+                        "Login"
+                    )}
+                </Button>
+                <ForgottedPassword />
+                <Typography
+                    variant="subtitle1"
+                    color="textSecondary"
+                    className="mx-auto text-center"
+                >
+                    or
+                </Typography>
+                <SocialLogin />
             </Box>
-            <Typography variant="caption" className="text-right text-red-600">
-                {authenticatingError}
-            </Typography>
-            <Button
-                variant="contained"
-                className="w-full"
-                onClick={formik.handleSubmit}
-                disabled={formik.isSubmitting}
-            >
-                {formik.isSubmitting ? (
-                    <CircularProgress color="warning" className="mr-2" size={18} />
-                ) : (
-                    "Login"
-                )}
-            </Button>
-            <ForgottedPassword />
-            <Typography
-                variant="subtitle1"
-                color="textSecondary"
-                className="mx-auto text-center"
-            >
-                or
-            </Typography>
-            <SocialLogin />
-        </Box>
+        </form>
     );
 });
 
@@ -232,67 +221,70 @@ const SignUp = memo(() => {
         },
     });
     return (
-        <Box className="flex flex-col gap-4">
-            <Box className="flex flex-col gap-4 *:!bg-transparent">
-                <TextField
-                    id="form-username"
-                    label="EMAIL"
-                    variant="standard"
-                    name="username"
-                    onChange={formik.handleChange}
-                    value={formik.values.username}
-                />
-                <TextField
-                    id="standard-basic"
-                    label="EMAIL"
-                    variant="standard"
-                    name="email"
-                    onChange={formik.handleChange}
-                    value={formik.values.email}
-                />
-                <TextField
-                    id="standard-password-input"
-                    label="Password"
-                    type="password"
-                    variant="standard"
-                    name="password"
-                    onChange={formik.handleChange}
-                    value={formik.values.password}
-                />
-                <TextField
-                    id="standard--confirmPassword-input"
-                    label="Confirm Password"
-                    type="password"
-                    variant="standard"
-                    name="confirmPassword"
-                    onChange={formik.handleChange}
-                    value={formik.values.confirmPassword}
-                />
+        <form onSubmit={formik.submitForm}>
+            <Box className="flex flex-col gap-4">
+                <Box className="flex flex-col gap-4 *:!bg-transparent">
+                    <TextField
+                        id="form-username"
+                        label="EMAIL"
+                        variant="standard"
+                        name="username"
+                        onChange={formik.handleChange}
+                        value={formik.values.username}
+                    />
+                    <TextField
+                        id="standard-basic"
+                        label="EMAIL"
+                        variant="standard"
+                        name="email"
+                        onChange={formik.handleChange}
+                        value={formik.values.email}
+                    />
+                    <TextField
+                        id="standard-password-input"
+                        label="Password"
+                        type="password"
+                        variant="standard"
+                        name="password"
+                        onChange={formik.handleChange}
+                        value={formik.values.password}
+                    />
+                    <TextField
+                        id="standard--confirmPassword-input"
+                        label="Confirm Password"
+                        type="password"
+                        variant="standard"
+                        name="confirmPassword"
+                        onChange={formik.handleChange}
+                        value={formik.values.confirmPassword}
+                    />
+                </Box>
+                <Typography variant="caption" className="text-right text-red-600">
+                    {authenticatingError}
+                </Typography>
+                <Button
+                    variant="contained"
+                    className="w-full"
+                    onClick={formik.handleSubmit}
+                    disabled={
+                        formik.isSubmitting ||
+                        authenticatingState === "loading" ||
+                        authenticatingState === "success"
+                    }
+                    type="submit"
+                >
+                    Sign Up
+                </Button>
+                <Typography
+                    variant="subtitle1"
+                    color="textSecondary"
+                    className="mx-auto text-center"
+                >
+                    or
+                </Typography>
+                <SocialLogin />
             </Box>
-            <Typography variant="caption" className="text-right text-red-600">
-                {authenticatingError}
-            </Typography>
-            <Button
-                variant="contained"
-                className="w-full"
-                onClick={formik.handleSubmit}
-                disabled={
-                    formik.isSubmitting ||
-                    authenticatingState === "loading" ||
-                    authenticatingState === "success"
-                }
-            >
-                Sign Up
-            </Button>
-            <Typography
-                variant="subtitle1"
-                color="textSecondary"
-                className="mx-auto text-center"
-            >
-                or
-            </Typography>
-            <SocialLogin />
-        </Box>
+        </form>
     );
 });
 
@@ -390,7 +382,12 @@ const ForgottedPassword = () => {
     });
     return (
         <>
-            <Button className="m-0 ml-auto p-0 text-right" color="secondary" variant="caption" onClick={handleClickOpen}>
+            <Button
+                className="m-0 ml-auto p-0 text-right"
+                color="secondary"
+                variant="caption"
+                onClick={handleClickOpen}
+            >
                 Forgot password?
             </Button>
             <Dialog
@@ -402,7 +399,8 @@ const ForgottedPassword = () => {
                 <DialogTitle id="alert-dialog-title">{"Reset Password"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Enter your email address below and we'll send you a link to reset your password.
+                        Enter your email address below and we'll send you a link to reset
+                        your password.
                     </DialogContentText>
                     <TextField
                         autoFocus
