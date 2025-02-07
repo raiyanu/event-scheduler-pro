@@ -84,7 +84,6 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-off-range-bg {
-	// background: #e6e6e6;
 	background: var(--mui-palette-background-paper);
 }
 
@@ -244,8 +243,13 @@ button.rbc-input::-moz-focus-inner {
 	white-space: nowrap;
 }
 .rbc-btn-group > button {
-	background-color: var(--mui-palette-Button-inheritContainedHoverBg);
 	border: none;
+}
+.rbc-btn-group > button:active,
+.rbc-btn-group > button.rbc-active,
+.rbc-btn-group > button:active,
+.rbc-btn-group > button:hover {
+	background: var(--mui-palette-action-hover);
 }
 .rbc-btn-group > button:first-child:not(:last-child) {
 	border-top-right-radius: 0;

@@ -19,6 +19,7 @@ import { useFormik } from "formik";
 import { updateUserInfo, validateUserEmail } from "@/config/firebase";
 import Image from "next/image";
 
+
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -32,9 +33,29 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function page() {
-    const isLogged = useSelector((state) => state.AUTH.loginStatus);
-    const [isEditing, setIsEditing] = useState(false); const userInfo = useSelector((state) => state.AUTH.user);
+    return (
+        <MainLayout>
+            <Box className="p-2 lg:p-3">
+                <Typography
+                    sx={{
+                        color: "primary.main",
+                    }}
+                    variant="h4"
+                >
+                    Settings
+                </Typography>
+                <UserSettings />
+            </Box>
+        </MainLayout>
+    );
+}
+
+const UserSettings = () => {
+    const userInfo = useSelector((state) => state.AUTH.user);
     const formik = useFormik(userSettingActionFormConfig(userInfo));
+    const isLogged = useSelector((state) => state.AUTH.loginStatus);
+    const [isEditing, setIsEditing] = useState(false);
+    console.log(userInfo)
     const data = [
         {
             name: "username",
@@ -58,171 +79,160 @@ export default function page() {
         },
     ];
     return (
-        <MainLayout>
-            <Typography
-                sx={{
-                    color: "primary.main",
-                }}
-                variant="h4"
-            >
-                Settings
-            </Typography>
-
-            <Typography
-                sx={{
-                    color: "primary.main",
-                }}
-                variant="h6"
-            >
-                {!isLogged && <Typography>Login to continue</Typography>}
-                {isLogged && (
-                    <Box className="mx-2 h-full lg:mx-8">
-                        <Typography variant="subtitle1" color="textSecondary" className="my-4">
-                            Account Information
-                        </Typography>
-                        <Box className="*:flex-grow-0 mt-8 flex w-full justify-between">
-                            <Box className="flex max-w-lg items-center">
-                                <IconButton
-                                    component="label"
-                                    role={undefined}
-                                    variant="text"
-                                    tabIndex={-1}
+        <Typography
+            sx={{
+                color: "primary.main",
+            }}
+            variant="h6"
+        >
+            {!isLogged ? (<Typography>Login to continue</Typography>) : (
+                <Box className="mx-2 h-full lg:mx-8">
+                    <Typography variant="subtitle1" color="textSecondary" className="my-4">
+                        Account Information
+                    </Typography>
+                    <Box className="mt-8 flex w-full max-w-2xl items-start justify-between *:flex-grow-0">
+                        <Box className="flex max-w-lg items-center">
+                            <IconButton
+                                component="label"
+                                role={undefined}
+                                variant="text"
+                                tabIndex={-1}
+                            >
+                                <Badge
+                                    badgeContent={<FileUploadSharp color="action" />}
+                                    overlap="circular"
+                                    className="cursor-pointer bg-transparent hover:opacity-80"
                                 >
-                                    <Badge
-                                        badgeContent={<FileUploadSharp color="action" />}
-                                        overlap="circular"
-                                        className="cursor-pointer bg-transparent hover:opacity-80"
-                                    >
-                                        {userInfo.photoURL ? (
-                                            <Image src={userInfo.photoURL} />
-                                        ) : (
-
-                                            <Box>
-                                                <AccountCircle color="disabled" sx={{ fontSize: 100 }} />
-                                            </Box>
-                                        )}
-                                    </Badge>
-                                    <VisuallyHiddenInput
-                                        type="file"
-                                        onChange={async (event) => {
-                                            try {
-                                                console.log(event.target.files)
-                                                const file = event.target.files[0];
-
-                                                const formData = new FormData();
-                                                formData.append("image", file);
-
-                                            } catch (error) {
-                                                console.error(error);
-                                            }
-                                        }}
-                                    />
-                                </IconButton>
-
-                                <Box className="ml-4 flex flex-col items-center">
-                                    {isEditing ? (
-                                        <TextField
-                                            variant="outlined"
-                                            label="Display Name"
-                                            name="displayName"
-                                            value={formik.values.displayName}
-                                            onChange={formik.handleChange}
-                                        />
+                                    {userInfo.photoURL ? (
+                                        <Image src={userInfo.photoURL} />
                                     ) : (
-                                        <Typography variant="h4" color="textPrimary">
-                                            {userInfo.displayName}
-                                        </Typography>
-                                    )}
-                                </Box>
-                            </Box>
-                            <Tooltip title="Edit profile">
-                                <IconButton
-                                    variant="text"
-                                    size="medium"
-                                    className="h-8"
-                                    color="primary"
-                                    onClick={() => setIsEditing((prev) => !prev)}
-                                >
-                                    {isEditing ? <Close /> : <Edit />}
-                                </IconButton>
-                            </Tooltip>
-                        </Box>
-                        <Box sx={{ flexGrow: 1, marginTop: "2rem" }}>
-                            <Box className="flex grid-cols-[1fr_1fr] flex-col gap-6 lg:grid">
-                                {data?.map((item, index) => {
-                                    return (
-                                        <Box key={index}>
-                                            {isEditing ? (
-                                                <TextField
-                                                    variant="outlined"
-                                                    label={item.label}
-                                                    name={item.name}
-                                                    value={formik.values[item.name]}
-                                                    onChange={formik.handleChange}
-                                                />
-                                            ) : (
-                                                <>
-                                                    <Box className="flex items-center">
-                                                        <Typography variant="subtitle2" color="textSecondary">
-                                                            {item.label}
-                                                        </Typography>
-                                                    </Box>
-                                                    <Typography variant="h5" color="textPrimary" className="">
-                                                        {item.displayValue}
-                                                    </Typography>
-                                                </>
-                                            )}
+
+                                        <Box>
+                                            <AccountCircle color="disabled" sx={{ fontSize: 100 }} />
                                         </Box>
-                                    );
-                                })}
-                                <Box>
-                                    <Box className="flex items-center">
-                                        <Typography variant="subtitle2" color="textSecondary">
-                                            Email
-                                        </Typography>
-                                    </Box>
-                                    <Typography
-                                        variant="h5"
-                                        color="textPrimary"
-                                        className="flex items-center gap-2"
-                                    >
-                                        {userInfo.emailVerified ? (
-                                            <Tooltip title="Email is verified">
-                                                {userInfo.email ? userInfo.email : "No Email"}
-                                                <VerifiedUser color="info" />
-                                            </Tooltip>
+                                    )}
+                                </Badge>
+                                <VisuallyHiddenInput
+                                    type="file"
+                                    onChange={async (event) => {
+                                        try {
+                                            console.log(event.target.files)
+                                            const file = event.target.files[0];
+
+                                            const formData = new FormData();
+                                            formData.append("image", file);
+
+                                        } catch (error) {
+                                            console.error(error);
+                                        }
+                                    }}
+                                />
+                            </IconButton>
+
+                            <Box className="ml-4 flex flex-col items-center">
+                                {isEditing ? (
+                                    <TextField
+                                        variant="outlined"
+                                        label="Display Name"
+                                        name="displayName"
+                                        value={formik.values.displayName}
+                                        onChange={formik.handleChange}
+                                    />
+                                ) : (
+                                    <Typography variant="h4" color="textPrimary">
+                                        {userInfo.displayName}
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+                        <Tooltip title="Edit profile">
+                            <IconButton
+                                variant="text"
+                                size="medium"
+                                className="h-8"
+                                color="primary"
+                                onClick={() => setIsEditing((prev) => !prev)}
+                            >
+                                {isEditing ? <Close /> : <Edit />}
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, marginTop: "2rem" }}>
+                        <Box className="flex grid-cols-[1fr_1fr] flex-col gap-6 lg:grid">
+                            {data?.map((item, index) => {
+                                return (
+                                    <Box key={index}>
+                                        {isEditing ? (
+                                            <TextField
+                                                variant="outlined"
+                                                label={item.label}
+                                                name={item.name}
+                                                value={formik.values[item.name]}
+                                                onChange={formik.handleChange}
+                                            />
                                         ) : (
-                                            <Tooltip title="Email is Not Verified!">
-                                                {userInfo.email ? userInfo.email : "No Email"}
-                                                <Button variant="outlined" color="warning" className="ml-2" onClick={() => {
-                                                    validateUserEmail();
-                                                }}>
-                                                    <GppMaybe color="warning" />{" "} Verify
-                                                </Button>
-                                            </Tooltip>
+                                            <>
+                                                <Box className="flex items-center">
+                                                    <Typography variant="subtitle2" color="textSecondary">
+                                                        {item.label}
+                                                    </Typography>
+                                                </Box>
+                                                <Typography variant="h5" color="textPrimary" className="">
+                                                    {item.displayValue}
+                                                </Typography>
+                                            </>
                                         )}
+                                    </Box>
+                                );
+                            })}
+                            <Box>
+                                <Box className="flex items-center">
+                                    <Typography variant="subtitle2" color="textSecondary">
+                                        Email
                                     </Typography>
                                 </Box>
+                                <Typography
+                                    variant="h5"
+                                    color="textPrimary"
+                                    className="flex items-center gap-2"
+                                >
+                                    {userInfo.emailVerified ? (
+                                        <Tooltip title="Email is verified">
+                                            {userInfo.email ? userInfo.email : "No Email"}
+                                            <VerifiedUser color="info" />
+                                        </Tooltip>
+                                    ) : (
+                                        <Tooltip title="Email is Not Verified!">
+                                            {userInfo.email ? userInfo.email : "No Email"}
+                                            <Button variant="outlined" color="warning" className="ml-2" onClick={() => {
+                                                validateUserEmail();
+                                            }}>
+                                                <GppMaybe color="warning" />{" "} Verify
+                                            </Button>
+                                        </Tooltip>
+                                    )}
+                                </Typography>
                             </Box>
-                            {isEditing && (
-                                <Box className="mt-8 flex flex-col-reverse gap-4">
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        className="ml-auto mt-8"
-                                        onClick={formik.handleSubmit}
-                                    >
-                                        Save Changes
-                                    </Button>
-                                </Box>
-                            )}
                         </Box>
+                        {isEditing && (
+                            <Box className="mt-8 flex flex-col-reverse gap-4">
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    className="ml-auto mt-8"
+                                    onClick={formik.handleSubmit}
+                                >
+                                    Save Changes
+                                </Button>
+                            </Box>
+                        )}
                     </Box>
-                )}
-            </Typography>
-        </MainLayout>
+                </Box>
+            )}
+        </Typography>
     );
-}
+};
+
 const userSettingActionFormConfig = (userInfo) => ({
     initialValues: {
         username: userInfo.username,

@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import { NextAppProvider } from "@toolpad/core/nextjs";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarMonth, Home, Task } from "@mui/icons-material";
+import { CalendarMonth, Home, Settings, Task } from "@mui/icons-material";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { getUser, isLogged, logout } from "../redux/slice/userSlice";
 import { useRouter } from "next/navigation";
@@ -87,17 +87,18 @@ export default function SideBarProvider(props) {
                     icon: <Home />,
                 },
                 {
-                    segment: "agenda",
-                    title: "Agenda",
-                    icon: <Task />,
-                    pattern: "agenda",
-                },
-                {
                     segment: "calendar",
                     title: "Calendar",
                     icon: <CalendarMonth />,
                     pattern: "calendar",
+                },
+                {
+                    segment: "setting",
+                    title: "Setting",
+                    icon: <Settings />,
+                    pattern: "setting",
                 }
+
             ]}
             window={demoWindow}
         >
@@ -287,7 +288,6 @@ function SidebarFooterAccountPopover() {
                 Option
             </Typography> */}
 
-            <Link href="/setting"><Button variant="text">Settings</Button></Link>
             <AccountPopoverFooter>
                 <SignOutButton />
             </AccountPopoverFooter>
