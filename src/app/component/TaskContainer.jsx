@@ -147,13 +147,14 @@ export const MyListItem = ({ info }) => {
         setOpen(false);
     };
 
-    const [DeleteActionModal, setDeleteActionModal] = useState(false);
-    const handleDeleteActionModalOpen = () => setDeleteActionModal(true);
-    const handleDeleteActionModalClose = () => setDeleteActionModal(false);
 
     const [openEditModal, setOpenEditModal] = useState(false);
     const handleEditModalOpen = () => setOpenEditModal(true);
     const handleEditModalClose = () => setOpenEditModal(false);
+
+    const [DeleteActionModal, setDeleteActionModal] = useState(false);
+    const handleDeleteActionModalOpen = () => setDeleteActionModal(true);
+    const handleDeleteActionModalClose = () => setDeleteActionModal(false);
 
     const displatch = useDispatch();
     const [markdown, setMarkdown] = useState("");
@@ -373,78 +374,7 @@ export const MyListItem = ({ info }) => {
                     </Box>
                 </DialogActions>
             </Dialog >
-            <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                open={DeleteActionModal}
-                onClose={handleDeleteActionModalClose}
-                closeAfterTransition
-                slots={{ backdrop: Backdrop }}
-                slotProps={{
-                    backdrop: {
-                        timeout: 500,
-                    },
-                }}
-                className="flex items-center justify-center"
-            >
-                <Fade in={DeleteActionModal}>
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            maxWidth: 400,
-                            width: "100%",
-                            // bgcolor: 'background.paper',
-                            // boxShadow: 24,
-                        }}
-                    >
-                        <Alert
-                            color="error"
-                            sx={{
-                                height: "100%",
-                                p: 2,
-                            }}
-                        >
-                            <Typography variant="h6" component="h2">
-                                Are you sure you want to delete this task?
-                            </Typography>
-                            <Box
-                                direction="row"
-                                spacing={2}
-                                sx={{
-                                    mt: 2,
-                                    display: "flex",
-                                    flexDirection: "row-reverse",
-                                    gap: "1rem",
-                                }}
-                            >
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={async () => {
-                                        await displatch(deleteTasks(info.id));
-                                        handleDeleteActionModal();
-                                        handleClose();
-                                    }}
-                                >
-                                    Delete
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="warning"
-                                    onClick={() => {
-                                        handleDeleteActionModalClose();
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                            </Box>
-                        </Alert>
-                    </Box>
-                </Fade>
-            </Modal>
+            <TaskDeleteModal DeleteActionModal={DeleteActionModal} handleDeleteActionModalClose={handleDeleteActionModalClose} taskId={info.id} handleClose={handleClose} />
             <Modal
                 anchor={"bottom"}
                 open={openEditModal}
@@ -482,6 +412,82 @@ export const MyListItem = ({ info }) => {
         </>
     );
 };
+
+export const TaskDeleteModal = ({ DeleteActionModal, handleDeleteActionModalClose, taskId, handleClose }) => {
+    const displatch = useDispatch();
+    return (<Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={DeleteActionModal}
+        onClose={handleDeleteActionModalClose}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+            backdrop: {
+                timeout: 500,
+            },
+        }}
+        className="flex items-center justify-center"
+    >
+        <Fade in={DeleteActionModal}>
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    maxWidth: 400,
+                    width: "100%",
+                    // bgcolor: 'background.paper',
+                    // boxShadow: 24,
+                }}
+            >
+                <Alert
+                    color="error"
+                    sx={{
+                        height: "100%",
+                        p: 2,
+                    }}
+                >
+                    <Typography variant="h6" component="h2">
+                        Are you sure you want to delete this task?
+                    </Typography>
+                    <Box
+                        direction="row"
+                        spacing={2}
+                        sx={{
+                            mt: 2,
+                            display: "flex",
+                            flexDirection: "row-reverse",
+                            gap: "1rem",
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={async () => {
+                                await displatch(deleteTasks(taskId));
+                                handleDeleteActionModalClose();
+                                handleClose();
+                            }}
+                        >
+                            Delete
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="warning"
+                            onClick={() => {
+                                handleDeleteActionModalClose();
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                    </Box>
+                </Alert>
+            </Box>
+        </Fade>
+    </Modal>)
+}
 
 
 export const UpdateTask = ({ task, handleEditModalClose }) => {

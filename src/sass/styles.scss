@@ -1,6 +1,9 @@
 @import "./variables";
 @import "./reset";
 
+:root {
+	// --mui-palette-background-paper: #fff;
+}
 ::-webkit-scrollbar {
 	width: 5px;
 	background-color: rgba(128, 128, 128, 0.233);
