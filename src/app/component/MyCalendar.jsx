@@ -194,6 +194,7 @@ export default function CalendarMain() {
     [setMyEvents]
   )
   const handleSlotSelect = useCallback(async (event) => {
+    console.log(event)
     await addTaskWithPreTime({ startTime: event.start, endTime: event.end })
     toggleDrawer(true)
     // setNewTask({ ...newTask, startTime: event.start, endTime: event.end })

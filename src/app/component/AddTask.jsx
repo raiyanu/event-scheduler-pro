@@ -96,9 +96,6 @@ export const TaskCrudDrawerProvider = ({ children }) => {
             tags: [],
         },
         onSubmit: async (values) => {
-            console.log("values before mod: ", values);
-            console.log(values);
-
             let startTime = values.startTime;
             values.startTime = {
                 seconds: Math.floor(startTime / 1000),
@@ -115,7 +112,6 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                 seconds: Math.floor(endTime / 1000),
                 nanoseconds: (endTime % 1000) * 1000000,
             };
-            console.log("values after mod: ", values);
             await dispatch(addTasks(values));
             formik.resetForm();
             toggleDrawer(false)();
@@ -124,10 +120,8 @@ export const TaskCrudDrawerProvider = ({ children }) => {
 
     const addTaskWithPreTime = async (payload) => {
         console.log("Payload: ", payload);
-
-        await formik.setFieldValue("startTime", dayjs(payload.startTime));
-        await formik.setFieldValue("endTime", dayjs(payload.endTime)); // progress :TODO
-        console.log("After setFieldValue, formik.values: ", formik.values);
+        await formik.setFieldValue("startTime", dayjs(new Date(payload.startTime)));
+        await formik.setFieldValue("endTime", dayjs(new Date(payload.endTime))); // progress :TODO
         console.log("After setFieldValue, formik.values: ", formik.values);
     };
 
@@ -377,9 +371,9 @@ export const TaskForm = ({ formik }) => {
                     value={formik.values.startTime}
                     // value={dayjs(formData.values.startTime)}
                     onError={(reason, value) => { }}
-                    onChange={(value) =>
-                        formik.setFieldValue("startTime", value.toDate(), true)
-                    }
+                    onChange={(date, dateType) => {
+                        formik.setFieldValue([dateType], date.toDate(), true)
+                    }}
                     slotProps={{
                         textField: {
                             variant: "outlined",
@@ -397,9 +391,9 @@ export const TaskForm = ({ formik }) => {
                     format="DD/MM/YYYY-hh:MM"
                     defaultValue={formik.values.endTime}
                     value={formik.values.endTime}
-                    onChange={(value) =>
-                        formik.setFieldValue("endTime", value.toDate(), true)
-                    }
+                    onChange={(date, dateType) => {
+                        formik.setFieldValue([dateType], date.toDate(), true)
+                    }}
                     slotProps={{
                         textField: {
                             variant: "outlined",
