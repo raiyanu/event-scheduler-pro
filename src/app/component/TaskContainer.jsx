@@ -316,7 +316,6 @@ export const MyListItem = ({ info }) => {
                             }}
                             variant="contained"
                             color="warning"
-                            autoFocus
                         >
                             <Delete />
                         </IconButton>
@@ -324,7 +323,6 @@ export const MyListItem = ({ info }) => {
                             onClick={handleEditModalOpen}
                             variant="contained"
                             color="warning"
-                            autoFocus
                         >
                             <Edit />
                         </IconButton>
@@ -560,6 +558,9 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
             console.log("reset: ", formik.values, ": ", task?.title);
         })();
     }, [task]);
+    const [DeleteActionModal, setDeleteActionModal] = useState(false);
+    const handleDeleteActionModalOpen = () => setDeleteActionModal(true);
+    const handleDeleteActionModalClose = () => setDeleteActionModal(false);
 
     return (
         <>
@@ -587,19 +588,33 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
                 {/* Footer */}
                 <Box>
                     <Divider />
-                    <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
-                        <Button
-                            variant="text"
-                            onClick={handleEditModalClose}
+                    <Box className="flex items-center justify-between">
+                        <IconButton
+                            onClick={() => {
+                                handleDeleteActionModalOpen();
+                            }}
+                            variant="contained"
+                            color="warning"
                         >
-                            Cancel
-                        </Button>
-                        <Button variant="contained" onClick={formik.handleSubmit}>
-                            Update Task
-                        </Button>
+                            <Delete />
+                        </IconButton>
+
+                        <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
+                            <Button
+                                variant="text"
+                                onClick={handleEditModalClose}
+                            >
+                                Cancel
+                            </Button>
+                            <Button variant="contained" onClick={formik.handleSubmit}>
+                                Update Task
+                            </Button>
+                        </Box>
                     </Box>
                 </Box>
             </Box>
+            <TaskDeleteModal
+                DeleteActionModal={DeleteActionModal} handleDeleteActionModalClose={handleDeleteActionModalClose} taskId={task.id} handleClose={handleEditModalClose} />
         </>
     );
 };

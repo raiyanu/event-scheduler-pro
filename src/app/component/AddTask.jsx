@@ -58,11 +58,6 @@ export function AddTaskLineCard() {
     );
 }
 
-const AddTaskContainer = memo(function AddTaskContainer() {
-    return <SwipeableDrawerContainer />;
-});
-
-
 export const TaskCrudDrawerContext = createContext(null);
 
 export const TaskCrudDrawerProvider = ({ children }) => {
@@ -221,8 +216,6 @@ export const TaskCrudDrawerProvider = ({ children }) => {
     );
 };
 
-export { AddTaskContainer };
-
 export const AddTaskButton = () => {
     const { toggleDrawer, setTask } = useContext(TaskCrudDrawerContext);
     return (
@@ -368,7 +361,8 @@ export const TaskForm = ({ formik }) => {
                     label="Start Time"
                     format="DD/MM/YYYY-hh:MM"
                     defaultValue={formik.values.startTime}
-                    value={formik.values.startTime}
+                    // value={formik.values.startTime}
+                    value={dayjs(formik.values.startTime)}
                     // value={dayjs(formData.values.startTime)}
                     onError={(reason, value) => { }}
                     onChange={(date, dateType) => {
@@ -390,7 +384,8 @@ export const TaskForm = ({ formik }) => {
                     onError={(reason, value) => { }}
                     format="DD/MM/YYYY-hh:MM"
                     defaultValue={formik.values.endTime}
-                    value={formik.values.endTime}
+                    // value={formik.values.endTime}
+                    value={dayjs(formik.values.endTime)}
                     onChange={(date, dateType) => {
                         formik.setFieldValue([dateType], date.toDate(), true)
                     }}
