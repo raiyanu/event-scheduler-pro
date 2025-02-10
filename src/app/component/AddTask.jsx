@@ -84,7 +84,8 @@ export const TaskCrudDrawerProvider = ({ children }) => {
             startTime: dayjs(),
             endTime: dayjs(),
             importance: "",
-            icon: "😉",
+            icon: ["😉", "🚲",
+                "📅", "📝", "📋", "📌", "📍", "📎", "🗂️", "🗃️", "🗄️", "📂", "📁", "🗓️", "📆", "🗒️", "🗳️", "📜", "📑", "🗞️", "📇", "📊"].at(Math.floor(Math.random() * 22)),
             difficulty: "",
             createdAt: null,
             status: "",
@@ -112,6 +113,10 @@ export const TaskCrudDrawerProvider = ({ children }) => {
             toggleDrawer(false)();
         },
     });
+    useEffect(() => {
+        formik.setFieldValue("icon", ["😉", "🚲",
+            "📅", "📝", "📋", "📌", "📍", "📎", "🗂️", "🗃️", "🗄️", "📂", "📁", "🗓️", "📆", "🗒️", "🗳️", "📜", "📑", "🗞️", "📇", "📊"].at(Math.floor(Math.random() * 22)));
+    }, [drawerState])
 
     const addTaskWithPreTime = async (payload) => {
         console.log("Payload: ", payload);
