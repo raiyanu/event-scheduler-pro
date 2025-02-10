@@ -32,7 +32,6 @@ import { deleteTasks, updateTask } from "../redux/slice/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ClockIcon } from "@mui/x-date-pickers";
 import { UpdateTaskButton } from "../component/AddTask";
-
 export const TaskDetailPanelContext = createContext();
 export const taskPaneViewHandler = createContext();
 

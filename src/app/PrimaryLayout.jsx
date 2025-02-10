@@ -1,16 +1,15 @@
-"use client"
-import React, { Suspense, useEffect } from 'react'
-import { Theme } from './context/ThemeContext'
-import { ThemeProvider, useColorScheme } from '@mui/material'
-import SideBarProvider from './component/SideBar';
-import { Provider, useDispatch, useStore } from 'react-redux';
+"use client";
+import { Suspense } from 'react';
+import { Theme } from './context/ThemeContext';
+import { ThemeProvider } from '@mui/material';
+import { Provider } from 'react-redux';
 import store from './redux/store';
-import { onAuthStateChanged } from 'firebase/auth';
 import GlobalActionProvider from './GlobalActionProvider';
 import TaskDetailPanelProvider from './context/TaskDetailPanelProvider';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TaskCrudDrawerProvider } from './component/AddTask';
+import DrawerAppBar from './component/AppBar';
 
 export default function MainLayout({ children }) {
     return (
@@ -18,9 +17,9 @@ export default function MainLayout({ children }) {
             <PublicLayout>
                 <TaskCrudDrawerProvider>
                     <TaskDetailPanelProvider>
-                        <SideBarProvider>
+                        <DrawerAppBar>
                             {children}
-                        </SideBarProvider>
+                        </DrawerAppBar>
                     </TaskDetailPanelProvider>
                 </TaskCrudDrawerProvider>
             </PublicLayout >

@@ -250,8 +250,14 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-btn-group > button {
-  background-color: var(--mui-palette-Button-inheritContainedHoverBg);
   border: none;
+}
+
+.rbc-btn-group > button:active,
+.rbc-btn-group > button.rbc-active,
+.rbc-btn-group > button:active,
+.rbc-btn-group > button:hover {
+  background: var(--mui-palette-action-hover);
 }
 
 .rbc-btn-group > button:first-child:not(:last-child) {

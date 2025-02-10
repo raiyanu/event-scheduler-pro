@@ -101,7 +101,12 @@ export const Theme = createTheme({
         "0px 1px 3px rgba(0, 0, 0, 0.2)",
         "0px 1px 5px rgba(0, 0, 0, 0.15)",
         "0px 1px 10px rgba(0, 0, 0, 0.12)",
-        // Add additional custom shadows as needed
+        "0px 2px 4px rgba(0, 0, 0, 0.1)",
+        "0px 3px 5px rgba(0, 0, 0, 0.1)",
+        "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        "0px 5px 8px rgba(0, 0, 0, 0.1)",
+        "0px 6px 9px rgba(0, 0, 0, 0.1)",
+        ...Array(25).fill('none')
     ],
     breakpoints: {
         values: {

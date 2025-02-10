@@ -1,7 +1,5 @@
 "use client";
-import {
-    Add, Close
-} from "@mui/icons-material";
+import { Add, Close } from "@mui/icons-material";
 import {
     Box,
     Button,
@@ -27,9 +25,7 @@ import { useFormik } from "formik";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import EmojiPicker from "emoji-picker-react";
-import {
-    DateTimePicker
-} from "@mui/x-date-pickers";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { addTasks } from "../redux/slice/taskSlice";
@@ -74,7 +70,6 @@ export const TaskCrudDrawerProvider = ({ children }) => {
         setDrawerState(open);
     };
 
-
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
@@ -84,8 +79,30 @@ export const TaskCrudDrawerProvider = ({ children }) => {
             startTime: dayjs(),
             endTime: dayjs(),
             importance: "",
-            icon: ["😉", "🚲",
-                "📅", "📝", "📋", "📌", "📍", "📎", "🗂️", "🗃️", "🗄️", "📂", "📁", "🗓️", "📆", "🗒️", "🗳️", "📜", "📑", "🗞️", "📇", "📊"].at(Math.floor(Math.random() * 22)),
+            icon: [
+                "😉",
+                "🚲",
+                "📅",
+                "📝",
+                "📋",
+                "📌",
+                "📍",
+                "📎",
+                "🗂️",
+                "🗃️",
+                "🗄️",
+                "📂",
+                "📁",
+                "🗓️",
+                "📆",
+                "🗒️",
+                "🗳️",
+                "📜",
+                "📑",
+                "🗞️",
+                "📇",
+                "📊",
+            ].at(Math.floor(Math.random() * 22)),
             difficulty: "",
             createdAt: null,
             status: "",
@@ -114,13 +131,41 @@ export const TaskCrudDrawerProvider = ({ children }) => {
         },
     });
     useEffect(() => {
-        formik.setFieldValue("icon", ["😉", "🚲",
-            "📅", "📝", "📋", "📌", "📍", "📎", "🗂️", "🗃️", "🗄️", "📂", "📁", "🗓️", "📆", "🗒️", "🗳️", "📜", "📑", "🗞️", "📇", "📊"].at(Math.floor(Math.random() * 22)));
-    }, [drawerState])
+        formik.setFieldValue(
+            "icon",
+            [
+                "😉",
+                "🚲",
+                "📅",
+                "📝",
+                "📋",
+                "📌",
+                "📍",
+                "📎",
+                "🗂️",
+                "🗃️",
+                "🗄️",
+                "📂",
+                "📁",
+                "🗓️",
+                "📆",
+                "🗒️",
+                "🗳️",
+                "📜",
+                "📑",
+                "🗞️",
+                "📇",
+                "📊",
+            ].at(Math.floor(Math.random() * 22))
+        );
+    }, [drawerState]);
 
     const addTaskWithPreTime = async (payload) => {
         console.log("Payload: ", payload);
-        await formik.setFieldValue("startTime", dayjs(new Date(payload.startTime)).$d);
+        await formik.setFieldValue(
+            "startTime",
+            dayjs(new Date(payload.startTime)).$d
+        );
         await formik.setFieldValue("endTime", dayjs(new Date(payload.endTime)).$d); // progress :TODO
         console.log("After setFieldValue, formik.values: ", formik.values);
     };
@@ -133,7 +178,7 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                     toggleDrawer,
                     drawerState,
                     setTask,
-                    addTaskWithPreTime
+                    addTaskWithPreTime,
                 }}
             >
                 {children}
@@ -170,7 +215,6 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                             maxWidth: "700px",
                         }}
                     >
-
                         <>
                             <Box className="grid h-full grid-flow-row grid-rows-[50px_1fr_50px] gap-4">
                                 {/* Header */}
@@ -228,7 +272,6 @@ export const AddTaskButton = () => {
             onClick={(event) => {
                 toggleDrawer(true, event);
                 setTask(null);
-
             }}
             variant="contained"
             className="px-3 py-2"
@@ -236,6 +279,24 @@ export const AddTaskButton = () => {
             <Add className="fill-white text-xl" />
             <Typography variant="button" className="text-white">
                 Add Task
+            </Typography>
+        </Button>
+    );
+};
+
+export const UpdateTaskButton = () => {
+    const { toggleDrawer, setTask } = useContext(TaskCrudDrawerContext);
+    return (
+        <Button
+            onClick={(event) => {
+                toggleDrawer(true, event);
+                setTask(null); // Ensure this does not cause an infinite loop
+            }}
+            variant="contained"
+            className="px-3 py-2"
+        >
+            <Typography variant="button" className="text-white">
+                Update Task
             </Typography>
         </Button>
     );
@@ -297,7 +358,7 @@ export const TaskForm = ({ formik }) => {
                     value={formik.values.title}
                     onChange={formik.handleChange}
                     error={formik.touched.title && Boolean(formik.errors.title)}
-                    helperText={formik.touched.title && formik.errors.title}
+                    helpertext={formik.touched.title && formik.errors.title}
                 />
             </Box>
 
@@ -310,7 +371,7 @@ export const TaskForm = ({ formik }) => {
                 value={formik.values.description}
                 onChange={formik.handleChange}
                 error={formik.touched.description && Boolean(formik.errors.description)}
-                helperText={formik.touched.description && formik.errors.description}
+                helpertext={formik.touched.description && formik.errors.description}
                 multiline
                 maxRows={6}
             />
@@ -348,7 +409,7 @@ export const TaskForm = ({ formik }) => {
                         error={
                             formik.touched.importance && Boolean(formik.errors.importance)
                         }
-                        helperText={formik.touched.importance && formik.errors.importance}
+                        helpertext={formik.touched.importance && formik.errors.importance}
                     >
                         <MenuItem value={null}>none</MenuItem>
                         <MenuItem value={"low"}>low</MenuItem>
@@ -370,17 +431,19 @@ export const TaskForm = ({ formik }) => {
                     maxDate={dayjs(new Date(8640000000000000))}
                     defaultValue={formik.values.startTime}
                     // value={formik.values.startTime}
-                    value={formik.values.startTime ? dayjs(formik.values.startTime) : null}
+                    value={
+                        formik.values.startTime ? dayjs(formik.values.startTime) : null
+                    }
                     // value={dayjs(formik.values.startTime)}
                     onChange={(date, dateType) => {
-                        formik.setFieldValue("startTime", date.toDate(), false)
+                        formik.setFieldValue("startTime", date.toDate(), false);
                     }}
                     slotProps={{
                         textField: {
                             variant: "outlined",
                             error:
                                 formik.touched.startTime && Boolean(formik.errors.startTime),
-                            helperText: formik.touched.startTime && formik.errors.startTime,
+                            helpertext: formik.touched.startTime && formik.errors.startTime,
                         },
                     }}
                 />
@@ -397,13 +460,13 @@ export const TaskForm = ({ formik }) => {
                     value={formik.values.endTime ? dayjs(formik.values.endTime) : null}
                     // value={dayjs(formik.values.endTime)}
                     onChange={(date, dateType) => {
-                        formik.setFieldValue("endTime", date.toDate(), false)
+                        formik.setFieldValue("endTime", date.toDate(), false);
                     }}
                     slotProps={{
                         textField: {
                             variant: "outlined",
                             error: formik.touched.endTime && Boolean(formik.errors.endTime),
-                            helperText: formik.touched.endTime && formik.errors.endTime,
+                            helpertext: formik.touched.endTime && formik.errors.endTime,
                         },
                     }}
                 />
@@ -425,7 +488,7 @@ export const TaskForm = ({ formik }) => {
                         error={
                             formik.touched.difficulty && Boolean(formik.errors.difficulty)
                         }
-                        helperText={formik.touched.difficulty && formik.errors.difficulty}
+                        helpertext={formik.touched.difficulty && formik.errors.difficulty}
                     >
                         <FormControlLabel value="easy" control={<Radio />} label="Easy" />
                         <FormControlLabel
@@ -447,7 +510,7 @@ export const TaskForm = ({ formik }) => {
                         value={formik.values.status}
                         onChange={formik.handleChange}
                         error={formik.touched.status && Boolean(formik.errors.status)}
-                        helperText={formik.touched.status && formik.errors.status}
+                        helpertext={formik.touched.status && formik.errors.status}
                     >
                         <FormControlLabel
                             value="to-start"
@@ -490,14 +553,13 @@ export const TaskForm = ({ formik }) => {
                         label="Tags"
                         placeholder="Add tags"
                         error={formik.touched.tags && Boolean(formik.errors.tags)}
-                        helperText={formik.touched.tags && formik.errors.tags}
+                        helpertext={formik.touched.tags && formik.errors.tags}
                     />
                 )}
             />
         </form>
     );
 };
-
 
 export const tagIdeas = [
     "Work",

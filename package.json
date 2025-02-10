@@ -7,7 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"sass": "sass -w ./src/sass:./src/css"
+		"sass": "sass -w ./src/app/assets/sass:./src/app/assets/css"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",

@@ -35,7 +35,7 @@ const VisuallyHiddenInput = styled('input')({
 export default function page() {
     return (
         <MainLayout>
-            <Box className="p-2 lg:p-3">
+            <Box className="h-screen overflow-y-scroll p-2 lg:p-3">
                 <Typography
                     sx={{
                         color: "primary.main",
