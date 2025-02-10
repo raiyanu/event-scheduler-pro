@@ -70,7 +70,7 @@ export default function TaskContainer() {
                 sx={(theme) => ({
                     zIndex: theme.zIndex.drawer + 1,
                     color: "#fff",
-                    backgroundColor: "white",
+                    backgroundColor: "theme.palette.background.paper",
                     maxWidth: "100%",
                     position: "absolute",
                     display: "flex",

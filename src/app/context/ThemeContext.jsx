@@ -1,11 +1,12 @@
 import { colors } from "@mui/material";
-import { createTheme } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createContext, useState } from "react";
 
 export const Theme = createTheme({
     cssVariables: {
         colorSchemeSelector: "data-toolpad-color-scheme",
     },
-    colorSchemes: { light: true, dark: true },
+    colorSchemes: { light: true, },
     palette: {
         primary: {
             main: '#FFB904', // Yellow
@@ -38,126 +39,76 @@ export const Theme = createTheme({
         },
         divider: colors.grey[300], // Divider color
     },
-    typography: {
-        fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-        h1: {
-            fontSize: "2.25rem",
-            fontWeight: 700,
+});
+
+
+
+export const darkTheme = createTheme({
+    cssVariables: {
+        colorSchemeSelector: "data-toolpad-color-scheme",
+    },
+    colorSchemes: { dark: true },
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#af99d7',
+            contrastText: '#e9edfb',
         },
-        h2: {
-            fontSize: "2rem",
-            fontWeight: 600,
+        secondary: {
+            main: '#772e52',
+            contrastText: '#e6def2',
         },
-        h3: {
-            fontSize: "1.75rem",
-            fontWeight: 500,
+        background: {
+            default: '#100a19',
+            paper: '#100a19',
         },
-        h4: {
-            fontSize: "1.5rem",
-            fontWeight: 500,
+        error: {
+            main: '#d72638',
+            contrastText: '#e6def2',
         },
-        h5: {
-            fontSize: "1.25rem",
-            fontWeight: 500,
+        warning: {
+            main: '#f49d37',
+            contrastText: '#e6def2',
         },
-        h6: {
-            fontSize: "1rem",
-            fontWeight: 500,
+        info: {
+            main: '#4a62e8',
+            contrastText: '#e6def2',
         },
-        subtitle1: {
-            fontSize: "0.875rem",
-            fontWeight: 400,
+        success: {
+            main: '#76c893',
+            contrastText: '#e6def2',
         },
-        subtitle2: {
-            fontSize: "0.75rem",
-            fontWeight: 400,
+        text: {
+            primary: '#e7dff3',
+            secondary: '#e7dff3',
+            disabled: '#7b95ea',
         },
-        body1: {
-            fontSize: "1rem",
-            fontWeight: 400,
-        },
-        body2: {
-            fontSize: "0.875rem",
-            fontWeight: 400,
-        },
-        button: {
-            textTransform: "none",
-            fontWeight: 600,
-        },
-        caption: {
-            fontSize: "0.75rem",
-            fontWeight: 400,
-        },
-        overline: {
-            fontSize: "0.625rem",
-            fontWeight: 700,
-        },
+        divider: 'rgba(255, 255, 255, 0.08)',
     },
     shape: {
-        borderRadius: 8, // Rounded corners
-    },
-    shadows: [
-        "none",
-        "0px 1px 3px rgba(0, 0, 0, 0.2)",
-        "0px 1px 5px rgba(0, 0, 0, 0.15)",
-        "0px 1px 10px rgba(0, 0, 0, 0.12)",
-        "0px 2px 4px rgba(0, 0, 0, 0.1)",
-        "0px 3px 5px rgba(0, 0, 0, 0.1)",
-        "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        "0px 5px 8px rgba(0, 0, 0, 0.1)",
-        "0px 6px 9px rgba(0, 0, 0, 0.1)",
-        ...Array(25).fill('none')
-    ],
-    breakpoints: {
-        values: {
-            xs: 0, // Mobile
-            sm: 600, // Tablets
-            md: 960, // Small laptops
-            lg: 1280, // Large laptops
-            xl: 1920, // Desktops
-        },
+        borderRadius: 10,
     },
     components: {
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    borderRadius: "8px", // Rounded buttons
-                    padding: "8px 16px",
-                    fontWeight: 600,
-                    textTransform: "none", // Disable uppercase
-                },
-            },
-        },
-        MuiTextField: {
-            styleOverrides: {
-                root: {
-                    borderRadius: "8px",
-                    backgroundColor: colors.grey[100],
-                },
-            },
-        },
-        MuiCard: {
-            styleOverrides: {
-                root: {
-                    borderRadius: "12px", // Custom card design
-                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                },
-            },
-        },
-        MuiAppBar: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: colors.common.black, // Black AppBar
-                    color: colors.common.white,
-                },
-            },
-        },
-        MuiPaper: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: colors.grey[100],
-                },
-            },
-        },
+
     },
 });
+
+
+
+
+export const themeChangeContext = createContext();
+
+export const MyThemeProvider = ({ children }) => {
+    const [themeMode, setThemeMode] = useState('dark');
+    const preferredTheme = themeMode === 'light' ? Theme : darkTheme;
+    const toggleTheme = () => {
+        setThemeMode((prevMode) => prevMode === 'light' ? 'dark' : 'light');
+    }
+    return (
+        <themeChangeContext.Provider value={{ toggleTheme, themeMode }}>
+            <ThemeProvider theme={preferredTheme}>
+                {children}
+            </ThemeProvider>
+        </themeChangeContext.Provider>
+    )
+};

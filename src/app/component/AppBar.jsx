@@ -14,7 +14,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { Theme } from "../context/ThemeContext";
+import { Theme, themeChangeContext } from "../context/ThemeContext";
 import { Fab, Icon, styled, ThemeProvider } from "@mui/material";
 import {
     Add,
@@ -50,7 +50,7 @@ function DrawerAppBar(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
-    const [themeMode, setThemeMode] = React.useState("light");
+    const { toggleTheme, themeMode } = React.useContext(themeChangeContext);
 
     const pathname = usePathname();
 
@@ -81,7 +81,7 @@ function DrawerAppBar(props) {
                         xs: 0,
                         sm: "initial",
                     },
-                    bgcolor: "white",
+                    bgcolor: "primary.main",
                     color: "black",
                     zIndex: (theme) => theme.zIndex.drawer + 1,
                 }}
@@ -104,7 +104,7 @@ function DrawerAppBar(props) {
                         <MoreVert />
                     </IconButton>
                 </Toolbar>
-                <Toolbar sx={{ display: { xs: "none", sm: "flex" } }}>
+                <Toolbar sx={{ display: { xs: "none", sm: "flex", justifyContent: "space-between" } }}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -114,24 +114,24 @@ function DrawerAppBar(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-                    >
-                        MUI
-                    </Typography>
+                    <Link href={"/"}>
+                        <Typography
+                            variant="h3"
+                            component="div"
+                            color="primary.contrastText"
+                            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+                        >
+                            ES<sup className="-top-4 text-xs">Pro</sup>
+                        </Typography>
+                    </Link>
                     <Box>
-                        <IconButton color="inherit" onClick={() => setThemeMode(() => {
-                            return themeMode === "light" ? "dark" : "light"
-                        })}>
+                        <IconButton color="" onClick={toggleTheme}>
                             {
                                 themeMode === "light" ? <DarkMode /> : <LightMode />
                             }
                         </IconButton>
-                    </Box>
-                    <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                        {/* to hide element : TODO */}
+                        <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                        </Box>
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -232,7 +232,7 @@ function DrawerAppBar(props) {
                         }}
                         open
                     >
-                        <Box onClick={handleDrawerToggle} sx={{ minWidth: "100%" }}>
+                        <Box onClick={handleDrawerToggle} sx={{ minWidth: "100%", mt: 1 }}>
                             {[
                                 {
                                     segment: "home",
@@ -292,11 +292,15 @@ function DrawerAppBar(props) {
                             height: "100%",
                             maxHeight: "100vh",
                             minHeight: "max-content",
-                            overflowY: "scroll",
+                            overflowY: "clip",
+                            mt: 1,
+                            pb: {
+                                xs: 8,
+                                md: 1
+                            }
                         }}
                     >
                         {props.children}
-                        <Toolbar />
                     </Box>
                 </Box>
             </Box>

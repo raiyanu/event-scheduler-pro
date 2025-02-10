@@ -1,6 +1,6 @@
 "use client";
 import { Suspense } from 'react';
-import { Theme } from './context/ThemeContext';
+import { MyThemeProvider, Theme } from './context/ThemeContext';
 import { ThemeProvider } from '@mui/material';
 import { Provider } from 'react-redux';
 import store from './redux/store';
@@ -32,9 +32,9 @@ export function PublicLayout({ children }) {
         <Provider store={store}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <GlobalActionProvider>
-                    <ThemeProvider theme={Theme} >
+                    <MyThemeProvider theme={Theme} >
                         {children}
-                    </ThemeProvider>
+                    </MyThemeProvider>
                 </GlobalActionProvider>
             </LocalizationProvider>
         </Provider>
