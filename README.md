@@ -65,3 +65,7 @@ We welcome contributions to Event Scheduler Pro! To contribute, follow these ste
    ```
 
 5. Create a pull request.
+
+## License
+
+This project is licensed under the GNU GENERAL PUBLIC LICENSE. See the [LICENSE](LICENSE) file for details.
