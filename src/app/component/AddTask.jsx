@@ -189,9 +189,9 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                     onClose={(event) => {
                         toggleDrawer(false, event);
                     }}
-                    onOpen={(event) => {
-                        toggleDrawer(true, event);
-                    }}
+                    // onOpen={(event) => {
+                    //     toggleDrawer(true, event);
+                    // }}
                     sx={{
                         "& .MuiDrawer-paper": {
                             width: "100%",

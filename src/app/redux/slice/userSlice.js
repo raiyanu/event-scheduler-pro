@@ -2,6 +2,7 @@ import {
     createNewUser,
     isUsernameTaken,
     loginUser,
+    logOut,
     occupyUsername,
 } from "@/config/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
@@ -29,6 +30,19 @@ export const userLogin = createAsyncThunk(
             } else {
                 return rejectWithValue(new Error(res.errorCode));
             }
+        } catch (error) {
+            return rejectWithValue(new Error(res.message));
+        }
+    }
+);
+
+export const userLogout = createAsyncThunk(
+    "auth/Logout",
+    async (payload, { rejectWithValue }) => {
+        try {
+            console.log("logging out... reducer");
+            await logOut();
+            return {};
         } catch (error) {
             return rejectWithValue(new Error(res.message));
         }
@@ -126,6 +140,18 @@ const userSlice = createSlice({
                     .split("-")
                     .join(" ");
                 state.loginStatus = false;
+            })
+            .addCase(userLogout.pending, (state) => {
+                state.authenticatingState = "loading";
+            })
+            .addCase(userLogout.fulfilled, (state) => {
+                state.user = {};
+                state.loginStatus = false;
+                state.authenticatingState = "idle";
+            })
+            .addCase(userLogout.rejected, (state, action) => {
+                state.authenticatingState = "failed";
+                state.authenticatingError = action.payload.message;
             });
     },
     selectors: (state) => state.user,

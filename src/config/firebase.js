@@ -126,6 +126,17 @@ export const loginUser = async (email, password) => {
     }
 };
 
+export const logOut = async () => {
+    console.log("Logging out...");
+    try {
+        await auth.signOut();
+        return { ok: true };
+    } catch (error) {
+        console.error("Error logging out:", error.message);
+        return { ok: false, message: error.message };
+    }
+}
+
 export const isUsernameTaken = async (username) => {
     console.log(username);
     const usernameRef = doc(db, "username", username);

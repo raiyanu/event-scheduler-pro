@@ -235,7 +235,7 @@ export default function CalendarMain() {
         anchor={"bottom"}
         open={openEditModal}
         onClose={handleEditModalClose}
-        onOpen={handleEditModalOpen}
+        // onOpen={handleEditModalOpen}
         sx={{
           display: "flex",
           alignItems: "center",

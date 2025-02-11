@@ -40,7 +40,7 @@ export default function Home() {
   const [scrollContainerRef2, isscrolling2] = useOnScrollShowScrollbar(Box);
   return (
     <MainLayout>
-      <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 max-lg:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
+      <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 sm:px-2 md:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
         <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : undefined} className="relative py-4 lg:px-4">
           <WelcomeMessage />
           <TaskList />
