@@ -102,7 +102,7 @@ const UserSettings = () => {
                                     className="cursor-pointer bg-transparent hover:opacity-80"
                                 >
                                     {userInfo.photoURL ? (
-                                        <Image src={userInfo.photoURL} />
+                                        <Image src={userInfo.photoURL} alt="user profile" />
                                     ) : (
 
                                         <Box>

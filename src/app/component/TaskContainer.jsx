@@ -255,57 +255,63 @@ export const MyListItem = ({ info }) => {
                             </Typography>
                         </Box>
                     </Box>
-                    <DialogContentText className="p-0 *:mt-2" variant="body1">
-                        {info?.description ? info.description : "--"}
-                    </DialogContentText>
+                    {info?.description && (
+                        <DialogContentText className="p-0 *:mt-2" variant="body1">
+                            {info?.description ? info.description : "--"}
+                        </DialogContentText>
+                    )}
                     <Box className="grid grid-cols-2">
-                        <Typography variant="">
-                            <Tooltip title="Difficulty">
-                                <WorkspacePremium />{" "}
-                                {info?.difficulty ? info.difficulty : "--"}
-                            </Tooltip>
-                        </Typography>
-                        <Typography variant="">
-                            <Tooltip title="Importance">
-                                <Image src={"/Ribbon.svg"} width={18} height={18} className="inline-block h-5 w-5" /> {info?.importance ? info.importance : "--"}
-                            </Tooltip>
-                        </Typography>
+                        {info?.difficulty && (
+                            <Typography variant="">
+                                <Tooltip title="Difficulty">
+                                    <WorkspacePremium />{" "}
+                                    {info?.difficulty ? info.difficulty : "--"}
+                                </Tooltip>
+                            </Typography>
+                        )}
+                        {info?.importance && (
+                            <Typography variant="">
+                                <Tooltip title="Importance">
+                                    <Image alt="ribbon pic" src={"/Ribbon.svg"} width={18} height={18} className="inline-block h-5 w-5" /> {info?.importance ? info.importance : "--"}
+                                </Tooltip>
+                            </Typography>
+                        )}
                     </Box>
                     <Box className="grid grid-cols-2">
-                        <Typography variant="">
-                            <Tooltip title="Priority">
-                                <PushPin /> {info?.priority ? info.priority : "--"}
-                            </Tooltip>
-                        </Typography>
-                        <Typography>
-                            <Tooltip title="Status">
-                                <HourglassBottom />{" "}
-                                {info?.status ? friendlyStatus(info.status) : "--"}
-                            </Tooltip>
-                        </Typography>
+                        {info?.priority && (
+                            <Typography variant="">
+                                <Tooltip title="Priority">
+                                    <PushPin /> {info?.priority ? info.priority : "--"}
+                                </Tooltip>
+                            </Typography>
+                        )}
+                        {info?.status && (
+                            <Typography>
+                                <Tooltip title="Status">
+                                    <HourglassBottom />{" "}
+                                    {info?.status ? friendlyStatus(info.status) : "--"}
+                                </Tooltip>
+                            </Typography>
+                        )}
                     </Box>
-                    {/* <Box>
-                        <Typography variant="button">
-                            Created At: 
-                            {info?.createdAt ? new Date(info.createdAt.seconds * 1000).toLocaleString() : "--"}
-                        </Typography>
-                    </Box> */}
-                    <Box className="flex gap-2">
-                        <Tag />
-                        <Box className="flex flex-wrap gap-2">
-                            {info.tags &&
-                                info.tags.length >= 0 &&
-                                info.tags.map((tag, index) => (
-                                    <Chip
-                                        label={tag}
-                                        key={index.toString() + "-myTaskElementTags"}
-                                        variant="outlined"
-                                        color="warning"
-                                        size="small"
-                                    />
-                                ))}
+                    {info?.tags && info.tags?.length > 0 && (
+                        <Box className="flex gap-2">
+                            <Tag />
+                            <Box className="flex flex-wrap gap-2">
+                                {info.tags &&
+                                    info.tags.length >= 0 &&
+                                    info.tags.map((tag, index) => (
+                                        <Chip
+                                            label={tag}
+                                            key={index.toString() + "-myTaskElementTags"}
+                                            variant="outlined"
+                                            color="warning"
+                                            size="small"
+                                        />
+                                    ))}
+                            </Box>
                         </Box>
-                    </Box>
+                    )}
                 </DialogContent>
                 <DialogActions className="mt-4 justify-between">
                     <Box className="flex justify-between">
@@ -377,7 +383,7 @@ export const MyListItem = ({ info }) => {
                 anchor={"bottom"}
                 open={openEditModal}
                 onClose={handleEditModalClose}
-                onOpen={handleEditModalOpen}
+                // onOpen={handleEditModalOpen}
                 sx={{
                     display: "flex",
                     alignItems: "center",

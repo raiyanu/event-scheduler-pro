@@ -127,47 +127,59 @@ export default function TaskDetailPanelProvider({ children }) {
                             {info?.description ? info.description : "--"}
                         </DialogContentText>
                         <Box className="grid grid-cols-2">
-                            <Typography variant="">
-                                <Tooltip title="Difficulty">
-                                    <WorkspacePremium />{" "}
-                                    {info?.difficulty ? info.difficulty : "--"}
-                                </Tooltip>
-                            </Typography>
-                            <Typography variant="">
-                                <Tooltip title="Importance">
-                                    <Ribbon /> {info?.importance ? info.importance : "--"}
-                                </Tooltip>
-                            </Typography>
+                            {info?.difficulty && (
+                                <Typography variant="">
+                                    <Tooltip title="Difficulty">
+                                        <WorkspacePremium />{" "}
+                                        {info?.difficulty ? info.difficulty : "--"}
+                                    </Tooltip>
+                                </Typography>
+                            )}
+                            {info?.importance && (
+                                <Typography variant="">
+                                    <Tooltip title="Importance">
+                                        <Ribbon /> {info?.importance ? info.importance : "--"}
+                                    </Tooltip>
+                                </Typography>
+                            )}
                         </Box>
                         <Box className="grid grid-cols-2">
-                            <Typography variant="">
-                                <Tooltip title="Priority">
-                                    <PushPin /> {info?.priority ? info.priority : "--"}
-                                </Tooltip>
-                            </Typography>
-                            <Typography>
-                                <Tooltip title="Status">
-                                    <HourglassBottom />{" "}
-                                    {info?.status ? friendlyStatus(info.status) : "--"}
-                                </Tooltip>
-                            </Typography>
+                            {info?.priority && (
+                                <Typography variant="">
+                                    <Tooltip title="Priority">
+                                        <PushPin /> {info?.priority ? info.priority : "--"}
+                                    </Tooltip>
+                                </Typography>
+                            )}
+                            {info?.status && (
+                                <Typography>
+                                    <Tooltip title="Status">
+                                        <HourglassBottom />{" "}
+                                        {info?.status ? friendlyStatus(info.status) : "--"}
+                                    </Tooltip>
+                                </Typography>
+                            )}
                         </Box>
-                        <Box className="flex gap-2">
-                            <Tag />
-                            <Box className="flex flex-wrap gap-2">
-                                {info.tags &&
-                                    info.tags.length >= 0 &&
-                                    info.tags.map((tag, index) => (
-                                        <Chip
-                                            label={tag}
-                                            key={index.toString() + "-myTaskElementTags"}
-                                            variant="outlined"
-                                            color="warning"
-                                            size="small"
-                                        />
-                                    ))}
+                        {info?.tags && (
+                            <Box className="flex gap-2">
+                                <Tag />
+                                <Box className="flex flex-wrap gap-2">
+                                    {
+                                        info.tags &&
+                                        info.tags.length >= 0 &&
+                                        info.tags.map((tag, index) => (
+                                            <Chip
+                                                label={tag}
+                                                key={index.toString() + "-myTaskElementTags"}
+                                                variant="outlined"
+                                                color="warning"
+                                                size="small"
+                                            />
+                                        ))
+                                    }
+                                </Box>
                             </Box>
-                        </Box>
+                        )}
                     </DialogContent>
                     <DialogActions className="mt-4 justify-between">
                         <Box className="flex justify-between">
