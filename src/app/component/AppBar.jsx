@@ -15,7 +15,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Theme, themeChangeContext } from "../context/ThemeContext";
-import { Fab, Icon, styled, ThemeProvider } from "@mui/material";
+import { Fab, Icon, styled, ThemeProvider, Tooltip } from "@mui/material";
 import {
     Add,
     CalendarMonth,
@@ -253,35 +253,38 @@ function DrawerAppBar(props) {
                                 },
                             ].map((item, index) => (
                                 <Link href={`/${item && item.segment}`} key={index} className="max-sm:mt-[1rem]">
-                                    <ListItemButton
-                                        title={item.title}
-                                        sx={{
-                                            display: "grid",
-                                            gridTemplateColumns: {
-                                                xs: "1fr",
-                                                md: "24px 1fr",
-                                            },
-                                            gap: "18px",
-                                            m: {
-                                                xs: 0.45,
-                                                md: 0.75,
-                                            },
-                                            padding: {
-                                                xs: "0",
-                                                md: "0.3rem .5rem",
-                                            },
-                                            borderRadius: "8px",
-                                            bgcolor: pathname === `/${item.segment}` ? 'primary.main' : 'transparent',
-                                            "&:hover": {
-                                                bgcolor: "primary.light",
-                                            },
-                                        }}
-                                    >
-                                        <IconButton disableRipple>{item.icon}</IconButton>
-                                        <ListItemText sx={{
-                                            display: { xs: "none", md: "block" },
-                                        }} primary={item.title} />
-                                    </ListItemButton>
+                                    <Tooltip title={item.title} placement="right">
+
+                                        <ListItemButton
+                                            sx={{
+                                                display: "grid",
+                                                gridTemplateColumns: {
+                                                    xs: "1fr",
+                                                    md: "24px 1fr",
+                                                },
+                                                gap: "18px",
+                                                m: {
+                                                    xs: 0.45,
+                                                    md: 0.75,
+                                                },
+                                                padding: {
+                                                    xs: "0",
+                                                    md: "0.3rem .5rem",
+                                                },
+                                                borderRadius: "8px",
+                                                bgcolor: pathname === `/${item.segment}` ? 'primary.main' : 'transparent',
+                                                "&:hover": {
+                                                    bgcolor: "primary.light",
+                                                },
+                                            }}
+                                        >
+                                            <IconButton disableRipple>{item.icon}</IconButton>
+                                            <ListItemText sx={{
+                                                display: { xs: "none", md: "block" },
+                                            }} primary={item.title} />
+                                        </ListItemButton>
+                                    </Tooltip>
+
                                 </Link>
                             ))}
                         </Box>
