@@ -1,5 +1,4 @@
 "use client";
-import Button from "@mui/material/Button";
 import {
   Autocomplete,
   Avatar,
@@ -7,28 +6,18 @@ import {
   Box,
   Divider,
   IconButton,
-  InputAdornment,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  styled,
+  InputAdornment, Skeleton, styled,
   TextField,
   Tooltip,
-  Typography,
+  Typography
 } from "@mui/material";
 import MainLayout from "../PrimaryLayout";
 import {
-  AccountCircle,
-  Email,
-  Logout,
-  Notifications,
-  PersonAdd,
-  Search,
-  Settings,
+  Email, Notifications, Search
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { getUser } from "../redux/slice/userSlice";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TaskList from "../component/TaskContainer";
 import useOnScrollShowScrollbar from "../hooks/useOnScrollShowScrollbar";
 import { AddTaskLineCard } from "../component/AddTask";
@@ -75,14 +64,18 @@ export const WelcomeMessage = () => {
   const userInfo = useSelector(getUser);
   const tasks = useSelector((state) => state.TASK.tasks);
   const taskCount = tasks.length;
+  const userLoadingStatus = useSelector((state) => state.AUTH.authenticatingState);
 
   return (
     <Box className="space-y-2 max-sm:hidden">
       <Typography variant="h6" color="primary" className="font-semibold">
-        Hey {userInfo.displayName?.split(" ")[0]}! 👋
+        {userInfo.displayName ? `Hey ${userInfo.displayName?.split(" ")?.[0]}! 👋` :
+          <Skeleton variant="text" width={200} height={30} />}
       </Typography>
       <Typography className="text-3xl font-bold text-gray-200">
-        {taskCount > 0 ? `You have ${taskCount} tasks waiting!` : "No tasks for now!"}
+        {
+          taskCount > 0 ? `You have ${taskCount} tasks waiting!` : userLoadingStatus === "loading" ? "Loading..." : ""
+        }
       </Typography>
     </Box>
   );

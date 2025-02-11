@@ -1,5 +1,5 @@
 import { onAuthStateChanged } from "firebase/auth";
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { extractUserInfo, logout, updateUser } from "./redux/slice/userSlice";
 import { auth, getUserFullInfo } from "@/config/firebase";
@@ -32,5 +32,11 @@ export default function GlobalActionProvider({ children }) {
             }
         })();
     }, []);
-    return (<>{children}</>)
+    return (
+        <>
+            <Suspense fallback={<div>Loading...</div>}>
+                {children}
+            </Suspense>
+        </>
+    )
 }

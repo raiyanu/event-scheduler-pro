@@ -7,7 +7,6 @@ function MyApp({ Component, pageProps }) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        // Initialize Firebase auth state listener
         dispatch(authStateChanged());
     }, [dispatch]);
     console.log("Hey there")

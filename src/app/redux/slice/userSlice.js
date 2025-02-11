@@ -147,7 +147,6 @@ export const isLogged = (state) => {
 export function extractUserInfo(userData) {
     const userInfo = {
         displayName: userData.displayName ? userData.displayName : null,
-
         photoURL: userData.providerData[0].photoURL,
         emailVerified: !!userData.emailVerified,
         uid: userData?.uid ? userData.uid : null,
@@ -160,6 +159,7 @@ export function extractUserInfo(userData) {
         secondMail: userData?.secondMail ? userData.secondMail : null,
         phone: userData?.phone ? userData.phone : null,
     };
+    console.log(userInfo);
     return userInfo;
 }
 
