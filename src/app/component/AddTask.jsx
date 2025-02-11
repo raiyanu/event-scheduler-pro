@@ -515,12 +515,12 @@ export const TaskForm = ({ formik }) => {
                         <FormControlLabel
                             value="to-start"
                             control={<Radio />}
-                            label="To Start"
+                            label="To start"
                         />
                         <FormControlLabel
                             value="progress"
                             control={<Radio />}
-                            label="progress"
+                            label="Progress"
                         />
                         <FormControlLabel value="done" control={<Radio />} label="Done" />
                     </RadioGroup>

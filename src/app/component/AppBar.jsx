@@ -81,9 +81,9 @@ function DrawerAppBar(props) {
                         xs: 0,
                         sm: "initial",
                     },
-                    bgcolor: "primary.main",
-                    color: "black",
+                    bgcolor: "background.default",
                     zIndex: (theme) => theme.zIndex.drawer + 1,
+                    borderBottom: themeMode === "light" ? "" : "1px solid rgba(255, 255, 255, 0.12)",
                 }}
             >
                 <Toolbar sx={{ display: { xs: "flex", sm: "none" } }}>

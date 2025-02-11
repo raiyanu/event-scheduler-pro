@@ -35,7 +35,7 @@ const VisuallyHiddenInput = styled('input')({
 export default function page() {
     return (
         <MainLayout>
-            <Box className="h-screen overflow-y-scroll p-2 lg:p-3">
+            <Box className="max-h-full overflow-y-scroll p-2 pb-12 lg:p-3">
                 <Typography
                     sx={{
                         color: "primary.main",
@@ -79,14 +79,12 @@ const UserSettings = () => {
         },
     ];
     return (
-        <Typography
-            sx={{
+        <>
+            {!isLogged ? (<Typography sx={{
                 color: "primary.main",
             }}
-            variant="h6"
-        >
-            {!isLogged ? (<Typography>Login to continue</Typography>) : (
-                <Box className="mx-2 h-full lg:mx-8">
+                variant="h6">Login to continue</Typography>) : (
+                <Box className="mx-2 h-max lg:mx-8">
                     <Typography variant="subtitle1" color="textSecondary" className="my-4">
                         Account Information
                     </Typography>
@@ -229,7 +227,7 @@ const UserSettings = () => {
                     </Box>
                 </Box>
             )}
-        </Typography>
+        </>
     );
 };
 

@@ -55,7 +55,7 @@ export default function Home() {
   const [scrollContainerRef, isscrolling] = useOnScrollShowScrollbar(Box);
   return (
     <MainLayout>
-      <Box className="flex flex-col-reverse gap-8 lg:grid lg:grid-cols-[1fr_1fr] lg:gap-2">
+      <Box className="flex max-h-full flex-col-reverse gap-8 overflow-y-scroll lg:grid lg:grid-cols-[1fr_1fr] lg:gap-2">
         <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? true : undefined} className="relative py-3 lg:px-3">
           <WelcomeMessage />
           <TaskList />
@@ -107,10 +107,7 @@ export const ProfileLineCard = () => {
   const userInfo = useSelector(getUser);
   return (
     <>
-      <Box
-        sx={{}}
-        className="my-4 flex items-center gap-2 rounded-xl px-4 py-2"
-      >
+      <Box className="my-4 flex items-center gap-2 rounded-xl px-4 py-2">
         <Box className="flex h-16 w-16 items-center gap-4 rounded-full p-0">
           {userInfo?.photoURL ? (
             <img

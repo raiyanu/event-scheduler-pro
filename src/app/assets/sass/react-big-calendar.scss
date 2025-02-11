@@ -369,6 +369,7 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-selected-cell {
 	background-color: var(--mui-palette-action-hover);
+	cursor: move;
 }
 
 .rbc-show-more {
@@ -633,7 +634,7 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-day-slot .rbc-event,
 .rbc-day-slot .rbc-background-event {
-	border: 1px solid #7c5900;
+	border: 1px solid var(--mui-palette-divider);
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
@@ -893,5 +894,15 @@ button.rbc-input::-moz-focus-inner {
 
 .rbc-toolbar button:hover {
 	color: var(--mui-palette-primary-main);
+}
+
+.rbc-current button {
+	background-color: var(--mui-palette-primary-p4);
+	color: var(--mui-palette-primary-contrastText);
+	border-radius: 50%;
+	height: fit-content;
+	width: auto;
+	padding: 2px 5px;
+	aspect-ratio: 1/1;
 }
 /*# sourceMappingURL=react-big-calendar.css.map */

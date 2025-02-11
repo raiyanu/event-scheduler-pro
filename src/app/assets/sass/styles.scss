@@ -14,7 +14,7 @@
 	border-radius: 10px;
 }
 ::selection {
-	background-color: #ffb904;
+	background-color: var(--mui-palette-primary-main);
 }
 
 .rbc-calendar {
