@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, memo } from "react";
+import { useEffect, useState, memo, useContext } from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -32,6 +32,7 @@ import {
     signInWithPopup,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { themeChangeContext } from "../context/ThemeContext";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -79,11 +80,18 @@ export function Auth() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+    const { toggleTheme, themeMode } = useContext(themeChangeContext);
+    "bg-[linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.3)),url(/bg-frame.svg)]"
     return (
-        <Box className="flex h-screen w-screen items-center justify-start bg-[url(/bg-frame.svg)] bg-cover bg-center bg-no-repeat text-black dark:text-white">
+        <Box
+            sx={{
+                background: themeMode == 'dark' ? "" : "url('/bg-frame.svg')",
+                bgcolor: themeMode == 'dark' ? "secondary.main" : "",
+            }}
+            className={`flex h-screen w-screen items-center justify-start bg-cover bg-center bg-no-repeat text-black dark:text-white`}>
             <Box
-                sx={{ width: "300px", marginInline: "auto", height: "530px" }}
-                className="rounded-lg bg-white p-4 shadow-2xl"
+                sx={{ width: "300px", marginInline: "auto", height: "530px", bgcolor: "background.paper" }}
+                className="rounded-lg p-4 shadow-2xl"
             >
                 <Box>
                     <Tabs
@@ -114,8 +122,8 @@ const Login = memo(() => {
     );
     const formik = useFormik({
         initialValues: {
-            email: "abc@gmail.com",
-            password: "123123",
+            email: "ray3@gmail.com",
+            password: "ray123",
         },
         onSubmit: async (values) => {
             console.log(JSON.stringify(values, null, 2));
@@ -194,7 +202,7 @@ const SignUp = memo(() => {
     );
     const formik = useFormik({
         initialValues: {
-            email: "ray@gmail.com",
+            email: "ray3@gmail.com",
             password: "ray123",
             confirmPassword: "ray123",
             username: "ray",
@@ -384,8 +392,8 @@ const ForgottedPassword = () => {
         <>
             <Button
                 className="m-0 ml-auto p-0 text-right"
-                color="secondary"
                 variant="caption"
+                sx={{ color: "primary.contrastText" }}
                 onClick={handleClickOpen}
             >
                 Forgot password?

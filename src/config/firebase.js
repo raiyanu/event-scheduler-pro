@@ -144,7 +144,6 @@ export const isUsernameTaken = async (username) => {
     console.log(usernameSnap);
     console.log(usernameSnap.data());
     console.log(usernameSnap.exists())
-    console.log(usernameSnap.exists);
     return usernameSnap.exists() ? true : false; // Explicitly return false if the document does not exist
 };
 
