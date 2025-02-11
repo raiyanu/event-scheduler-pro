@@ -276,10 +276,8 @@ export const AddTaskButton = () => {
             variant="contained"
             className="px-3 py-2"
         >
-            <Add className="fill-white text-xl" />
-            <Typography variant="button" className="text-white">
-                Add Task
-            </Typography>
+            <Add className="text-xl" />
+            Add Task
         </Button>
     );
 };

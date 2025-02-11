@@ -32,13 +32,14 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { AddTaskButton, TaskCrudDrawerContext } from "./AddTask";
 const drawerWidth = 200;
 const navItems = ["Home", "About", "Contact"];
 
 const StyledFab = styled(Fab)({
     position: "absolute",
     zIndex: 1,
-    top: -30,
+    top: -20,
     left: 0,
     right: 0,
     margin: "0 auto",
@@ -59,6 +60,8 @@ function DrawerAppBar(props) {
             setMobileOpen(!mobileOpen);
         }
     };
+    const { toggleDrawer, setTask } = React.useContext(TaskCrudDrawerContext);
+
 
     const container =
         window !== undefined ? () => window().document.body : undefined;
@@ -96,7 +99,10 @@ function DrawerAppBar(props) {
                     >
                         <Menu />
                     </IconButton>
-                    <StyledFab color="secondary" aria-label="add">
+                    <StyledFab color="secondary" aria-label="add" onClick={() => {
+                        toggleDrawer(true, event);
+                        setTask(null);
+                    }}>
                         <AddIcon />
                     </StyledFab>
                     <Box sx={{ flexGrow: 1 }} />
@@ -124,14 +130,13 @@ function DrawerAppBar(props) {
                             ES<sup className="-top-4 text-xs">Pro</sup>
                         </Typography>
                     </Link>
-                    <Box>
+                    <Box className="flex gap-3">
                         <IconButton color="" onClick={toggleTheme}>
                             {
                                 themeMode === "light" ? <DarkMode /> : <LightMode />
                             }
                         </IconButton>
-                        <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                        </Box>
+                        <AddTaskButton />
                     </Box>
                 </Toolbar>
             </AppBar>

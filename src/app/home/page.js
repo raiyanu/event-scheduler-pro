@@ -56,7 +56,6 @@ export default function Home() {
 export const MainHeroSection = () => (
   <>
     <ProfileLineCard />
-    <AddTaskLineCard />
   </>
 );
 

@@ -980,6 +980,19 @@
     clsx "^2.1.1"
     prop-types "^15.8.1"
 
+"@mui/base@5.0.0-beta.69":
+  version "5.0.0-beta.69"
+  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-beta.69.tgz#fc3635818c6a9fb954b1ee00870109e7e266149d"
+  integrity sha512-r2YyGUXpZxj8rLAlbjp1x2BnMERTZ/dMqd9cClKj2OJ7ALAuiv/9X5E9eHfRc9o/dGRuLSMq/WTjREktJVjxVA==
+  dependencies:
+    "@babel/runtime" "^7.26.0"
+    "@floating-ui/react-dom" "^2.1.1"
+    "@mui/types" "^7.2.21"
+    "@mui/utils" "^6.4.1"
+    "@popperjs/core" "^2.11.8"
+    clsx "^2.1.1"
+    prop-types "^15.8.1"
+
 "@mui/core-downloads-tracker@^6.4.3":
   version "6.4.3"
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-6.4.3.tgz#aa9506e4d43e02d61fb82e23de9741fd24b22b61"
@@ -1005,7 +1018,20 @@
     clsx "^2.1.1"
     prop-types "^15.8.1"
 
-"@mui/material@^6.4.1":
+"@mui/lab@^6.0.0-beta.26":
+  version "6.0.0-beta.26"
+  resolved "https://registry.yarnpkg.com/@mui/lab/-/lab-6.0.0-beta.26.tgz#0e6310039d34b16db3ad7da07ef3fb5a94172916"
+  integrity sha512-auu2dXp6jslzW4Cp0tfYWv0xO9FmuwROsjyWcB9wPlAsEoWhh5N1FW8dqESDwaSKqFz5LwV+Y2vsYjYsYX9aOw==
+  dependencies:
+    "@babel/runtime" "^7.26.0"
+    "@mui/base" "5.0.0-beta.69"
+    "@mui/system" "^6.4.3"
+    "@mui/types" "^7.2.21"
+    "@mui/utils" "^6.4.3"
+    clsx "^2.1.1"
+    prop-types "^15.8.1"
+
+"@mui/material@^6.4.3":
   version "6.4.3"
   resolved "https://registry.yarnpkg.com/@mui/material/-/material-6.4.3.tgz#18cb003b6526bf4b3ad6f2bb46ab53154a51b19f"
   integrity sha512-ubtQjplbWneIEU8Y+4b2VA0CDBlyH5I3AmVFGmsLyDe/bf0ubxav5t11c8Afem6rkSFWPlZA2DilxmGka1xiKQ==
@@ -1075,7 +1101,7 @@
     prop-types "^15.8.1"
     react-is "^19.0.0"
 
-"@mui/utils@^5.16.6 || ^6.0.0", "@mui/utils@^6.3.0", "@mui/utils@^6.3.1", "@mui/utils@^6.4.3":
+"@mui/utils@^5.16.6 || ^6.0.0", "@mui/utils@^6.3.0", "@mui/utils@^6.3.1", "@mui/utils@^6.4.1", "@mui/utils@^6.4.3":
   version "6.4.3"
   resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-6.4.3.tgz#e08bc3a5ae1552a48dd13ddc7c65e3eebdb4cd58"
   integrity sha512-jxHRHh3BqVXE9ABxDm+Tc3wlBooYz/4XPa0+4AI+iF38rV1/+btJmSUgG4shDtSWVs/I97aDn5jBCt6SF2Uq2A==
