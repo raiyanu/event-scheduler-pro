@@ -61,7 +61,6 @@ const CustomListContainer = styled(List)({
     overflowY: "scroll",
 });
 
-
 export default function TaskContainer() {
     const isLoading = useSelector((state) => state.TASK.taskLoading);
     return (
@@ -138,7 +137,6 @@ export function TaskList() {
     );
 }
 
-
 export const MyListItem = ({ info }) => {
     const [open, setOpen] = useState(false);
     const theme = useTheme();
@@ -170,9 +168,9 @@ export const MyListItem = ({ info }) => {
             <ListItem alignItems="flex-start" className="p-0">
                 <ListItemButton onClick={() => {
                     setOpen(true)
-                }}>
+                }} className="rounded-md">
                     <ListItemAvatar>
-                        {info.icon ? <Avatar>{info.icon}</Avatar> : <Avatar alt={info.Name} />}
+                        {info.icon ? <Avatar>{info.icon} </Avatar> : <Avatar alt={info.Name} />}
                     </ListItemAvatar>
                     <ListItemText
                         primary={< Typography
@@ -493,7 +491,6 @@ export const TaskDeleteModal = ({ DeleteActionModal, handleDeleteActionModalClos
     </Modal>)
 }
 
-
 export const UpdateTask = ({ task, handleEditModalClose }) => {
     const dispatch = useDispatch();
     const formik = useFormik({
@@ -624,7 +621,6 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
         </>
     );
 };
-
 
 function sortTasksByCreatedAt(tasks) {
     const sortedTasks = [...tasks].sort((a, b) => {
