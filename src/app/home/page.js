@@ -51,12 +51,12 @@ export default function Home() {
   const [scrollContainerRef2, isscrolling2] = useOnScrollShowScrollbar(Box);
   return (
     <MainLayout>
-      <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 max-md:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
-        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? true : undefined} className="relative py-4 lg:px-4">
+      <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 max-lg:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
+        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : undefined} className="relative py-4 lg:px-4">
           <WelcomeMessage />
           <TaskList />
         </CustomContainer>
-        <CustomContainer ref={scrollContainerRef2} isscrolling={isscrolling2 ? true : undefined} className="relative py-4 lg:px-4">
+        <CustomContainer ref={scrollContainerRef2} isscrolling={isscrolling2 ? 'true' : undefined} className="relative py-4 lg:px-4">
           <MainHeroSection />
         </CustomContainer>
       </Box>
@@ -94,7 +94,7 @@ export const ProfileLineCard = () => {
   const userInfo = useSelector(getUser);
 
   return (
-    <Box className="my-4 flex items-center gap-4 rounded-xl p-4 shadow-md" bgcolor={"background.b6"}>
+    <Box className="my-4 flex items-center gap-4 rounded-xl p-4 shadow-md" bgcolor={"background.b8"}>
       <Avatar src={userInfo?.photoURL || ""} alt="Profile" className="h-16 w-16" />
       <Box className="flex-1">
         <Typography variant="h6">{userInfo?.displayName}</Typography>

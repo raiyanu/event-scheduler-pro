@@ -1,16 +1,13 @@
 @import "./variables";
 @import "./reset";
 
-:root {
-	// --mui-palette-background-paper: #fff;
-}
 ::-webkit-scrollbar {
 	width: 5px;
-	background-color: rgba(128, 128, 128, 0.233);
+	background-color: var(--mui-palette-background-paper);
 	border-radius: 5px;
 }
 ::-webkit-scrollbar-thumb {
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: var(--mui-palette-primary-main);
 	border-radius: 10px;
 }
 ::selection {
