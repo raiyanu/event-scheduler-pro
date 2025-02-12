@@ -222,9 +222,10 @@ export default function CalendarMain() {
           onDragOverFromOutside={customOnDragOverFromOutside}
           onEventDrop={moveEvent}
           onEventResize={resizeEvent}
-          onSelectEvent={handleSelectEvent}
           onSelectSlot={handleSlotSelect}
-          onDoubleClickEvent={newEvent}
+          onDoubleClickEvent={handleSelectEvent}
+          onSelecting={event => console.log(event)}
+          // onSelectEvent={handleSelectEvent}
           resizable
           selectable
           popup
