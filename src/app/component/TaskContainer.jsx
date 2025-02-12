@@ -370,12 +370,12 @@ export const MyListItem = ({ info }) => {
                                         },
                                     }}
                                 >
-                                    {info?.status ? friendlyStatus(info.status) : "--"}
+                                    Status
                                 </InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    label={info?.status ? friendlyStatus(info.status) : "--"}
+                                    label="Status"
                                     value={markdown}
                                     defaultValue={info?.status ? friendlyStatus(info.status) : "--"}
                                     onChange={(e) => setMarkdown(e.target.value)}
