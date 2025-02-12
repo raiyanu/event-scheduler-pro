@@ -4,17 +4,19 @@ import { useEffect, useRef, useState } from "react";
 export default function useOnScrollShowScrollbar() {
     const scrollContainerRef = useRef(null);
     const [isscrolling, setIsScrolling] = useState(false);
-    const scrollTimeout = useRef(null); // Store timeout reference
+    let scrollTimeout = useRef(null);
 
     const handleScroll = () => {
+        console.log("handleScroll: ");
         setIsScrolling(true);
-        if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-        scrollTimeout.current = setTimeout(() => {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
             setIsScrolling(false);
         }, 1000);
     };
 
     useEffect(() => {
+        console.log("useOnScrollShowScrollbar: ", scrollContainerRef);
         const scrollContainer = scrollContainerRef.current;
         if (!scrollContainer) return;
 
@@ -24,7 +26,7 @@ export default function useOnScrollShowScrollbar() {
             scrollContainer.removeEventListener("scroll", handleScroll);
             if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
         };
-    }, []);
+    }, [scrollContainerRef]);
 
     return [scrollContainerRef, isscrolling];
 }

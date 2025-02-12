@@ -29,6 +29,7 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { addTasks } from "../redux/slice/taskSlice";
+import { themeChangeContext } from "../context/ThemeContext";
 
 export function AddTaskLineCard() {
     const [date, setDate] = useState(null);
@@ -310,6 +311,7 @@ export const TaskForm = ({ formik }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const { themeMode } = useContext(themeChangeContext)
     return (
         <form onSubmit={formik.handleSubmit} className="grid gap-7 p-2">
             <Box sx={{ display: "flex", alignItems: "flex-end" }}>
@@ -344,6 +346,7 @@ export const TaskForm = ({ formik }) => {
                                 setEmojiState(false);
                                 handleClose();
                             }}
+                            theme={themeMode === "light" ? "light" : "dark"}
                         />
                     </Menu>
                 </Box>

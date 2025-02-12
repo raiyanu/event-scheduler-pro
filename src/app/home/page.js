@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import MainLayout from "../PrimaryLayout";
 import {
-  Email, Notifications, Search
+  Email, MoreVert, Notifications, Search
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { getUser } from "../redux/slice/userSlice";
@@ -26,7 +26,7 @@ const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
   [theme.breakpoints.up("md")]: {
     maxHeight: "calc(100vh - 5rem)",
     overflowY: "scroll",
-    scrollbarWidth: isscrolling ? "" : "none",
+    scrollbarWidth: isscrolling == 'true' ? "" : "none",
     scrollbarBaseColor: "red",
     "&::-webkit-scrollbar": {
       width: isscrolling ? "7px" : "0px",
@@ -36,17 +36,16 @@ const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
 }));
 
 export default function Home() {
-  const [scrollContainerRef, isscrolling] = useOnScrollShowScrollbar(Box);
-  const [scrollContainerRef2, isscrolling2] = useOnScrollShowScrollbar(Box);
+  const [scrollContainerRef, isscrolling] = useOnScrollShowScrollbar();
+  const [scrollContainerRef2, isscrolling2] = useOnScrollShowScrollbar();
   return (
     <MainLayout>
       <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 sm:px-2 md:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
-        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : undefined} className="relative py-4 lg:px-4">
+        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : 'false'} className="relative py-4 lg:px-4">
           <WelcomeMessage />
           <TaskList />
         </CustomContainer>
-        <CustomContainer ref={scrollContainerRef2} isscrolling={isscrolling2 ? 'true' : undefined} className="relative py-4 lg:px-4">
-          <MainHeroSection />
+        <CustomContainer ref={scrollContainerRef2} isscrolling={isscrolling ? 'true' : 'false'} className="relative py-4 lg:px-4">
         </CustomContainer>
       </Box>
     </MainLayout>
@@ -67,11 +66,11 @@ export const WelcomeMessage = () => {
 
   return (
     <Box className="space-y-2 max-sm:hidden">
-      <Typography variant="h6" color="primary" className="font-semibold">
+      <Typography variant="body1" color="primary" className="font-semibold">
         {userInfo.displayName ? `Hey ${userInfo.displayName?.split(" ")?.[0]}! 👋` :
           <Skeleton variant="text" width={200} height={30} />}
       </Typography>
-      <Typography className="text-3xl font-bold text-gray-200">
+      <Typography className="text-2xl font-bold opacity-75">
         {
           taskCount > 0 ? `You have ${taskCount} tasks waiting!` : userLoadingStatus === "loading" ? "Loading..." : ""
         }
@@ -93,18 +92,9 @@ export const ProfileLineCard = () => {
         <Typography variant="body2" color="textSecondary">{userInfo?.email}</Typography>
       </Box>
       <Box className="flex gap-3">
-        <Tooltip title="Notifications">
-          <IconButton>
-            <Badge variant="dot" color="primary">
-              <Notifications />
-            </Badge>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Messages">
-          <IconButton>
-            <Email />
-          </IconButton>
-        </Tooltip>
+        <IconButton>
+          <MoreVert />
+        </IconButton>
       </Box>
     </Box>
   );

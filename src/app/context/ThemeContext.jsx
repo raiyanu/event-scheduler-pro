@@ -14,7 +14,7 @@ export const Theme = createTheme({
             contrastText: colors.common.black, // White for text on primary
         },
         secondary: {
-            main: colors.yellow[500], // Gray
+            main: colors.yellow[800], // Gray
             contrastText: colors.common.black, // White for text on secondary
         },
         success: {
@@ -27,7 +27,7 @@ export const Theme = createTheme({
             main: colors.blue[500], // Blue
         },
         error: {
-            main: colors.purple[500], // Purple
+            main: colors.red[500], // Purple
         },
         background: {
             default: colors.common.white, // White background
@@ -159,7 +159,9 @@ export const darkTheme = createTheme({
 export const themeChangeContext = createContext();
 
 export const MyThemeProvider = ({ children }) => {
-    const [themeMode, setThemeMode] = useState('dark');
+    const [themeMode, setThemeMode] = useState(() => {
+        return 'dark';
+    });
 
     useEffect(() => {
         setThemeMode(localStorage.getItem('themeMode') || 'dark');

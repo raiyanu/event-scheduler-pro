@@ -81,7 +81,7 @@ export default function TaskContainer() {
             >
                 <CircularProgress sx={(theme) => ({ color: "orange" })} />
             </Backdrop>
-            <Typography variant="h3" className="font-semibold">
+            <Typography variant="h4" className="font-semibold">
                 Your tasks
             </Typography>
             <Box
@@ -121,15 +121,27 @@ export function TaskList() {
             sx={{
                 width: "100%",
                 bgcolor: "background.paper",
-                minHeight: "120px",
+                minHeight: {
+                    xs: "fit-content",
+                    sm: "fit-content",
+                    md: "120px",
+                },
                 marginInline: "auto",
+                pr: 1
             }}
         >
             {sortedTasks.map((task, index) => (
                 <Fragment key={index}>
                     <MyListItem info={task} />
                     {index < tasks.length - 1 && (
-                        <Divider variant="inset" component="li" />
+                        <Divider variant="inset" component="li"
+                            sx={{
+                                maxWidth: "90%",
+                                width: "100%",
+                                marginInline: "auto",
+                                marginInline: "auto",
+                            }}
+                        />
                     )}
                 </Fragment>
             ))}
@@ -158,6 +170,10 @@ export const MyListItem = ({ info }) => {
     const [markdown, setMarkdown] = useState("");
     const [date, setDate] = useState("");
     const fullScreen = useMediaQuery(theme.breakpoints.up("300px"));
+
+    useEffect(() => {
+        setMarkdown(info.status);
+    }, [open])
 
     useEffect(() => {
         setDate(FriendlyDate(info.startTime));
