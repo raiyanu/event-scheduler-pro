@@ -64,7 +64,7 @@ const CustomListContainer = styled(List)({
 export default function TaskContainer() {
     const isLoading = useSelector((state) => state.TASK.taskLoading);
     return (
-        <Box className="relative mt-8 grid grid-cols-1 gap-4 px-2 lg:px-0">
+        <Box className="relative mt-8 grid grid-cols-1 gap-4 lg:px-0">
             <Backdrop
                 sx={(theme) => ({
                     zIndex: theme.zIndex.drawer + 1,

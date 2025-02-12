@@ -40,13 +40,13 @@ export default function Home() {
   const [isscrolling2, scrollContainerRef2, handleScroll2] = useOnScrollShowScrollbar();
   return (
     <MainLayout>
-      <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 sm:px-2 md:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
+      <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 max-md:px-3 sm:px-2 md:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
         <CustomContainer onScroll={handleScroll} ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : 'false'} className="relative py-4 lg:px-4">
           <WelcomeMessage />
           <TaskList />
         </CustomContainer>
-        <CustomContainer onScroll={handleScroll2} ref={scrollContainerRef2} isscrolling={isscrolling2 ? 'true' : 'false'} className="relative py-4 lg:px-4">
-        </CustomContainer>
+        {/* <CustomContainer onScroll={handleScroll2} ref={scrollContainerRef2} isscrolling={isscrolling2 ? 'true' : 'false'} className="relative py-4 lg:px-4">
+        </CustomContainer> */}
       </Box>
     </MainLayout>
   );
@@ -65,7 +65,7 @@ export const WelcomeMessage = () => {
   const userLoadingStatus = useSelector((state) => state.AUTH.authenticatingState);
 
   return (
-    <Box className="space-y-2 max-sm:hidden">
+    <Box className="space-y-2">
       <Typography variant="body1" color="primary" className="font-semibold">
         {userInfo.displayName ? `Hey ${userInfo.displayName?.split(" ")?.[0]}! 👋` :
           <Skeleton variant="text" width={200} height={30} />}
