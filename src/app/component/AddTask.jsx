@@ -362,7 +362,6 @@ export const TaskForm = ({ formik }) => {
                     helpertext={formik.touched.title && formik.errors.title}
                 />
             </Box>
-
             <TextField
                 fullWidth
                 id="description"
@@ -375,53 +374,7 @@ export const TaskForm = ({ formik }) => {
                 helpertext={formik.touched.description && formik.errors.description}
                 multiline
                 maxRows={6}
-            />
-            <Box className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-                <FormControl variant="standard" sx={{}}>
-                    <InputLabel id="demo-simple-select-standard-label">
-                        Priority
-                    </InputLabel>
-                    <Select
-                        labelId="demo-simple-select-standard-label"
-                        id="demo-simple-select-standard"
-                        value={formik.values.priority}
-                        onChange={formik.handleChange}
-                        label="Priority"
-                        name="priority"
-                    >
-                        <MenuItem value={null}>none</MenuItem>
-                        <MenuItem value={"low"}>low</MenuItem>
-                        <MenuItem value={"casual"}>casual</MenuItem>
-                        <MenuItem value={"medium"}>medium</MenuItem>
-                        <MenuItem value={"high"}>high</MenuItem>
-                    </Select>
-                </FormControl>
-                <FormControl variant="standard" sx={{}}>
-                    <InputLabel id="demo-simple-select-standard-label">
-                        Importance
-                    </InputLabel>
-                    <Select
-                        id="importance"
-                        name="importance"
-                        variant="standard"
-                        label="Importance"
-                        value={formik.values.importance}
-                        onChange={formik.handleChange}
-                        error={
-                            formik.touched.importance && Boolean(formik.errors.importance)
-                        }
-                        helpertext={formik.touched.importance && formik.errors.importance}
-                    >
-                        <MenuItem value={null}>none</MenuItem>
-                        <MenuItem value={"low"}>low</MenuItem>
-                        <MenuItem value={"medium"}>medium</MenuItem>
-                        <MenuItem value={"high"}>high</MenuItem>
-                        <MenuItem value={"critical"}>critical</MenuItem>
-                    </Select>
-                </FormControl>
-            </Box>
-            <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2"></Box>
-            <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
+            /><Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
                 <DateTimePicker
                     // disablePast T// ODO: enable this feature depending on the task status
                     name="startTime"
@@ -472,6 +425,51 @@ export const TaskForm = ({ formik }) => {
                     }}
                 />
             </Box>
+            <Box className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                <FormControl variant="standard" className="lg:col-start-2">
+                    <InputLabel id="demo-simple-select-standard-label">
+                        Priority
+                    </InputLabel>
+                    <Select
+                        labelId="demo-simple-select-standard-label"
+                        id="demo-simple-select-standard"
+                        value={formik.values.priority}
+                        onChange={formik.handleChange}
+                        label="Priority"
+                        name="priority"
+                    >
+                        <MenuItem value={null}>none</MenuItem>
+                        <MenuItem value={"low"}>low</MenuItem>
+                        <MenuItem value={"casual"}>casual</MenuItem>
+                        <MenuItem value={"medium"}>medium</MenuItem>
+                        <MenuItem value={"high"}>high</MenuItem>
+                    </Select>
+                </FormControl>
+                {/* <FormControl variant="standard" sx={{}}>
+                    <InputLabel id="demo-simple-select-standard-label">
+                        Importance
+                    </InputLabel>
+                    <Select
+                        id="importance"
+                        name="importance"
+                        variant="standard"
+                        label="Importance"
+                        value={formik.values.importance}
+                        onChange={formik.handleChange}
+                        error={
+                            formik.touched.importance && Boolean(formik.errors.importance)
+                        }
+                        helpertext={formik.touched.importance && formik.errors.importance}
+                    >
+                        <MenuItem value={null}>none</MenuItem>
+                        <MenuItem value={"low"}>low</MenuItem>
+                        <MenuItem value={"medium"}>medium</MenuItem>
+                        <MenuItem value={"high"}>high</MenuItem>
+                        <MenuItem value={"critical"}>critical</MenuItem>
+                    </Select>
+                </FormControl> */}
+            </Box>
+
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
                 <FormControl>
                     <FormLabel id="demo-row-radio-buttons-group-label">
