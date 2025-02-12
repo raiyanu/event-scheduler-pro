@@ -1,16 +1,16 @@
-import { styled } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
 export default function useOnScrollShowScrollbar() {
     const scrollContainerRef = useRef(null);
+
     const [isscrolling, setIsScrolling] = useState(false);
     let scrollTimeout = useRef(null);
 
     const handleScroll = () => {
         console.log("handleScroll: ");
         setIsScrolling(true);
-        if (scrollTimeout) clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
+        if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+        scrollTimeout.current = setTimeout(() => {
             setIsScrolling(false);
         }, 1000);
     };
@@ -28,5 +28,5 @@ export default function useOnScrollShowScrollbar() {
         };
     }, [scrollContainerRef]);
 
-    return [scrollContainerRef, isscrolling];
+    return [isscrolling, scrollContainerRef, handleScroll];
 }

@@ -17,7 +17,7 @@ import {
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { getUser } from "../redux/slice/userSlice";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TaskList from "../component/TaskContainer";
 import useOnScrollShowScrollbar from "../hooks/useOnScrollShowScrollbar";
 import { AddTaskLineCard } from "../component/AddTask";
@@ -36,16 +36,16 @@ const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
 }));
 
 export default function Home() {
-  const [scrollContainerRef, isscrolling] = useOnScrollShowScrollbar();
-  const [scrollContainerRef2, isscrolling2] = useOnScrollShowScrollbar();
+  const [isscrolling, scrollContainerRef, handleScroll] = useOnScrollShowScrollbar();
+  const [isscrolling2, scrollContainerRef2, handleScroll2] = useOnScrollShowScrollbar();
   return (
     <MainLayout>
       <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 sm:px-2 md:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
-        <CustomContainer ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : 'false'} className="relative py-4 lg:px-4">
+        <CustomContainer onScroll={handleScroll} ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : 'false'} className="relative py-4 lg:px-4">
           <WelcomeMessage />
           <TaskList />
         </CustomContainer>
-        <CustomContainer ref={scrollContainerRef2} isscrolling={isscrolling ? 'true' : 'false'} className="relative py-4 lg:px-4">
+        <CustomContainer onScroll={handleScroll2} ref={scrollContainerRef2} isscrolling={isscrolling2 ? 'true' : 'false'} className="relative py-4 lg:px-4">
         </CustomContainer>
       </Box>
     </MainLayout>
