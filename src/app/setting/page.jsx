@@ -110,7 +110,7 @@ const UserSettings = () => {
             <Typography>Login to continue</Typography>
         </Box>
     ) : (
-        <form onSubmit={formik.submitForm} className="max-h-full overflow-y-scroll px-3 pb-24 md:px-6">
+        <form onSubmit={formik.submitForm} className="block max-h-full overflow-y-scroll px-3 pb-24 max-sm:mx-auto md:px-6">
             <Typography
                 sx={{
                     color: "primary.main",

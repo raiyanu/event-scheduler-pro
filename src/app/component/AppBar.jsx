@@ -6,33 +6,26 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import { Theme, themeChangeContext } from "../context/ThemeContext";
-import { Fab, Icon, styled, ThemeProvider, Tooltip } from "@mui/material";
+import { themeChangeContext } from "../context/ThemeContext";
+import { Fab, styled, Tooltip } from "@mui/material";
 import {
-    Add,
     CalendarMonth,
-    Menu,
-    More,
-    MoreVert,
-    Search,
-    Settings,
+    Menu, MoreVert, Settings,
     Home,
     DarkMode,
-    LightMode,
+    LightMode
 } from "@mui/icons-material";
 
 import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { AddTaskButton, TaskCrudDrawerContext } from "./AddTask";
+import { Account } from "@toolpad/core";
 const drawerWidth = 200;
 const navItems = ["Home", "About", "Contact"];
 
@@ -73,11 +66,13 @@ function DrawerAppBar(props) {
                 maxHeight: "100%",
                 minHeight: "100vh",
                 overflowY: "hidden",
+                display: "flex",
+                width: "100%",
             }}
         >
             <CssBaseline />
             <AppBar
-                component="nav"
+                component="header"
                 sx={{
                     top: { xs: "auto", sm: "initial" },
                     bottom: {
@@ -140,7 +135,15 @@ function DrawerAppBar(props) {
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Box sx={{ maxHeight: "100vh", minHeight: "100vh" }}>
+            <Box sx={{
+                maxHeight: "100vh",
+                flexGrow: 1,
+                display: "flex",
+                minWidth: "100%",
+                flexShrink: 0,
+                flexBasis: "100%",
+                flexDirection: "column",
+            }}>
                 <Toolbar
                     sx={{
                         display: {
@@ -214,7 +217,7 @@ function DrawerAppBar(props) {
                             xs: "1fr",
                             sm: "60px 1fr",
                             md: `${drawerWidth}px 1fr`,
-                        },
+                        }, // TODO: FIX THIS
                         flexWrap: "nowrap",
                         minHeight: "100vh",
                     }}
@@ -222,12 +225,15 @@ function DrawerAppBar(props) {
                     <Drawer
                         variant="permanent"
                         sx={{
-                            display: { xs: "none", sm: "block" },
+                            display: { xs: "none", sm: "flex" },
                             "& .MuiDrawer-paper": {
                                 boxSizing: "border-box",
                                 width: "100%",
                                 position: "sticky",
                                 zIndex: (theme) => theme.zIndex.drawer - 1,
+                                display: "flex",
+                                flexDirection: "col",
+                                justifyContent: "space-between",
                             },
                             width: "100%",
                             zIndex: (theme) => theme.zIndex.drawer - 1,
@@ -293,6 +299,9 @@ function DrawerAppBar(props) {
                                 </Link>
                             ))}
                         </Box>
+                        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                            hey there
+                        </Box>
                     </Drawer>
                     <Box
                         sx={{
@@ -312,7 +321,7 @@ function DrawerAppBar(props) {
                     </Box>
                 </Box>
             </Box>
-        </Box>
+        </Box >
     );
 }
 
