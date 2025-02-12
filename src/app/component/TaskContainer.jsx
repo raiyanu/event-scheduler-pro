@@ -163,12 +163,32 @@ export const MyListItem = ({ info }) => {
         setDate(FriendlyDate(info.startTime));
     }, []);
 
+    const isCompletedTask = info.status === "done";
+
     return (
         <>
-            <ListItem alignItems="flex-start" className="p-0">
+            <ListItem alignItems="flex-start" className="p-0"
+                secondaryAction={
+                    <> {
+                        isCompletedTask && (
+                            <IconButton edge="end" aria-label="delete" onClick={
+                                async () => await displatch(deleteTasks(info.id))
+                            }>
+                                <Delete />
+                            </IconButton>
+                        )
+                    }
+                    </>
+                }
+            >
                 <ListItemButton onClick={() => {
                     setOpen(true)
-                }} className="rounded-md">
+                }} className="rounded-md"
+                    sx={{
+                        width: "100%",
+                        bgcolor: isCompletedTask ? "transparent" : "background.paper",
+                    }}
+                >
                     <ListItemAvatar>
                         {info.icon ? <Avatar>{info.icon} </Avatar> : <Avatar alt={info.Name} />}
                     </ListItemAvatar>
@@ -176,20 +196,28 @@ export const MyListItem = ({ info }) => {
                         primary={< Typography
                             component="span"
                             variant="subtitle1"
-                            sx={{ color: "text.primary", display: "inline" }} className="font-bold"
+                            sx={{
+                                color: isCompletedTask ? "gray" : "text.primary",
+                                display: "inline",
+                                textDecoration: isCompletedTask ? "line-through" : "none",
+                            }} className="font-bold"
                         >
                             {info.title}
                         </Typography>}
                         secondary={
                             <>
-                                <Typography
-                                    component="span"
-                                    variant="body2"
-                                    sx={{ color: "text.primary", display: "inline" }}
-                                >
-                                    {date}
-                                </Typography>
-                                {" — " + info.description}
+                                {!isCompletedTask &&
+                                    <>
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                            sx={{ color: "text.primary", display: "inline" }}
+                                        >
+                                            {date}
+                                        </Typography>
+                                        {" — " + info.description}
+                                    </>
+                                }
                             </>
                         }
                     />
@@ -333,7 +361,7 @@ export const MyListItem = ({ info }) => {
                     </Box>
                     <Box className="flex gap-2 *:flex-shrink-0 *:flex-grow-0">
                         <Box className="flex flex-col gap-1 sm:flex-row">
-                            <FormControl sx={{ minWidth: 80 }} fullWidth>
+                            <FormControl sx={{ minWidth: 120 }} fullWidth>
                                 <InputLabel
                                     id="demo-simple-select-label"
                                     sx={{
@@ -342,13 +370,14 @@ export const MyListItem = ({ info }) => {
                                         },
                                     }}
                                 >
-                                    Mark
+                                    {info?.status ? friendlyStatus(info.status) : "--"}
                                 </InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    label="Mark"
+                                    label={info?.status ? friendlyStatus(info.status) : "--"}
                                     value={markdown}
+                                    defaultValue={info?.status ? friendlyStatus(info.status) : "--"}
                                     onChange={(e) => setMarkdown(e.target.value)}
                                     size="small"
                                     className="p-0"
@@ -623,13 +652,13 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
 };
 
 function sortTasksByCreatedAt(tasks) {
-    const sortedTasks = [...tasks].sort((a, b) => {
-        if (b.createdAt.seconds !== a.createdAt.seconds) {
-            return b.createdAt.seconds - a.createdAt.seconds;
-        }
+    return [...tasks].sort((a, b) => {
+        if (a.status === "done" && b.status !== "done") return 1;
+        if (a.status !== "done" && b.status === "done") return -1;
+        if (a.status === "done" && b.status === "done") return b.createdAt.seconds - a.createdAt.seconds
+        if (b.createdAt.seconds !== a.createdAt.seconds) return b.createdAt.seconds - a.createdAt.seconds;
         return b.createdAt.nanoseconds - a.createdAt.nanoseconds;
     });
-    return sortedTasks;
 }
 
 export function formatDate(date) {
