@@ -1,6 +1,6 @@
 "use client";
-import { Button, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Button, TextField, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 import MainLayout from "../PrimaryLayout";
 import {
     collection,
@@ -50,92 +50,42 @@ const taskz = {
     importance: "casual",
 };
 
+
 export function Test() {
-    const [username, setUsername] = useState("");
+    const reference = useRef(0);
+    const [data, setData] = useTest(reference);
+    console.log("render")
     return (
         <>
-            <TextField
-                label="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
+            <Typography variant="h1">{data}</Typography>
             <Button
                 className="ml-4"
                 variant="contained"
                 color="primary"
                 onClick={async () => {
-                    run();
+                    reference.current += 1;
                 }}
             >
                 Check
             </Button>
+            <Child />
         </>
     );
 }
 
-const run = async () => {
-    console.log(await getTaskList());
-}
-const getTaskList = async () => {
-    if (!auth.currentUser) {
-        return [];
-    };
-    const taskListRef = collection(db, "users", auth.currentUser?.uid, "tasks");
-    const taskList = await getDocs(taskListRef);
-    return [...taskList.docs.map((doc) => doc.data())];
+
+export function Child() {
+    let sNum = 0;
+    console.log("rendered");
+    return (
+        <Typography variant="h1">{sNum}</Typography>
+    )
 }
 
-const addTask = (task) => {
-    addDoc(collection(db, "users", auth.currentUser?.uid, "tasks"), task);
-}
-
-
-
-function generateTask() {
-    const now = Date.now();
-    const getRandomFutureTime = (offsetMinutes) => {
-        const futureTime = now + offsetMinutes * 60 * 1000;
-        return {
-            seconds: Math.floor(futureTime / 1000),
-            nanoseconds: (futureTime % 1000) * 1e6,
-        };
-    };
-
-    const difficulties = ["easy", "medium", "hard"];
-    const statuses = ["toStart", "inProgress", "completed"];
-    const importanceLevels = ["casual", "important", "urgent"];
-    const icons = ["🧹", "🛠", "📖", "🎯", "📝"];
-    const repeatOptions = ["never", "daily", "weekly", "monthly"];
-    const taskTitles = ["Vacuum the living room", "Fix the kitchen sink", "Read a book", "Practice archery", "Write a journal entry"];
-    const descriptions = [
-        "The floor is covered in dust and needs a good cleaning.",
-        "The faucet keeps leaking, I should fix it soon.",
-        "Time to read a few chapters of my book.",
-        "I need to improve my accuracy with some practice.",
-        "Journaling helps clear my mind, let's write something."
-    ];
-    const tagsList = [
-        ["cleaning", "home"],
-        ["repair", "home", "DIY"],
-        ["reading", "learning"],
-        ["hobby", "sports"],
-        ["writing", "personal"]
-    ];
-
-    const index = Math.floor(Math.random() * taskTitles.length);
-
-    return {
-        startTime: getRandomFutureTime(30),
-        isRepeated: repeatOptions[Math.floor(Math.random() * repeatOptions.length)],
-        createdAt: getRandomFutureTime(-5),
-        icon: icons[index],
-        difficulty: difficulties[Math.floor(Math.random() * difficulties.length)],
-        tags: tagsList[index],
-        status: statuses[Math.floor(Math.random() * statuses.length)],
-        description: descriptions[index],
-        removedAt: getRandomFutureTime(1000),
-        endTime: getRandomFutureTime(120),
-        title: taskTitles[index],
-        importance: importanceLevels[Math.floor(Math.random() * importanceLevels.length)],
-    };
+const useTest = ({ reference }) => {
+    const [data, setData] = useState(0);
+    useEffect(() => {
+        setData(data + 1)
+    }, [reference?.current])
+    return [data, setData];
 }

@@ -225,6 +225,7 @@ export default function CalendarMain() {
           onSelectSlot={handleSlotSelect}
           onDoubleClickEvent={handleSelectEvent}
           onSelecting={event => console.log(event)}
+          onDragStart={event => console.log(event)}
           // onSelectEvent={handleSelectEvent}
           resizable
           selectable

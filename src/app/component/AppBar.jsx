@@ -25,9 +25,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AddTaskButton, TaskCrudDrawerContext } from "./AddTask";
-import { Account } from "@toolpad/core";
 const drawerWidth = 200;
-const navItems = ["Home", "About", "Contact"];
 
 const StyledFab = styled(Fab)({
     position: "absolute",
