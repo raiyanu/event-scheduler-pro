@@ -7,7 +7,6 @@ export default function useOnScrollShowScrollbar() {
     let scrollTimeout = useRef(null);
 
     const handleScroll = () => {
-        console.log("handleScroll: ");
         setIsScrolling(true);
         if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
         scrollTimeout.current = setTimeout(() => {
@@ -16,7 +15,6 @@ export default function useOnScrollShowScrollbar() {
     };
 
     useEffect(() => {
-        console.log("useOnScrollShowScrollbar: ", scrollContainerRef);
         const scrollContainer = scrollContainerRef.current;
         if (!scrollContainer) return;
 

@@ -12,7 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { themeChangeContext } from "../context/ThemeContext";
-import { Fab, styled, Tooltip } from "@mui/material";
+import { Button, Fab, Fade, Popper, styled, Switch, Tooltip } from "@mui/material";
 import {
     CalendarMonth,
     Menu, MoreVert, Settings,
@@ -26,6 +26,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AddTaskButton, TaskCrudDrawerContext } from "./AddTask";
 const drawerWidth = 200;
+const navItems = ["Home", "About", "Contact"];
 
 const StyledFab = styled(Fab)({
     position: "absolute",
@@ -56,7 +57,16 @@ function DrawerAppBar(props) {
 
     const container =
         window !== undefined ? () => window().document.body : undefined;
+    const [open, setOpen] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+        setOpen((previousOpen) => !previousOpen);
+    };
+
+    const canBeOpen = open && Boolean(anchorEl);
+    const id = canBeOpen ? 'transition-popper' : undefined;
     return (
         <Box
             sx={{
@@ -99,9 +109,41 @@ function DrawerAppBar(props) {
                         <AddIcon />
                     </StyledFab>
                     <Box sx={{ flexGrow: 1 }} />
-                    <IconButton color="inherit">
-                        <MoreVert />
-                    </IconButton>
+                    <Box>
+                        <IconButton
+                            aria-describedby={id} type="button" onClick={handleClick}>
+                            <MoreVert />
+                        </IconButton>
+                        <Popper id={id} open={open} anchorEl={anchorEl} transition sx={{
+                            zIndex: (theme) => theme.zIndex.drawer + 1,
+                        }} onBlur={handleClick}>
+                            {({ TransitionProps }) => (
+                                <Fade {...TransitionProps} timeout={350}>
+                                    <Box sx={{
+                                        bgcolor: "background.default",
+                                        mb: 2,
+                                        mr: 2,
+                                        p: 2,
+                                        borderRadius: "6px",
+                                        borderWidth: "1px",
+                                        borderColor: "divider",
+                                        borderStyle: "solid"
+                                    }}>
+                                        <Box>
+                                            Darkmode
+                                            <Switch
+                                                checked={themeMode === "dark"}
+                                                onChange={toggleTheme}
+                                                color="primary"
+                                                name="checkedB"
+                                                inputProps={{ 'aria-label': 'primary checkbox' }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Fade>
+                            )}
+                        </Popper>
+                    </Box>
                 </Toolbar>
                 <Toolbar sx={{ display: { xs: "none", sm: "flex", justifyContent: "space-between" } }}>
                     <IconButton
@@ -150,6 +192,7 @@ function DrawerAppBar(props) {
                         },
                     }}
                 />
+                {/* SideBar drawer */}
                 <Drawer
                     container={container}
                     variant="temporary"
@@ -164,7 +207,7 @@ function DrawerAppBar(props) {
                             boxSizing: "border-box",
                             width: drawerWidth,
                         },
-                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                        zIndex: (theme) => theme.zIndex.drawer + 2,
                     }}
                 >
                     <Box onClick={handleDrawerToggle} sx={{ minWidth: "100%" }}>
