@@ -427,7 +427,7 @@ export const TaskForm = ({ formik }) => {
                     }}
                 />
             </Box>
-            <Box className="grid max-w-full grid-cols-1 gap-3 overflow-x-clip lg:grid-cols-2">
+            <Box className="grid max-w-full grid-cols-1 gap-3 overflow-x-clip px-3 lg:grid-cols-2">
                 <Slider
                     value={priorityMap.get(formik.values.priority) || null}
                     min={1}
