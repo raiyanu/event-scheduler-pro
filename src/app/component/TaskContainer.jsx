@@ -127,7 +127,12 @@ export function TaskList() {
                     md: "120px",
                 },
                 marginInline: "auto",
-                pr: 1
+                pr: 1,
+                "& .MuiListItem-root": {
+                    my: 1,
+                },
+                "& .MuiDivider-inset": {
+                }
             }}
         >
             {sortedTasks.map((task, index) => (
@@ -180,7 +185,21 @@ export const MyListItem = ({ info }) => {
     }, []);
 
     const isCompletedTask = info.status === "done";
-
+    const taskPriorityColor = (priority) => {
+        if (isCompletedTask) return "background.paper"
+        switch (priority) {
+            case "low":
+                return "divider";
+            case "casual":
+                return "info.main";
+            case "medium":
+                return "success.main";
+            case "high":
+                return "error.main";
+            default:
+                return "divider";
+        }
+    }
     return (
         <>
             <ListItem alignItems="flex-start" className="p-0"
@@ -196,13 +215,21 @@ export const MyListItem = ({ info }) => {
                     }
                     </>
                 }
+                sx={{
+
+                }}
             >
                 <ListItemButton onClick={() => {
                     setOpen(true)
-                }} className="rounded-md"
+                }}
                     sx={{
                         width: "100%",
                         bgcolor: isCompletedTask ? "transparent" : "background.paper",
+                        borderColor: taskPriorityColor(info.priority),
+                        borderLeftWidth: "3px",
+                        borderStyle: "solid",
+                        borderTopLeftRadius: "none",
+                        borderRadius: "0px"
                     }}
                 >
                     <ListItemAvatar>
