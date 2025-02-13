@@ -12,13 +12,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { themeChangeContext } from "../context/ThemeContext";
-import { Button, Fab, Fade, Popper, styled, Switch, Tooltip } from "@mui/material";
+import { Button, Fab, Fade, Menu, MenuItem, Popper, styled, Switch, Tooltip } from "@mui/material";
 import {
     CalendarMonth,
-    Menu, MoreVert, Settings,
+    MoreVert, Settings,
     Home,
     DarkMode,
-    LightMode
+    LightMode,
 } from "@mui/icons-material";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -57,16 +57,15 @@ function DrawerAppBar(props) {
 
     const container =
         window !== undefined ? () => window().document.body : undefined;
-    const [open, setOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
-
+    const open = Boolean(anchorEl);
     const handleClick = (event) => {
+        console.log(event.currentTarget);
         setAnchorEl(event.currentTarget);
-        setOpen((previousOpen) => !previousOpen);
     };
-
-    const canBeOpen = open && Boolean(anchorEl);
-    const id = canBeOpen ? 'transition-popper' : undefined;
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     return (
         <Box
             sx={{
@@ -100,7 +99,7 @@ function DrawerAppBar(props) {
                             handleDrawerToggle();
                         }}
                     >
-                        <Menu />
+                        <MenuIcon />
                     </IconButton>
                     <StyledFab color="secondary" aria-label="add" onClick={() => {
                         toggleDrawer(true, event);
@@ -111,38 +110,46 @@ function DrawerAppBar(props) {
                     <Box sx={{ flexGrow: 1 }} />
                     <Box>
                         <IconButton
-                            aria-describedby={id} type="button" onClick={handleClick}>
+                            id="basic-button"
+                            aria-controls={open ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            onClick={handleClick}
+
+                        >
                             <MoreVert />
                         </IconButton>
-                        <Popper id={id} open={open} anchorEl={anchorEl} transition sx={{
-                            zIndex: (theme) => theme.zIndex.drawer + 1,
-                        }} onBlur={handleClick}>
-                            {({ TransitionProps }) => (
-                                <Fade {...TransitionProps} timeout={350}>
-                                    <Box sx={{
-                                        bgcolor: "background.default",
-                                        mb: 2,
-                                        mr: 2,
-                                        p: 2,
-                                        borderRadius: "6px",
-                                        borderWidth: "1px",
-                                        borderColor: "divider",
-                                        borderStyle: "solid"
-                                    }}>
-                                        <Box>
-                                            Darkmode
-                                            <Switch
-                                                checked={themeMode === "dark"}
-                                                onChange={toggleTheme}
-                                                color="primary"
-                                                name="checkedB"
-                                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                                            />
-                                        </Box>
-                                    </Box>
-                                </Fade>
-                            )}
-                        </Popper>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                            sx={{
+                                transform: 'translateY(-12px)',
+
+                            }}
+                            transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+                            anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        >
+                            <Box sx={{
+                                px: 2,
+                                py: 1
+                            }}>
+                                <Box className="flex items-center gap-3">
+                                    Darkmode
+                                    <Switch
+                                        checked={themeMode === "dark"}
+                                        onChange={toggleTheme}
+                                        color="primary"
+                                        name="checkedB"
+                                        inputProps={{ 'aria-label': 'primary checkbox' }}
+                                    />
+                                </Box>
+                            </Box>
+                        </Menu>
                     </Box>
                 </Toolbar>
                 <Toolbar sx={{ display: { xs: "none", sm: "flex", justifyContent: "space-between" } }}>

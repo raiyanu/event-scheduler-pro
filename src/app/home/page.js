@@ -1,26 +1,16 @@
 "use client";
 import {
   Autocomplete,
-  Avatar,
-  Badge,
-  Box,
-  Divider,
-  IconButton,
+  Avatar, Box, IconButton,
   InputAdornment, Skeleton, styled,
-  TextField,
-  Tooltip,
-  Typography
+  TextField, Typography
 } from "@mui/material";
 import MainLayout from "../PrimaryLayout";
-import {
-  Email, MoreVert, Notifications, Search
-} from "@mui/icons-material";
+import { MoreVert, Search } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { getUser } from "../redux/slice/userSlice";
-import { useEffect, useRef, useState } from "react";
 import TaskList from "../component/TaskContainer";
 import useOnScrollShowScrollbar from "../hooks/useOnScrollShowScrollbar";
-import { AddTaskLineCard } from "../component/AddTask";
 
 const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
   [theme.breakpoints.up("md")]: {
@@ -70,7 +60,7 @@ export const WelcomeMessage = () => {
         {userInfo.displayName ? `Hey ${userInfo.displayName?.split(" ")?.[0]}! 👋` :
           <Skeleton variant="text" width={200} height={30} />}
       </Typography>
-      <Typography className="text-2xl font-bold opacity-75">
+      <Typography className="text-2xl font-bold" sx={{ color: "text.secondary" }}>
         {
           taskCount > 0 ? `You have ${taskCount} tasks waiting!` : userLoadingStatus === "loading" ? "Loading..." : ""
         }
@@ -80,8 +70,6 @@ export const WelcomeMessage = () => {
 };
 
 export const ProfileLineCard = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   const userInfo = useSelector(getUser);
 
   return (
@@ -120,5 +108,3 @@ export function SearchBar() {
     </Box>
   );
 }
-
-const CustomDivider = () => <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mt: 3 }} />;

@@ -1,265 +1,107 @@
-"use client";
-import {
-    Badge,
-    Box,
-    Button, IconButton, styled,
-    TextField,
-    Tooltip,
-    Typography
-} from "@mui/material";
-import MainLayout from "../PrimaryLayout";
-import { useDispatch, useSelector } from "react-redux";
-import {
-    AccountCircle,
-    Close, Edit, FileUploadSharp,
-    GppMaybe, VerifiedUser
-} from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useFormik } from "formik";
-import { logOut, updateUserInfo, validateUserEmail } from "@/config/firebase";
-import Image from "next/image";
-import { userLogout } from "../redux/slice/userSlice";
-import Link from "next/link";
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Settings from '@mui/icons-material/Settings';
+import Logout from '@mui/icons-material/Logout';
 
-
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-});
-
-export default function page() {
+export default function AccountMenu() {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     return (
-        <MainLayout>
-            <Box className="max-h-full overflow-y-scroll p-2 pb-12 lg:p-3">
-                <Typography
-                    sx={{
-                        color: "primary.main",
-                        mb: 2,
-                    }}
-                    variant="h4"
-                >
-                    Settings
-                </Typography>
-                <UserSettings />
+        <React.Fragment>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                <Typography sx={{ minWidth: 100 }}>Contact</Typography>
+                <Typography sx={{ minWidth: 100 }}>Profile</Typography>
+                <Tooltip title="Account settings">
+                    <IconButton
+                        onClick={handleClick}
+                        size="small"
+                        sx={{ ml: 2 }}
+                        aria-controls={open ? 'account-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                    >
+                        <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                    </IconButton>
+                </Tooltip>
             </Box>
-        </MainLayout>
+            <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                slotProps={{
+                    paper: {
+                        elevation: 0,
+                        sx: {
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1,
+                            },
+                            '&::before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0,
+                            },
+                        },
+                    },
+                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+                <MenuItem onClick={handleClose}>
+                    <Avatar /> Profile
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <Avatar /> My account
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <PersonAdd fontSize="small" />
+                    </ListItemIcon>
+                    Add another account
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <Settings fontSize="small" />
+                    </ListItemIcon>
+                    Settings
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <Logout fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                </MenuItem>
+            </Menu>
+        </React.Fragment>
     );
 }
-
-const UserSettings = () => {
-    const userInfo = useSelector((state) => state.AUTH.user);
-    const formik = useFormik(userSettingActionFormConfig(userInfo));
-    const isLogged = useSelector((state) => state.AUTH.loginStatus);
-    const [isEditing, setIsEditing] = useState(false);
-    console.log(userInfo)
-    useEffect(() => {
-        formik.resetForm();
-    }, [userInfo]);
-    const data = [
-        {
-            name: "username",
-            label: "Username",
-            displayValue: userInfo.username ? userInfo.username : "No Username",
-        },
-        {
-            name: "firstName",
-            label: "First Name",
-            displayValue: userInfo.firstName ? userInfo.firstName : "Not provided",
-        },
-        {
-            name: "lastName",
-            label: "Last Name",
-            displayValue: userInfo.lastName ? userInfo.lastName : "Not provided",
-        },
-        {
-            name: "phone",
-            label: "Phone",
-            displayValue: userInfo.phone ? userInfo.phone : "No Phone",
-        },
-    ];
-    console.log(formik.values['displayName'])
-    const dispatch = useDispatch();
-    return (
-        <>
-            {!isLogged ? (<Link href={'/'} sx={{
-                color: "primary.main",
-            }}
-                variant="h6">To continue <Button variant="contained" className="max-md:w-full">Login </Button> </Link>) : (
-                <Box className="mx-2 h-max lg:mx-8">
-                    <Typography variant="subtitle1" color="textSecondary" className="my-4">
-                        Account Information
-                    </Typography>
-                    <Box className="mt-8 flex w-full max-w-2xl items-start justify-between *:flex-grow-0">
-                        <Box className="flex max-w-lg items-center">
-                            <IconButton
-                                component="label"
-                                role={undefined}
-                                variant="text"
-                                tabIndex={-1}
-                            >
-                                <Badge
-                                    badgeContent={<FileUploadSharp color="action" />}
-                                    overlap="circular"
-                                    className="cursor-pointer bg-transparent hover:opacity-80"
-                                >
-                                    {userInfo.photoURL ? (
-                                        <Image src={userInfo.photoURL} alt="user profile" />
-                                    ) : (
-
-                                        <Box>
-                                            <AccountCircle color="disabled" sx={{ fontSize: 100 }} />
-                                        </Box>
-                                    )}
-                                </Badge>
-                                <VisuallyHiddenInput
-                                    type="file"
-                                    onChange={async (event) => {
-                                        try {
-                                            console.log(event.target.files)
-                                            const file = event.target.files[0];
-
-                                            const formData = new FormData();
-                                            formData.append("image", file);
-
-                                        } catch (error) {
-                                            console.error(error);
-                                        }
-                                    }}
-                                />
-                            </IconButton>
-
-                            <Box className="ml-4 flex flex-col items-center">
-                                {isEditing ? (
-                                    <TextField
-                                        variant="outlined"
-                                        label="Display Name"
-                                        name="displayName"
-                                        value={formik.values.displayName}
-                                        onChange={formik.handleChange}
-                                    />
-                                ) : (
-                                    <Typography variant="h4" color="textPrimary">
-                                        {userInfo.displayName}
-                                    </Typography>
-                                )}
-                            </Box>
-                        </Box>
-                        <Tooltip title="Edit profile">
-                            <IconButton
-                                variant="text"
-                                size="medium"
-                                className="h-8"
-                                color="primary"
-                                onClick={() => setIsEditing((prev) => !prev)}
-                            >
-                                {isEditing ? <Close /> : <Edit />}
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
-                    <Box sx={{ flexGrow: 1, marginTop: "2rem" }}>
-                        <Box className="flex grid-cols-[1fr_1fr] flex-col gap-6 lg:grid">
-                            {data?.map((item, index) => {
-                                return (
-                                    <Box key={index}>
-                                        {isEditing ? (
-                                            <TextField
-                                                variant="outlined"
-                                                label={item.label}
-                                                name={item.name}
-                                                value={formik.values[item.name]}
-                                                onChange={formik.handleChange}
-                                            />
-                                        ) : (
-                                            <>
-                                                <Box className="flex items-center">
-                                                    <Typography variant="subtitle2" color="textSecondary">
-                                                        {item.label}
-                                                    </Typography>
-                                                </Box>
-                                                <Typography variant="h5" color="textPrimary" className="">
-                                                    {item.displayValue}
-                                                </Typography>
-                                            </>
-                                        )}
-                                    </Box>
-                                );
-                            })}
-                            <Box>
-                                <Box className="flex items-center">
-                                    <Typography variant="subtitle2" color="textSecondary">
-                                        Email
-                                    </Typography>
-                                </Box>
-                                <Typography
-                                    variant="h5"
-                                    color="textPrimary"
-                                    className="flex items-center gap-2"
-                                >
-                                    {userInfo.emailVerified ? (
-                                        <Tooltip title="Email is verified">
-                                            {userInfo.email ? userInfo.email : "No Email"}
-                                            <VerifiedUser color="info" />
-                                        </Tooltip>
-                                    ) : (
-                                        <Tooltip title="Email is Not Verified!">
-                                            {userInfo.email ? userInfo.email : "No Email"}
-                                            <Button variant="outlined" color="warning" className="ml-2" onClick={() => {
-                                                validateUserEmail();
-                                            }}>
-                                                <GppMaybe color="warning" />{" "} Verify
-                                            </Button>
-                                        </Tooltip>
-                                    )}
-                                </Typography>
-                            </Box>
-                        </Box>
-                        {isEditing && (
-                            <Box className="mt-8 flex flex-col-reverse gap-4">
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    className="ml-auto mt-8"
-                                    onClick={formik.handleSubmit}
-                                >
-                                    Save Changes
-                                </Button>
-                            </Box>
-                        )}
-                    </Box>
-                    <Box>
-                        <Button size="medium" color="error" variant="outlined" onClick={() => {
-                            dispatch(userLogout());
-                        }} className="ml-auto block">
-                            Logout
-                        </Button>
-                    </Box>
-                </Box>
-            )}
-        </>
-    );
-};
-
-const userSettingActionFormConfig = (userInfo) => ({
-    initialValues: {
-        username: userInfo.username,
-        firstName: userInfo.firstName,
-        lastName: userInfo.lastName,
-        phone: userInfo.phone,
-        displayName: userInfo.displayName,
-    },
-    onSubmit: async (values) => {
-        console.log(JSON.stringify(values, null, 2));
-        if (await updateUserInfo(values)) {
-            console.log("User info updated successfully");
-        } else {
-            console.error("User info update failed");
-        }
-    },
-});
