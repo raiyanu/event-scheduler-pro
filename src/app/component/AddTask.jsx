@@ -314,7 +314,7 @@ export const TaskForm = ({ formik }) => {
     };
     const { themeMode } = useContext(themeChangeContext);
     return (
-        <form onSubmit={formik.handleSubmit} className="grid gap-7 p-2">
+        <form onSubmit={formik.handleSubmit} className="grid gap-7 px-3 py-2">
             <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                 <Box className="flex items-center">
                     <IconButton
