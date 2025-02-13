@@ -8,9 +8,15 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import {
-    Alert, Backdrop,
+    Alert,
+    Backdrop,
     Box,
     Button,
+    Card,
+    CardActionArea,
+    CardActions,
+    CardContent,
+    CardHeader,
     Chip,
     CircularProgress,
     Dialog,
@@ -19,38 +25,50 @@ import {
     DialogContentText,
     DialogTitle,
     Fade,
-    FormControl, IconButton,
+    FormControl,
+    IconButton,
     InputLabel,
-    ListItemButton, MenuItem,
+    ListItemButton,
+    MenuItem,
     Modal,
-    Paper, Select,
-    styled, Tooltip,
+    Paper,
+    Select,
+    styled,
+    Tooltip,
     useMediaQuery,
-    useTheme
+    useTheme,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTasks, fetchTasks, updateTask } from "../redux/slice/taskSlice";
-import { Close, Delete, Edit, HourglassBottom, PushPin, Tag, WorkspacePremium } from "@mui/icons-material";
-import { format, isToday, isTomorrow, isYesterday } from 'date-fns';
+import {
+    Close,
+    Delete,
+    Edit,
+    HourglassBottom,
+    PushPin,
+    Tag,
+    WorkspacePremium,
+} from "@mui/icons-material";
+import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import { TaskForm } from "./AddTask";
 import { useFormik } from "formik";
 import dayjs from "dayjs";
 import { ClockIcon } from "@mui/x-date-pickers";
 import Image from "next/image";
+import { Masonry } from "@mui/lab";
 
 const FriendlyDate = (input) => {
     const date = new Date(input.seconds);
     if (isToday(date)) {
-        return `Today ${format(date, 'p')}`;
+        return `Today ${format(date, "p")}`;
     } else if (isTomorrow(date)) {
-        return `Tomorrow ${format(date, 'p')}`;
+        return `Tomorrow ${format(date, "p")}`;
     } else if (isYesterday(date)) {
-        return `Yesterday ${format(date, 'p')}`;
+        return `Yesterday ${format(date, "p")}`;
     } else {
-        return format(date, 'd MMM p');
+        return format(date, "d MMM p");
     }
 };
-
 
 const CustomListContainer = styled(List)({
     borderBottom: "1px solid rgba(0, 0, 0, 0)",
@@ -105,7 +123,7 @@ export function TaskList() {
             return sortTasksByCreatedAt(tasks);
         } catch (error) {
             console.log(error);
-            return []
+            return [];
         }
     }, [tasks]);
     const dispatch = useDispatch();
@@ -116,41 +134,25 @@ export function TaskList() {
     const loadTask = () => {
         dispatch(fetchTasks());
     };
+
+    const taskCount = tasks.length ? tasks.length : 0;
+
+    const numberOfColumn = taskCount > 4 ? 4 : taskCount > 3 ? 3 : taskCount;
+
     return (
-        <CustomListContainer
-            sx={{
-                width: "100%",
-                bgcolor: "background.paper",
-                minHeight: {
-                    xs: "fit-content",
-                    sm: "fit-content",
-                    md: "120px",
-                },
-                marginInline: "auto",
-                pr: 1,
-                "& .MuiListItem-root": {
-                    my: 1,
-                },
-                "& .MuiDivider-inset": {
-                }
-            }}
-        >
+        <Masonry columns={{
+            xs: 1,
+            sm: 2,
+            md: 3,
+            lg: numberOfColumn,
+        }} spacing={2}>
             {sortedTasks.map((task, index) => (
                 <Fragment key={index}>
                     <MyListItem info={task} />
-                    {index < tasks.length - 1 && (
-                        <Divider variant="inset" component="li"
-                            sx={{
-                                maxWidth: "90%",
-                                width: "100%",
-                                marginInline: "auto",
-                                marginInline: "auto",
-                            }}
-                        />
-                    )}
+
                 </Fragment>
             ))}
-        </CustomListContainer>
+        </Masonry>
     );
 }
 
@@ -158,10 +160,7 @@ export const MyListItem = ({ info }) => {
     const [open, setOpen] = useState(false);
     const theme = useTheme();
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
+    const handleClose = () => setOpen(false);
 
     const [openEditModal, setOpenEditModal] = useState(false);
     const handleEditModalOpen = () => setOpenEditModal(true);
@@ -178,7 +177,7 @@ export const MyListItem = ({ info }) => {
 
     useEffect(() => {
         setMarkdown(info.status);
-    }, [open])
+    }, [open]);
 
     useEffect(() => {
         setDate(FriendlyDate(info.startTime));
@@ -186,7 +185,7 @@ export const MyListItem = ({ info }) => {
 
     const isCompletedTask = info.status === "done";
     const taskPriorityColor = (priority) => {
-        if (isCompletedTask) return "background.paper"
+        if (isCompletedTask) return "background.paper";
         switch (priority) {
             case "low":
                 return "divider";
@@ -199,73 +198,96 @@ export const MyListItem = ({ info }) => {
             default:
                 return "divider";
         }
-    }
+    };
     return (
         <>
-            <ListItem alignItems="flex-start" className="p-0"
-                secondaryAction={
-                    <> {
-                        isCompletedTask && (
-                            <IconButton edge="end" aria-label="delete" onClick={
-                                async () => await displatch(deleteTasks(info.id))
-                            }>
-                                <Delete />
-                            </IconButton>
-                        )
-                    }
-                    </>
-                }
+            <Card
                 sx={{
-
+                    width: "100%",
+                    bgcolor: isCompletedTask ? "transparent" : "background.paper",
+                    borderStyle: "solid",
+                    borderTopLeftRadius: "none",
+                    borderRadius: "0px",
+                    mb: 2,
+                    borderRadius: "md",
+                    "& .MuiCardContent-root": {
+                        p: 0,
+                    }
                 }}
             >
-                <ListItemButton onClick={() => {
-                    setOpen(true)
-                }}
-                    sx={{
-                        width: "100%",
-                        bgcolor: isCompletedTask ? "transparent" : "background.paper",
-                        borderColor: taskPriorityColor(info.priority),
-                        borderLeftWidth: "3px",
-                        borderStyle: "solid",
-                        borderTopLeftRadius: "none",
-                        borderRadius: "0px"
-                    }}
-                >
-                    <ListItemAvatar>
-                        {info.icon ? <Avatar>{info.icon} </Avatar> : <Avatar alt={info.Name} />}
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={< Typography
-                            component="span"
-                            variant="subtitle1"
-                            sx={{
-                                color: isCompletedTask ? "gray" : "text.primary",
-                                display: "inline",
-                                textDecoration: isCompletedTask ? "line-through" : "none",
-                            }} className="font-bold"
-                        >
-                            {info.title}
-                        </Typography>}
-                        secondary={
+                <CardActionArea sx={{ p: 1 }} onClick={() => setOpen(true)}>
+                    <CardHeader
+                        sx={{
+                            py: 1, px: 0,
+                            "& .MuiCardHeader-action": {
+                                flexShrink: 0,
+                                m: 0,
+                                minWidth: "40px"
+                            },
+
+                        }}
+                        avatar={
                             <>
-                                {!isCompletedTask &&
-                                    <>
-                                        <Typography
-                                            component="span"
-                                            variant="body2"
-                                            sx={{ color: "text.primary", display: "inline" }}
-                                        >
-                                            {date}
-                                        </Typography>
-                                        {" — " + info.description}
-                                    </>
-                                }
+                                {info.icon ? (
+                                    <Avatar>{info.icon} </Avatar>
+                                ) : (
+                                    <Avatar alt={info.Name} />
+                                )}
                             </>
                         }
+                        action={
+                            isCompletedTask && (
+                                <IconButton
+                                    edge="end"
+                                    aria-label="delete"
+                                    onClick={async () => await displatch(deleteTasks(info.id))}
+                                    size="medium"
+                                    className="min-w-fit"
+                                >
+                                    <Delete />
+                                </IconButton>
+                            )
+                        }
+                        title={
+                            <Typography
+                                component="span"
+                                variant="subtitle1"
+                                sx={{
+                                    color: isCompletedTask ? "gray" : "text.primary",
+                                    textDecoration: isCompletedTask ? "line-through" : "none",
+                                }}
+                                className="line-clamp-2 font-bold"
+                            >
+                                {info.title}
+                            </Typography>
+                        }
+                        subheader={
+                            !isCompletedTask && (
+                                <>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        sx={{ color: "text.primary", display: "inline" }}
+                                    >
+                                        {date}
+                                    </Typography>
+                                </>
+                            )
+                        }
                     />
-                </ListItemButton>
-            </ListItem>
+                    {!!(info.description || info.tags.length) &&
+                        <CardContent
+                            className="line-clamp-4 font-bold"
+                        >
+                            <Box>
+                                <Typography variant="body2" color="text.secondary">
+                                    {info.description}
+                                </Typography>
+                            </Box>
+                        </CardContent>
+                    }
+                </CardActionArea>
+            </Card>
             <Dialog
                 fullScreen={fullScreen}
                 maxWidth="lg"
@@ -285,8 +307,12 @@ export const MyListItem = ({ info }) => {
                         id="responsive-dialog-title"
                         className="mr-[1.5rem] flex items-center gap-2 max-md:items-start"
                     >
-                        <span className="text-3xl max-md:mt-1 max-md:text-xl">{info?.icon ? info.icon : "--"}</span>
-                        <span className="text-xl max-md:text-base">{info?.title ? info.title : "--"}</span>
+                        <span className="text-3xl max-md:mt-1 max-md:text-xl">
+                            {info?.icon ? info.icon : "--"}
+                        </span>
+                        <span className="text-xl max-md:text-base">
+                            {info?.title ? info.title : "--"}
+                        </span>
                     </DialogTitle>
                     <IconButton
                         autoFocus
@@ -341,7 +367,14 @@ export const MyListItem = ({ info }) => {
                         {info?.importance && (
                             <Typography variant="">
                                 <Tooltip title="Importance">
-                                    <Image alt="ribbon pic" src={"/Ribbon.svg"} width={18} height={18} className="inline-block h-5 w-5" /> {info?.importance ? info.importance : "--"}
+                                    <Image
+                                        alt="ribbon pic"
+                                        src={"/Ribbon.svg"}
+                                        width={18}
+                                        height={18}
+                                        className="inline-block h-5 w-5"
+                                    />{" "}
+                                    {info?.importance ? info.importance : "--"}
                                 </Tooltip>
                             </Typography>
                         )}
@@ -420,7 +453,9 @@ export const MyListItem = ({ info }) => {
                                     id="demo-simple-select"
                                     label="Status"
                                     value={markdown}
-                                    defaultValue={info?.status ? friendlyStatus(info.status) : "--"}
+                                    defaultValue={
+                                        info?.status ? friendlyStatus(info.status) : "--"
+                                    }
                                     onChange={(e) => setMarkdown(e.target.value)}
                                     size="small"
                                     className="p-0"
@@ -447,8 +482,13 @@ export const MyListItem = ({ info }) => {
                         </Box>
                     </Box>
                 </DialogActions>
-            </Dialog >
-            <TaskDeleteModal DeleteActionModal={DeleteActionModal} handleDeleteActionModalClose={handleDeleteActionModalClose} taskId={info.id} handleClose={handleClose} />
+            </Dialog>
+            <TaskDeleteModal
+                DeleteActionModal={DeleteActionModal}
+                handleDeleteActionModalClose={handleDeleteActionModalClose}
+                taskId={info.id}
+                handleClose={handleClose}
+            />
             <Modal
                 anchor={"bottom"}
                 open={openEditModal}
@@ -480,88 +520,100 @@ export const MyListItem = ({ info }) => {
                         maxWidth: "700px",
                     }}
                 >
-                    <UpdateTask task={info} openEditModal={openEditModal} handleEditModalOpen={handleEditModalOpen} handleEditModalClose={handleEditModalClose} />
+                    <UpdateTask
+                        task={info}
+                        openEditModal={openEditModal}
+                        handleEditModalOpen={handleEditModalOpen}
+                        handleEditModalClose={handleEditModalClose}
+                    />
                 </Paper>
             </Modal>
         </>
     );
 };
 
-export const TaskDeleteModal = ({ DeleteActionModal, handleDeleteActionModalClose, taskId, handleClose }) => {
+export const TaskDeleteModal = ({
+    DeleteActionModal,
+    handleDeleteActionModalClose,
+    taskId,
+    handleClose,
+}) => {
     const displatch = useDispatch();
-    return (<Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={DeleteActionModal}
-        onClose={handleDeleteActionModalClose}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-            backdrop: {
-                timeout: 500,
-            },
-        }}
-        className="flex items-center justify-center"
-    >
-        <Fade in={DeleteActionModal}>
-            <Box
-                sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    maxWidth: 400,
-                    width: "100%",
-                    // bgcolor: 'background.paper',
-                    // boxShadow: 24,
-                }}
-            >
-                <Alert
-                    color="error"
+    return (
+        <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={DeleteActionModal}
+            onClose={handleDeleteActionModalClose}
+            closeAfterTransition
+            slots={{ backdrop: Backdrop }}
+            slotProps={{
+                backdrop: {
+                    timeout: 500,
+                },
+            }}
+            className="flex items-center justify-center"
+        >
+            <Fade in={DeleteActionModal}>
+                <Box
                     sx={{
-                        height: "100%",
-                        p: 2,
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        maxWidth: 400,
+                        width: "100%",
+                        // bgcolor: 'background.paper',
+                        // boxShadow: 24,
                     }}
                 >
-                    <Typography variant="h6" component="h2">
-                        Are you sure you want to delete this task?
-                    </Typography>
-                    <Box
-                        direction="row"
-                        spacing={2}
+                    <Alert
+                        color="error"
                         sx={{
-                            mt: 2,
-                            display: "flex",
-                            flexDirection: "row-reverse",
-                            gap: "1rem",
+                            height: "100%",
+                            p: 2,
                         }}
                     >
-                        <Button
-                            variant="contained"
-                            color="error"
-                            onClick={async () => {
-                                await displatch(deleteTasks(taskId));
-                                handleDeleteActionModalClose();
-                                handleClose();
+                        <Typography variant="h6" component="h2">
+                            Are you sure you want to delete this task?
+                        </Typography>
+                        <Box
+                            direction="row"
+                            spacing={2}
+                            sx={{
+                                mt: 2,
+                                display: "flex",
+                                flexDirection: "row-reverse",
+                                gap: "1rem",
                             }}
                         >
-                            Delete
-                        </Button>
-                        <Button
-                            variant="contained"
-                            color="warning"
-                            onClick={() => {
-                                handleDeleteActionModalClose();
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                    </Box>
-                </Alert>
-            </Box>
-        </Fade>
-    </Modal>)
-}
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={async () => {
+                                    await displatch(deleteTasks(taskId));
+                                    handleDeleteActionModalClose();
+                                    handleClose();
+                                }}
+                            >
+                                Delete
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color="warning"
+                                onClick={() => {
+                                    handleDeleteActionModalClose();
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                        </Box>
+                    </Alert>
+                </Box>
+            </Fade>
+        </Modal>
+    );
+};
 
 export const UpdateTask = ({ task, handleEditModalClose }) => {
     const dispatch = useDispatch();
@@ -646,9 +698,7 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
                         <Typography variant="h5" className="p-3">
                             Update Task
                         </Typography>
-                        <IconButton
-                            onClick={handleEditModalClose}
-                        >
+                        <IconButton onClick={handleEditModalClose}>
                             <Close />
                         </IconButton>
                     </Box>
@@ -675,10 +725,7 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
                         </IconButton>
 
                         <Box className="mt-4 flex items-center justify-end gap-3 *:flex-grow-0">
-                            <Button
-                                variant="text"
-                                onClick={handleEditModalClose}
-                            >
+                            <Button variant="text" onClick={handleEditModalClose}>
                                 Cancel
                             </Button>
                             <Button variant="contained" onClick={formik.handleSubmit}>
@@ -689,7 +736,11 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
                 </Box>
             </Box>
             <TaskDeleteModal
-                DeleteActionModal={DeleteActionModal} handleDeleteActionModalClose={handleDeleteActionModalClose} taskId={task.id} handleClose={handleEditModalClose} />
+                DeleteActionModal={DeleteActionModal}
+                handleDeleteActionModalClose={handleDeleteActionModalClose}
+                taskId={task.id}
+                handleClose={handleEditModalClose}
+            />
         </>
     );
 };
@@ -698,8 +749,10 @@ function sortTasksByCreatedAt(tasks) {
     return [...tasks].sort((a, b) => {
         if (a.status === "done" && b.status !== "done") return 1;
         if (a.status !== "done" && b.status === "done") return -1;
-        if (a.status === "done" && b.status === "done") return b.createdAt.seconds - a.createdAt.seconds
-        if (b.createdAt.seconds !== a.createdAt.seconds) return b.createdAt.seconds - a.createdAt.seconds;
+        if (a.status === "done" && b.status === "done")
+            return b.createdAt.seconds - a.createdAt.seconds;
+        if (b.createdAt.seconds !== a.createdAt.seconds)
+            return b.createdAt.seconds - a.createdAt.seconds;
         return b.createdAt.nanoseconds - a.createdAt.nanoseconds;
     });
 }
@@ -732,10 +785,9 @@ export function friendlyStatus(status) {
     }
 }
 
-
-
 // Code for multiple task with tabbed
-{/* <Box
+{
+    /* <Box
     sx={{
         width: "100%",
         overflowY: isLoading === "loading" ? "hidden" : "",
@@ -783,8 +835,8 @@ export function friendlyStatus(status) {
     <CustomTabPanel value={value} index={2}>
         Tomorrow
     </CustomTabPanel>
-</Box> */}
-
+</Box> */
+}
 
 // function taskNavTabPropsGenerator(index) {
 //     return {
@@ -828,7 +880,6 @@ export function friendlyStatus(status) {
 //         </div>
 //     );
 // }
-
 
 // const TaskForm = ({ formik }) => {
 //     const [EmojiState, setEmojiState] = useState(false);

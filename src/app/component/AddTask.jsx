@@ -444,10 +444,10 @@ export const TaskForm = ({ formik }) => {
                     aria-labelledby="priority-slider"
                     sx={{
                         maxWidth: "95%", mx: "auto",
-                        "& .MuiSlider-markLabel:first-child": {
+                        "& .MuiSlider-markLabel:first-of-type": {
                             color: "green"
                         },
-                        "& .MuiSlider-markLabel:last-child": {
+                        "& .MuiSlider-markLabel:last-of-type": {
                             color: "red"
                         },
                     }}

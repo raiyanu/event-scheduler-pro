@@ -1,91 +1,110 @@
 "use client";
-import { Button, TextField, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import MainLayout from "../PrimaryLayout";
 import {
-    collection,
-    addDoc,
-    getDocs,
-    doc,
-    getDoc,
-    setDoc,
-    updateDoc,
-} from "firebase/firestore";
-import { auth, db, getUserFullInfo } from "@/config/firebase";
-import { updateCurrentUser } from "firebase/auth";
+    Autocomplete,
+    Avatar, Box, IconButton,
+    InputAdornment, Skeleton, styled,
+    TextField, Typography
+} from "@mui/material";
+import MainLayout from "../PrimaryLayout";
+import { MoreVert, Search } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import { getUser } from "../redux/slice/userSlice";
+import TaskList from "../component/TaskContainer";
+import useOnScrollShowScrollbar from "../hooks/useOnScrollShowScrollbar";
 
-export default function page() {
+const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
+    [theme.breakpoints.up("md")]: {
+        maxHeight: "calc(100vh - 5rem)",
+        overflowY: "scroll",
+        scrollbarWidth: isscrolling == 'true' ? "" : "none",
+        scrollbarBaseColor: "red",
+        "&::-webkit-scrollbar": {
+            width: isscrolling ? "7px" : "0px",
+        },
+        transition: "scrollbar-width 0.3s ease-in-out ease-in-out",
+    },
+}));
+
+export default function Home() {
+    const [isscrolling, scrollContainerRef, handleScroll] = useOnScrollShowScrollbar();
+    const [isscrolling2, scrollContainerRef2, handleScroll2] = useOnScrollShowScrollbar();
     return (
         <MainLayout>
-            <Test />
+            <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 max-md:px-3 sm:px-2 md:px-4 lg:grid lg:grid-cols-2 lg:gap-4">
+                <CustomContainer onScroll={handleScroll} ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : 'false'} className="relative py-4 lg:px-4">
+                    <WelcomeMessage />
+                    <TaskList />
+                </CustomContainer>
+                {/* <CustomContainer onScroll={handleScroll2} ref={scrollContainerRef2} isscrolling={isscrolling2 ? 'true' : 'false'} className="relative py-4 lg:px-4">
+        </CustomContainer> */}
+            </Box>
         </MainLayout>
     );
 }
 
-const taskz = {
-    startTime: {
-        seconds: 1738221347,
-        nanoseconds: 937000000,
-    },
-    isRepeated: "everyday",
-    createdAt: {
-        seconds: 1738232231,
-        nanoseconds: 481000000,
-    },
-    icon: "🧡",
-    difficulty: "easy",
-    tags: ["chore", "house", "personal"],
-    status: "toStart",
-    description:
-        "i gotta clean the bike as soon as possible, because it look like scrap metal from garage sale",
-    removedAt: {
-        seconds: 1739266119,
-        nanoseconds: 378000000,
-    },
-    endTime: {
-        seconds: 1738308070,
-        nanoseconds: 114000000,
-    },
-    title: "Wash the bike",
-    importance: "casual",
+export const MainHeroSection = () => (
+    <>
+        <ProfileLineCard />
+    </>
+);
+
+export const WelcomeMessage = () => {
+    const userInfo = useSelector(getUser);
+    const tasks = useSelector((state) => state.TASK.tasks);
+    const taskCount = tasks.length;
+    const userLoadingStatus = useSelector((state) => state.AUTH.authenticatingState);
+
+    return (
+        <Box className="space-y-2">
+            <Typography variant="body1" color="primary" className="font-semibold">
+                {userInfo.displayName ? `Hey ${userInfo.displayName?.split(" ")?.[0]}! 👋` :
+                    <Skeleton variant="text" width={200} height={30} />}
+            </Typography>
+            <Typography className="text-2xl font-bold" sx={{ color: "text.secondary" }}>
+                {
+                    taskCount > 0 ? `You have ${taskCount} tasks waiting!` : userLoadingStatus === "loading" ? "Loading..." : ""
+                }
+            </Typography>
+        </Box>
+    );
 };
 
+export const ProfileLineCard = () => {
+    const userInfo = useSelector(getUser);
 
-export function Test() {
-    const reference = useRef(0);
-    const [data, setData] = useTest(reference);
-    console.log("render")
     return (
-        <>
-            <Typography variant="h1">{data}</Typography>
-            <Button
-                className="ml-4"
-                variant="contained"
-                color="primary"
-                onClick={async () => {
-                    reference.current += 1;
-                }}
-            >
-                Check
-            </Button>
-            <Child />
-        </>
+        <Box className="my-4 flex items-center gap-4 rounded-xl p-4 shadow-md" bgcolor={"background.b8"}>
+            <Avatar src={userInfo?.photoURL || ""} alt="Profile" className="h-16 w-16" />
+            <Box className="flex-1">
+                <Typography variant="h6">{userInfo?.displayName}</Typography>
+                <Typography variant="body2" color="textSecondary">{userInfo?.email}</Typography>
+            </Box>
+            <Box className="flex gap-3">
+                <IconButton>
+                    <MoreVert />
+                </IconButton>
+            </Box>
+        </Box>
     );
-}
+};
 
-
-export function Child() {
-    let sNum = 0;
-    console.log("rendered");
+export function SearchBar() {
     return (
-        <Typography variant="h1">{sNum}</Typography>
-    )
-}
-
-const useTest = ({ reference }) => {
-    const [data, setData] = useState(0);
-    useEffect(() => {
-        setData(data + 1)
-    }, [reference?.current])
-    return [data, setData];
+        <Box className="relative mt-4 w-full max-w-md">
+            <Autocomplete
+                freeSolo
+                options={["Option 1", "Option 2"]}
+                renderInput={(params) => (
+                    <TextField {...params} placeholder="Search" InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Search />
+                            </InputAdornment>
+                        )
+                    }} />
+                )}
+            />
+        </Box>
+    );
 }

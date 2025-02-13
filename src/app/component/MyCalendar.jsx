@@ -225,11 +225,11 @@ export default function CalendarMain() {
           onSelectSlot={handleSlotSelect}
           onDoubleClickEvent={handleSelectEvent}
           onSelecting={event => console.log(event)}
-          onDragStart={event => console.log(event)}
+          onDragStart={handleDragStart}
           // onSelectEvent={handleSelectEvent}
           resizable
           selectable
-          popup
+          // popup
           titleAccessor={(event) => event?.icon ? event.icon + " " + event.title : event.title + event.title}
         />
       </div>
