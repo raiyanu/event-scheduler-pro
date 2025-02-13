@@ -14,6 +14,7 @@ import {
     Radio,
     RadioGroup,
     Select,
+    Slider,
     TextField,
     Typography,
 } from "@mui/material";
@@ -311,7 +312,7 @@ export const TaskForm = ({ formik }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const { themeMode } = useContext(themeChangeContext)
+    const { themeMode } = useContext(themeChangeContext);
     return (
         <form onSubmit={formik.handleSubmit} className="grid gap-7 p-2">
             <Box sx={{ display: "flex", alignItems: "flex-end" }}>
@@ -374,7 +375,8 @@ export const TaskForm = ({ formik }) => {
                 helpertext={formik.touched.description && formik.errors.description}
                 multiline
                 maxRows={6}
-            /><Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
+            />
+            <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
                 <DateTimePicker
                     // disablePast T// ODO: enable this feature depending on the task status
                     name="startTime"
@@ -425,49 +427,31 @@ export const TaskForm = ({ formik }) => {
                     }}
                 />
             </Box>
-            <Box className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-                <FormControl variant="standard" className="lg:col-start-2">
-                    <InputLabel id="demo-simple-select-standard-label">
-                        Priority
-                    </InputLabel>
-                    <Select
-                        labelId="demo-simple-select-standard-label"
-                        id="demo-simple-select-standard"
-                        value={formik.values.priority}
-                        onChange={formik.handleChange}
-                        label="Priority"
-                        name="priority"
-                    >
-                        <MenuItem value={null}>none</MenuItem>
-                        <MenuItem value={"low"}>low</MenuItem>
-                        <MenuItem value={"casual"}>casual</MenuItem>
-                        <MenuItem value={"medium"}>medium</MenuItem>
-                        <MenuItem value={"high"}>high</MenuItem>
-                    </Select>
-                </FormControl>
-                {/* <FormControl variant="standard" sx={{}}>
-                    <InputLabel id="demo-simple-select-standard-label">
-                        Importance
-                    </InputLabel>
-                    <Select
-                        id="importance"
-                        name="importance"
-                        variant="standard"
-                        label="Importance"
-                        value={formik.values.importance}
-                        onChange={formik.handleChange}
-                        error={
-                            formik.touched.importance && Boolean(formik.errors.importance)
-                        }
-                        helpertext={formik.touched.importance && formik.errors.importance}
-                    >
-                        <MenuItem value={null}>none</MenuItem>
-                        <MenuItem value={"low"}>low</MenuItem>
-                        <MenuItem value={"medium"}>medium</MenuItem>
-                        <MenuItem value={"high"}>high</MenuItem>
-                        <MenuItem value={"critical"}>critical</MenuItem>
-                    </Select>
-                </FormControl> */}
+            <Box className="grid max-w-full grid-cols-1 gap-3 overflow-x-clip lg:grid-cols-2">
+                <Slider
+                    value={priorityMap.get(formik.values.priority) || null}
+                    min={1}
+                    max={4}
+                    step={1}
+                    marks={Array.from(priorityMap, ([name, value]) => ({ value, label: name }))}
+                    // valueLabelDisplay="auto"
+                    onChange={(event, value) => {
+                        formik.setFieldValue(
+                            "priority",
+                            [...priorityMap.entries()].find(([key, val]) => val === value)?.[0] || null
+                        );
+                    }}
+                    aria-labelledby="priority-slider"
+                    sx={{
+                        maxWidth: "95%", mx: "auto",
+                        "& .MuiSlider-markLabel:first-child": {
+                            color: "green"
+                        },
+                        "& .MuiSlider-markLabel:last-child": {
+                            color: "red"
+                        },
+                    }}
+                />
             </Box>
 
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
@@ -632,3 +616,14 @@ export const tagIdeas = [
     "Coffee Break",
     "Tea Break",
 ];
+
+const priorityMap = new Map([
+    ["low", 1],
+    ["casual", 2],
+    ["medium", 3],
+    ["high", 4],
+]);
+
+console.log([...priorityMap.entries()].find(([key, val]) => val === "casual")?.[0])
+
+console.log(Array.from(priorityMap, ([name, value]) => ({ value, label: name })))
