@@ -6,7 +6,7 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { UpdateTask } from './TaskContainer';
-import { Modal, Paper } from '@mui/material';
+import { Modal, Paper, useTheme } from '@mui/material';
 import { updateTask } from '../redux/slice/taskSlice';
 import { TaskCrudDrawerContext } from './AddTask';
 
@@ -208,12 +208,15 @@ export default function CalendarMain() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const handleEditModalOpen = () => setOpenEditModal(true);
   const handleEditModalClose = () => setOpenEditModal(false);
+
+  const isMobileDevice = /Mobi|Android/i.test(navigator.userAgent);
+
   return (
     <>
       <div className="h-full">
         <DragAndDropCalendar
           defaultDate={defaultDate}
-          defaultView={Views.MONTH}
+          defaultView={isMobileDevice ? Views.WEEK : Views.MONTH}
           dragFromOutsideItem={
             displayDragItemInCell ? dragFromOutsideItem : null
           }

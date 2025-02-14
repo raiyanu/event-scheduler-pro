@@ -159,7 +159,7 @@ export function TaskList() {
                 <QuoteCard />
                 {sortedTasks.map((task, index) => (
                     <Fragment key={index}>
-                        <MyListItem info={task} />
+                        <TaskCardItem info={task} />
 
                     </Fragment>
                 ))}
@@ -168,7 +168,7 @@ export function TaskList() {
     );
 }
 
-export const MyListItem = ({ info }) => {
+export const TaskCardItem = ({ info }) => {
     const [open, setOpen] = useState(false);
     const theme = useTheme();
 
@@ -226,13 +226,18 @@ export const MyListItem = ({ info }) => {
                     }
                 }}
             >
-                <CardActionArea sx={{ p: 1 }} onClick={() => setOpen(true)}>
+                <CardActionArea sx={{ py: 1, px: 2 }} onClick={() => setOpen(true)}>
                     <CardHeader
                         sx={{
-                            py: 1, px: 0,
+                            px: 0,
+                            py: 1,
+                            "& .MuiCardHeader-root": {
+                                p: 0,
+                            },
                             "& .MuiCardHeader-action": {
                                 flexShrink: 0,
                                 m: 0,
+                                p: 0,
                                 minWidth: "40px"
                             },
                             alignItems: "flex-start",
@@ -295,6 +300,27 @@ export const MyListItem = ({ info }) => {
                                 <Typography variant="body2" color="text.secondary">
                                     {info.description}
                                 </Typography>
+                                <Box className="mt-2 flex flex-wrap gap-2">
+                                    {info.tags &&
+                                        info.tags.length >= 0 &&
+                                        info.tags
+                                            .slice(0, 5).map((tag, index) => (
+                                                <Chip
+                                                    label={tag}
+                                                    key={index.toString() + "-myTaskElementTags"}
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    size="small"
+                                                />)
+                                            )}
+                                    {info.tags.length > 5 && <Chip
+                                        label={"..."}
+                                        key={(info.tags.length.toString() + 1) + "-myTaskElementTags"}
+                                        variant="outlined"
+                                        color="primary"
+                                        size="small"
+                                    />}
+                                </Box>
                             </Box>
                         </CardContent>
                     }
