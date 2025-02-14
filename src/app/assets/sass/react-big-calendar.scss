@@ -933,12 +933,14 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-current button {
-	background-color: var(--mui-palette-primary-p4);
-	color: var(--mui-palette-primary-contrastText);
 	border-radius: 50%;
 	height: fit-content;
 	width: auto;
 	padding: 2px 5px;
 	aspect-ratio: 1/1;
+}
+.rbc-now button {
+	background-color: var(--mui-palette-primary-p4);
+	color: var(--mui-palette-primary-contrastText);
 }
 /*# sourceMappingURL=react-big-calendar.css.map */
