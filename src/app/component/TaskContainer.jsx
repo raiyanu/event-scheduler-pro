@@ -46,6 +46,7 @@ import {
     Edit,
     HourglassBottom,
     PushPin,
+    Repeat,
     Tag,
     WorkspacePremium,
 } from "@mui/icons-material";
@@ -544,7 +545,10 @@ export const MyListItem = ({ info }) => {
 };
 
 export const QuoteCard = () => {
-    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+    const gr = () => Math.floor(Math.random() * quotes.length)
+    const [index, setIndex] = useState(gr());
+    const quote = quotes[index];
+    const update = () => setIndex(gr());
     return (
         <>
             <Card
@@ -554,14 +558,14 @@ export const QuoteCard = () => {
                     borderTopLeftRadius: "none",
                     borderRadius: "0px",
                     borderRadius: "md",
-                    "& .MuiCardContent-root:last-child": {
+                    "& .MuiCardContent-root": {
                         p: 0,
                     },
                     bgcolor: "secondary.s7",
                 }}
             >
-                <CardContent >
-                    <Box sx={{ p: 2 }}>
+                <CardContent>
+                    <Box sx={{ p: 2, pb: 0 }}>
                         <Typography variant="caption" component="p">
                             "{quote.quote}"
                         </Typography>
@@ -570,6 +574,9 @@ export const QuoteCard = () => {
                         </Typography>
                     </Box>
                 </CardContent>
+                <CardActions>
+                    <IconButton sx={{ ml: 'auto' }} size="small" onClick={update}><Repeat /></IconButton>
+                </CardActions>
             </Card >
         </>
     );
