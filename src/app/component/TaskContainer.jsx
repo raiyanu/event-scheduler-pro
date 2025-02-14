@@ -575,7 +575,9 @@ export const QuoteCard = () => {
                     </Box>
                 </CardContent>
                 <CardActions>
-                    <IconButton sx={{ ml: 'auto' }} size="small" onClick={update}><Repeat /></IconButton>
+                    <Tooltip title="Refresh Quote" disableInteractive enterDelay={1200}>
+                        <IconButton sx={{ ml: 'auto' }} size="small" onClick={update}><Repeat /></IconButton>
+                    </Tooltip>
                 </CardActions>
             </Card >
         </>

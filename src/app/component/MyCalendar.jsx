@@ -60,8 +60,11 @@ export default function CalendarMain() {
     (async () => {
       console.log(tasks)
       const updatedTasks = tasks.map((task) => {
-        let start = new Date(task.startTime.seconds * 1000),
-          end = new Date(task.endTime.seconds * 1000);
+        if (!(task?.startTime?.seconds)) {
+          console.log(task)
+        }
+        let start = new Date(task?.startTime?.seconds * 1000),
+          end = new Date(task?.endTime?.seconds * 1000);
         return {
           ...task,
           start,

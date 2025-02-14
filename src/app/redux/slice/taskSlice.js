@@ -63,7 +63,11 @@ export const addTasks = createAsyncThunk(
 const taskSlice = createSlice({
     name: "TASK",
     initialState,
-    reducers: {},
+    reducers: {
+        pushTasks: (state, action) => {
+            state.tasks = action.payload;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchTasks.pending, (state) => {
@@ -109,5 +113,5 @@ const taskSlice = createSlice({
     },
 });
 
-export const { } = taskSlice.actions;
+export const { pushTasks } = taskSlice.actions;
 export default taskSlice.reducer;
