@@ -232,7 +232,7 @@ const SignUp = memo(() => {
                 <Box className="flex flex-col gap-4 *:!bg-transparent">
                     <TextField
                         id="form-username"
-                        label="EMAIL"
+                        label="Username"
                         variant="standard"
                         name="username"
                         onChange={formik.handleChange}

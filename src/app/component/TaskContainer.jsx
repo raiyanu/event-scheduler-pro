@@ -51,7 +51,7 @@ import {
     WorkspacePremium,
 } from "@mui/icons-material";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
-import { TaskForm } from "./AddTask";
+import { AddTaskButton, TaskForm } from "./AddTask";
 import { useFormik } from "formik";
 import dayjs from "dayjs";
 import { ClockIcon } from "@mui/x-date-pickers";
@@ -163,6 +163,13 @@ export function TaskList() {
 
                     </Fragment>
                 ))}
+                {
+                    taskCount === 0 && (
+                        <Alert severity="info" className="w-full" sx={{ p: 2 }}>
+                            You have no task
+                        </Alert>
+                    )
+                }
             </Masonry>
         </ResponsiveMasonry >
     );

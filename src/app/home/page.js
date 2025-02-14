@@ -57,8 +57,8 @@ export const WelcomeMessage = () => {
   return (
     <Box className="space-y-2">
       <Typography variant="body1" color="primary" className="font-semibold">
-        {userInfo.displayName ? `Hey ${userInfo.displayName?.split(" ")?.[0]}! 👋` :
-          <Skeleton variant="text" width={200} height={30} />}
+        {userInfo.firstName ? `Hey ${userInfo.firstName}! 👋` :
+          null}
       </Typography>
       <Typography className="text-2xl font-bold" sx={{ color: "text.secondary" }}>
         {

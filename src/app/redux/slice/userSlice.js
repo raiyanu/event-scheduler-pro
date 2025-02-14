@@ -4,6 +4,7 @@ import {
     loginUser,
     logOut,
     occupyUsername,
+    storeUserDetails,
 } from "@/config/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -63,6 +64,10 @@ export const userSignUp = createAsyncThunk(
             if (res.ok) {
                 console.log("User created successfully");
                 await occupyUsername(payload.username);
+                await storeUserDetails({
+                    uid: res.uid,
+                    username: payload.username,
+                });
                 return { ...res, router: payload.router };
             } else {
                 return rejectWithValue(new Error(res.errorCode));

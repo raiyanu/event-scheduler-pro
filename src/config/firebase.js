@@ -163,6 +163,19 @@ export const occupyUsername = async (username) => {
     }
 };
 
+export const storeUserDetails = async (user) => {
+    try {
+        await setDoc(doc(db, "users", user.uid), {
+            username: user.username,
+        });
+        console.log("User details stored successfully!");
+        return { ok: true };
+    } catch (error) {
+        console.error("Error storing user details:", error.message);
+        return { ok: false, message: error.message };
+    }
+}
+
 export const getUserFullInfo = async () => {
     const userFullInfo = await getDoc(doc(db, "users", auth.currentUser.uid));
     return userFullInfo;
