@@ -540,6 +540,7 @@ export const TaskForm = ({ formik }) => {
                     />
                 )}
             />
+            <Button type="submit"></Button>
         </form>
     );
 };
@@ -624,6 +625,6 @@ const priorityMap = new Map([
     ["high", 4],
 ]);
 
-console.log([...priorityMap.entries()].find(([key, val]) => val === "casual")?.[0])
+// console.log([...priorityMap.entries()].find(([key, val]) => val === "casual")?.[0])
 
-console.log(Array.from(priorityMap, ([name, value]) => ({ value, label: name })))
+// console.log(Array.from(priorityMap, ([name, value]) => ({ value, label: name })))
