@@ -1,7 +1,8 @@
+"use client";
 import { onAuthStateChanged } from "firebase/auth";
 import { Suspense, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux";
-import { extractUserInfo, logout, updateUser } from "./redux/slice/userSlice";
+import { extractUserInfo, logout, setPublicState, updateUser } from "./redux/slice/userSlice";
 import { auth, db, getUserFullInfo } from "@/config/firebase";
 import { fetchTasks, pushTasks } from "./redux/slice/taskSlice";
 import { collection, doc, onSnapshot } from "firebase/firestore";
@@ -15,6 +16,11 @@ export default function GlobalActionProvider({ children }) {
         (async () => {
             let unsub;
             try {
+                if (auth.currentUser) {
+                    await dispatch(updateUser(extractUserInfo(auth.currentUser)));
+                } else {
+                    await dispatch(setPublicState());
+                }
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         if (user) {

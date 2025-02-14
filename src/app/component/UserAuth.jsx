@@ -130,10 +130,8 @@ const Login = memo(() => {
             await dispatch(
                 userLogin({ email: values.email, password: values.password })
             );
-            setTimeout(() => {
-                dispatch(setLoginStatus(false));
-                dispatch(calmAuthenticatingState());
-            }, 2000);
+            dispatch(setLoginStatus(false));
+            dispatch(calmAuthenticatingState());
         },
     });
     return (

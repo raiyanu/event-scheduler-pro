@@ -16,7 +16,7 @@ const initialState = {
         displayName: null,
     },
     loginStatus: false,
-    authenticatingState: "idle",
+    authenticatingState: "to_initiate",
     authenticatingError: null,
 };
 
@@ -86,6 +86,7 @@ const userSlice = createSlice({
         updateUser: (state, action) => {
             state.user = action.payload;
             state.loginStatus = true;
+            state.authenticatingState = "idle";
         },
         logout: (state) => {
             state.user = {};
@@ -97,6 +98,11 @@ const userSlice = createSlice({
         calmAuthenticatingState: (state) => {
             state.authenticatingState = "idle";
             state.authenticatingError = null;
+        },
+        setPublicState: (state) => {
+            state.authenticatingState = "idle";
+            state.authenticatingError = null;
+            state.loginStatus = false;
         },
         selectors: (state) => state.user,
     },
@@ -158,7 +164,7 @@ const userSlice = createSlice({
 });
 
 export const selectUser = (state) => state.AUTH.user;
-export const { logout, setLoginStatus, updateUser, calmAuthenticatingState } =
+export const { logout, setPublicState, setLoginStatus, updateUser, calmAuthenticatingState } =
     userSlice.actions;
 export default userSlice.reducer;
 
