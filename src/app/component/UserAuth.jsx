@@ -122,8 +122,8 @@ const Login = memo(() => {
     );
     const formik = useFormik({
         initialValues: {
-            email: "ray3@gmail.com",
-            password: "ray123",
+            email: "",
+            password: "",
         },
         onSubmit: async (values) => {
             console.log(JSON.stringify(values, null, 2));
@@ -200,10 +200,10 @@ const SignUp = memo(() => {
     );
     const formik = useFormik({
         initialValues: {
-            email: "ray3@gmail.com",
-            password: "ray123",
-            confirmPassword: "ray123",
-            username: "ray",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            username: "",
         },
         onSubmit: async (values) => {
             if (!(values.confirmPassword === values.password)) {
