@@ -32,7 +32,8 @@
 		"react-dom": "^18",
 		"react-redux": "^9.2.0",
 		"react-responsive-masonry": "^2.7.1",
-		"sass": "^1.84.0"
+		"sass": "^1.84.0",
+		"yup": "^1.6.1"
 	},
 	"devDependencies": {
 		"eslint": "^9.19.0",

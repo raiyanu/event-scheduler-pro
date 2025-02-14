@@ -33,6 +33,7 @@ import {
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { themeChangeContext } from "../context/ThemeContext";
+import * as Yup from 'yup'
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -91,7 +92,7 @@ export function Auth() {
             className={`flex h-screen w-screen items-center justify-start bg-cover bg-center bg-no-repeat text-black dark:text-white`}>
             <Box
                 sx={{ width: "300px", marginInline: "auto", height: "530px", bgcolor: "background.paper" }}
-                className="rounded-lg p-4 shadow-2xl"
+                className="overflow-y-auto rounded-lg p-4 shadow-2xl"
             >
                 <Box>
                     <Tabs
@@ -115,6 +116,13 @@ export function Auth() {
     );
 }
 
+const LoginSchema = Yup.object().shape({
+    password: Yup.string()
+        .min(2, 'Too Short!')
+        .required('Required'),
+    email: Yup.string().email('Invalid email').required('Required'),
+});
+
 const Login = memo(() => {
     const dispatch = useDispatch();
     const authenticatingError = useSelector(
@@ -125,13 +133,16 @@ const Login = memo(() => {
             email: "",
             password: "",
         },
+        validationSchema: LoginSchema,
         onSubmit: async (values) => {
             console.log(JSON.stringify(values, null, 2));
             await dispatch(
                 userLogin({ email: values.email, password: values.password })
             );
             dispatch(setLoginStatus(false));
-            dispatch(calmAuthenticatingState());
+            setTimeout(() => {
+                dispatch(calmAuthenticatingState());
+            }, 2000);
         },
     });
     return (
@@ -148,7 +159,11 @@ const Login = memo(() => {
                         name="email"
                         onChange={formik.handleChange}
                         value={formik.values.email}
+                        helpertext={formik.touched.email && formik.errors.email}
                     />
+                    {formik.errors.email && formik.touched.email ? (
+                        <Typography variant="caption" color="error">{formik.errors.email}</Typography>
+                    ) : null}
                     <TextField
                         id="standard-password-input"
                         label="Password"
@@ -158,6 +173,9 @@ const Login = memo(() => {
                         onChange={formik.handleChange}
                         value={formik.values.password}
                     />
+                    {formik.errors.password && formik.touched.password ? (
+                        <Typography variant="caption" color="error">{formik.errors.password}</Typography>
+                    ) : null}
                 </Box>
                 <Typography variant="caption" className="text-right text-red-600">
                     {authenticatingError}
@@ -189,6 +207,16 @@ const Login = memo(() => {
     );
 });
 
+
+const SignUpSchema = Yup.object().shape({
+    password: Yup.string()
+        .min(6, 'Too Short!')
+        .required('Required'),
+    email: Yup.string().email('Invalid email').required('Required'),
+    username: Yup.string().min(6, 'Too Short!').required('Required'),
+    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match')
+});
+
 const SignUp = memo(() => {
     const dispatch = useDispatch();
     const router = useRouter();
@@ -205,6 +233,7 @@ const SignUp = memo(() => {
             confirmPassword: "",
             username: "",
         },
+        validationSchema: SignUpSchema,
         onSubmit: async (values) => {
             if (!(values.confirmPassword === values.password)) {
                 alert("Password does not match");
@@ -238,6 +267,9 @@ const SignUp = memo(() => {
                         onChange={formik.handleChange}
                         value={formik.values.username}
                     />
+                    {formik.errors.username && formik.touched.username ? (
+                        <Typography variant="caption" color="error">{formik.errors.username}</Typography>
+                    ) : null}
                     <TextField
                         id="standard-basic"
                         label="EMAIL"
@@ -246,6 +278,9 @@ const SignUp = memo(() => {
                         onChange={formik.handleChange}
                         value={formik.values.email}
                     />
+                    {formik.errors.email && formik.touched.email ? (
+                        <Typography variant="caption" color="error">{formik.errors.email}</Typography>
+                    ) : null}
                     <TextField
                         id="standard-password-input"
                         label="Password"
@@ -255,6 +290,9 @@ const SignUp = memo(() => {
                         onChange={formik.handleChange}
                         value={formik.values.password}
                     />
+                    {formik.errors.password && formik.touched.password ? (
+                        <Typography variant="caption" color="error">{formik.errors.password}</Typography>
+                    ) : null}
                     <TextField
                         id="standard--confirmPassword-input"
                         label="Confirm Password"
@@ -264,6 +302,9 @@ const SignUp = memo(() => {
                         onChange={formik.handleChange}
                         value={formik.values.confirmPassword}
                     />
+                    {formik.errors.confirmPassword && formik.touched.confirmPassword ? (
+                        <Typography variant="caption" color="error">{formik.errors.confirmPassword}</Typography>
+                    ) : null}
                 </Box>
                 <Typography variant="caption" className="text-right text-red-600">
                     {authenticatingError}
