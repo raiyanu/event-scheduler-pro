@@ -55,7 +55,8 @@ import { useFormik } from "formik";
 import dayjs from "dayjs";
 import { ClockIcon } from "@mui/x-date-pickers";
 import Image from "next/image";
-import { Masonry } from "@mui/lab";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import quotes from '../assets/quotes.json';
 
 const FriendlyDate = (input) => {
     const date = new Date(input.seconds);
@@ -117,6 +118,13 @@ export default function TaskContainer() {
 }
 
 export function TaskList() {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+
     const tasks = useSelector((state) => state.TASK.tasks);
     const sortedTasks = useMemo(() => {
         try {
@@ -138,21 +146,24 @@ export function TaskList() {
     const taskCount = tasks.length ? tasks.length : 0;
 
     const numberOfColumn = taskCount > 4 ? 4 : taskCount > 3 ? 3 : taskCount;
-
+    if (!isClient) {
+        return null;
+    }
     return (
-        <Masonry columns={{
-            xs: 1,
-            sm: 2,
-            md: 3,
-            lg: numberOfColumn,
-        }} spacing={2}>
-            {sortedTasks.map((task, index) => (
-                <Fragment key={index}>
-                    <MyListItem info={task} />
+        <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 700: 2, 900: 3, 1200: 4 }}
+            gutter="0px"
+            columnsCount={5}
+        >
+            <Masonry>
+                <QuoteCard />
+                {sortedTasks.map((task, index) => (
+                    <Fragment key={index}>
+                        <MyListItem info={task} />
 
-                </Fragment>
-            ))}
-        </Masonry>
+                    </Fragment>
+                ))}
+            </Masonry>
+        </ResponsiveMasonry >
     );
 }
 
@@ -208,7 +219,6 @@ export const MyListItem = ({ info }) => {
                     borderStyle: "solid",
                     borderTopLeftRadius: "none",
                     borderRadius: "0px",
-                    mb: 2,
                     borderRadius: "md",
                     "& .MuiCardContent-root": {
                         p: 0,
@@ -224,6 +234,7 @@ export const MyListItem = ({ info }) => {
                                 m: 0,
                                 minWidth: "40px"
                             },
+                            alignItems: "flex-start",
 
                         }}
                         avatar={
@@ -531,6 +542,39 @@ export const MyListItem = ({ info }) => {
         </>
     );
 };
+
+export const QuoteCard = () => {
+    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+    return (
+        <>
+            <Card
+                sx={{
+                    width: "100%",
+                    borderStyle: "solid",
+                    borderTopLeftRadius: "none",
+                    borderRadius: "0px",
+                    borderRadius: "md",
+                    "& .MuiCardContent-root:last-child": {
+                        p: 0,
+                    },
+                    bgcolor: "secondary.s7",
+                }}
+            >
+                <CardContent >
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="caption" component="p">
+                            "{quote.quote}"
+                        </Typography>
+                        <Typography variant="caption" component="p" sx={{ textAlign: "right" }}>
+                            - {quote.author}
+                        </Typography>
+                    </Box>
+                </CardContent>
+            </Card >
+        </>
+    );
+};
+
 
 export const TaskDeleteModal = ({
     DeleteActionModal,
@@ -1125,3 +1169,5 @@ export function friendlyStatus(status) {
 //         </Box>
 //     );
 // };
+
+
