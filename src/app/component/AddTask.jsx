@@ -428,30 +428,34 @@ export const TaskForm = ({ formik }) => {
                 />
             </Box>
             <Box className="grid max-w-full grid-cols-1 gap-3 overflow-x-clip px-3 lg:grid-cols-2">
-                <Slider
-                    value={priorityMap.get(formik.values.priority) || null}
-                    min={1}
-                    max={4}
-                    step={1}
-                    marks={Array.from(priorityMap, ([name, value]) => ({ value, label: name }))}
-                    // valueLabelDisplay="auto"
-                    onChange={(event, value) => {
-                        formik.setFieldValue(
-                            "priority",
-                            [...priorityMap.entries()].find(([key, val]) => val === value)?.[0] || null
-                        );
-                    }}
-                    aria-labelledby="priority-slider"
-                    sx={{
-                        maxWidth: "95%", mx: "auto",
-                        "& .MuiSlider-markLabel:first-of-type": {
-                            color: "green"
-                        },
-                        "& .MuiSlider-markLabel:last-of-type": {
-                            color: "red"
-                        },
-                    }}
-                />
+                <FormControl>
+                    <Typography id="priority-select-label">Priority</Typography>
+                    <Slider
+                        value={priorityMap.get(formik.values.priority) || null}
+                        min={1}
+                        max={4}
+                        step={1}
+                        marks={Array.from(priorityMap, ([name, value]) => ({ value, label: name }))}
+                        // valueLabelDisplay="auto"
+                        onChange={(event, value) => {
+                            formik.setFieldValue(
+                                "priority",
+                                [...priorityMap.entries()].find(([key, val]) => val === value)?.[0] || null
+                            );
+                        }}
+                        aria-labelledby="priority-slider"
+                        sx={{
+                            maxWidth: "95%", mx: "auto",
+                            "& .MuiSlider-markLabel:first-of-type": {
+                                color: "green"
+                            },
+                            "& .MuiSlider-markLabel:last-of-type": {
+                                color: "red"
+                            },
+                        }}
+                    />
+                </FormControl>
+
             </Box>
 
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
