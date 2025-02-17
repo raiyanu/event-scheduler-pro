@@ -14,8 +14,8 @@ import useOnScrollShowScrollbar from "../hooks/useOnScrollShowScrollbar";
 
 const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
   [theme.breakpoints.up("md")]: {
-    maxHeight: "calc(100vh - 5rem)",
-    // overflowY: "scroll",
+    maxHeight: "calc(100vh)",
+    overflowY: "scroll",
     scrollbarWidth: isscrolling == 'true' ? "" : "none",
     scrollbarBaseColor: "red",
     "&::-webkit-scrollbar": {
@@ -26,18 +26,15 @@ const CustomContainer = styled(Box)(({ theme, isscrolling }) => ({
 }));
 
 export default function Home() {
-  const [isscrolling, scrollContainerRef, handleScroll] = useOnScrollShowScrollbar();
-  const [isscrolling2, scrollContainerRef2, handleScroll2] = useOnScrollShowScrollbar();
+  const [isscrolling, scrollContainerRef, handleScroll] = useOnScrollShowScrollbar(1500);
   return (
     <MainLayout>
-      <Box className="flex max-h-full flex-col-reverse gap-6 overflow-y-scroll *:flex-shrink-0 max-md:px-3 sm:px-2 md:px-4 lg:grid lg:gap-4">
-        <CustomContainer onScroll={handleScroll} ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : 'true'} className="relative py-4 lg:px-4">
+      <CustomContainer onScroll={handleScroll} ref={scrollContainerRef} isscrolling={isscrolling ? 'true' : 'false'} className="max-h-full flex-col-reverse gap-6 overflow-y-scroll pb-24 max-md:px-3 sm:px-2 md:px-4 lg:grid lg:gap-4">
+        <Box>
           <WelcomeMessage />
           <TaskList />
-        </CustomContainer>
-        {/* <CustomContainer onScroll={handleScroll2} ref={scrollContainerRef2} isscrolling={isscrolling2 ? 'true' : 'false'} className="relative py-4 lg:px-4">
-        </CustomContainer> */}
-      </Box>
+        </Box>
+      </CustomContainer>
     </MainLayout>
   );
 }

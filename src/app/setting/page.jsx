@@ -2,22 +2,23 @@
 import {
     Badge,
     Box,
-    Button, IconButton, styled,
+    Button,
+    IconButton,
+    styled,
     TextField,
     Tooltip,
-    Typography
+    Typography,
 } from "@mui/material";
 import MainLayout from "../PrimaryLayout";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    userLogout,
-    updateUser
-} from "../redux/slice/userSlice";
+import { userLogout, updateUser } from "../redux/slice/userSlice";
 import {
     AccountCircle,
     Close,
-    Edit, FileUploadSharp,
-    GppMaybe, VerifiedUser
+    Edit,
+    FileUploadSharp,
+    GppMaybe,
+    VerifiedUser,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
@@ -110,7 +111,10 @@ const UserSettings = () => {
             <Typography>Login to continue</Typography>
         </Box>
     ) : (
-        <form onSubmit={formik.submitForm} className="block max-h-full overflow-y-scroll px-3 pb-24 max-sm:mx-auto md:px-6">
+        <form
+            onSubmit={formik.submitForm}
+            className="block max-h-full overflow-y-scroll px-3 pb-24 max-sm:mx-auto md:px-6"
+        >
             <Typography
                 sx={{
                     color: "primary.main",
@@ -191,12 +195,17 @@ const UserSettings = () => {
                     </Box>
                 </Box>
             </Box>
-            <Box sx={{
-                flexGrow: 1, marginTop: "2rem", width: {
-                    xs: "fit-content",
-                    md: "auto"
-                }, marginInline: "auto"
-            }}>
+            <Box
+                sx={{
+                    flexGrow: 1,
+                    marginTop: "2rem",
+                    width: {
+                        xs: "fit-content",
+                        md: "auto",
+                    },
+                    marginInline: "auto",
+                }}
+            >
                 <Box
                     className={`flex grid-cols-[1fr_1fr] flex-col  ${isEditing ? "items-center" : ""} gap-6 md:grid max-sm:px-2`}
                 >
@@ -282,12 +291,12 @@ const UserSettings = () => {
                         >
                             {userInfo.emailVerified ? (
                                 <Tooltip title="Email is verified" placement="top-end">
-                                    {userInfo.email ? userInfo.email : "No Email"} {" "}
+                                    {userInfo.email ? userInfo.email : "No Email"}{" "}
                                     <VerifiedUser color="info" />
                                 </Tooltip>
                             ) : (
                                 <Tooltip title="Email is Not Verified!" placement="top-end">
-                                    {userInfo.email ? userInfo.email : "No Email"} {" "}
+                                    {userInfo.email ? userInfo.email : "No Email"}{" "}
                                     <Button
                                         variant="outlined"
                                         color="warning"
@@ -296,6 +305,7 @@ const UserSettings = () => {
                                             validateUserEmail();
                                         }}
                                         size="small"
+                                        sx={{ ml: 2 }}
                                     >
                                         <GppMaybe color="warning" /> Verify
                                     </Button>
@@ -305,11 +315,18 @@ const UserSettings = () => {
                     </Box>
                 </Box>
                 {isEditing && (
-                    <Box className="mt-8 flex flex-col-reverse gap-4">
+                    <Box
+                        sx={{
+                            mt: 8,
+                            display: "flex",
+                            flexDirection: "column-reverse",
+                            gap: 4,
+                        }}
+                    >
                         <Button
                             variant="contained"
                             color="primary"
-                            className="ml-auto mt-8 max-sm:w-full"
+                            sx={{ ml: "auto", mt: 8, width: { xs: "100%", sm: "auto" } }}
                             onClick={formik.handleSubmit}
                             type="submit"
                         >
@@ -319,11 +336,18 @@ const UserSettings = () => {
                 )}
             </Box>
             {!isEditing && (
-                <Box className="mt-4">
+                <Box sx={{ mt: 4 }}>
                     <Button
                         variant="contained"
                         color="error"
-                        className="max-sm:mt-18 ml-auto mt-8 block max-w-[80%] max-sm:mx-auto max-sm:w-full"
+                        sx={{
+                            mt: 8,
+                            display: "block",
+                            maxWidth: "80%",
+                            mr: { xs: "auto", sm: "0" },
+                            ml: "auto",
+                            width: { xs: "100%", sm: "auto" },
+                        }}
                         onClick={() => {
                             dispatch(userLogout());
                         }}

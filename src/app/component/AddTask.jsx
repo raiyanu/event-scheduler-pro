@@ -99,7 +99,7 @@ export const TaskCrudDrawerProvider = ({ children }) => {
             };
             await dispatch(addTasks(values));
             formik.resetForm();
-            toggleDrawer(false)();
+            toggleDrawer(false);
         },
     });
     useEffect(() => {

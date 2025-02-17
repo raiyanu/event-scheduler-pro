@@ -81,13 +81,12 @@ export function Auth() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    const { toggleTheme, themeMode } = useContext(themeChangeContext);
+    const themeMode = useSelector((state) => state.UTIL.themeMode);
     "bg-[linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.3)),url(/bg-frame.svg)]"
     return (
         <Box
             sx={{
-                background: themeMode == 'dark' ? "" : "url('/bg-frame.svg')",
-                bgcolor: themeMode == 'dark' ? "secondary.main" : "",
+                background: themeMode == 'dark' ? "url(/bg-frame-dark.svg)" : "url('/bg-frame.svg')",
             }}
             className={`flex h-screen w-screen items-center justify-start bg-cover bg-center bg-no-repeat text-black dark:text-white`}>
             <Box
@@ -390,17 +389,24 @@ const SocialLogin = () => (
                             );
                         });
                 }}
+                sx={{
+                    color: "var(--mui-palette-action-active)",
+                }}
             >
                 <Google />
             </Button>
         </ButtonGroup>
         <ButtonGroup size="small" aria-label="Small button group">
-            <Button variant="contained" className="w-full">
+            <Button sx={{
+                color: "var(--mui-palette-action-active)",
+            }} variant="contained" className="w-full">
                 <Facebook />
             </Button>
         </ButtonGroup>
         <ButtonGroup size="small" aria-label="Small button group">
-            <Button variant="contained" className="w-full">
+            <Button sx={{
+                color: "var(--mui-palette-action-active)",
+            }} variant="contained" className="w-full">
                 <Instagram />
             </Button>
         </ButtonGroup>

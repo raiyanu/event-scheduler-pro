@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export default function useOnScrollShowScrollbar() {
+export default function useOnScrollShowScrollbar(delay) {
     const scrollContainerRef = useRef(null);
 
     const [isscrolling, setIsScrolling] = useState(false);
@@ -11,13 +11,12 @@ export default function useOnScrollShowScrollbar() {
         if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
         scrollTimeout.current = setTimeout(() => {
             setIsScrolling(false);
-        }, 1000);
+        }, delay);
     };
 
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current;
         if (!scrollContainer) return;
-
         scrollContainer.addEventListener("scroll", handleScroll);
 
         return () => {

@@ -60,7 +60,7 @@ import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import quotes from '../assets/quotes.json';
 
 const FriendlyDate = (input) => {
-    const date = new Date(input.seconds);
+    const date = new Date(input.seconds * 1000);
     if (isToday(date)) {
         return `Today ${format(date, "p")}`;
     } else if (isTomorrow(date)) {
@@ -203,21 +203,7 @@ export const TaskCardItem = ({ info }) => {
     }, []);
 
     const isCompletedTask = info.status === "done";
-    const taskPriorityColor = (priority) => {
-        if (isCompletedTask) return "background.paper";
-        switch (priority) {
-            case "low":
-                return "divider";
-            case "casual":
-                return "info.main";
-            case "medium":
-                return "success.main";
-            case "high":
-                return "error.main";
-            default:
-                return "divider";
-        }
-    };
+
     return (
         <>
             <Card
@@ -261,15 +247,26 @@ export const TaskCardItem = ({ info }) => {
                         }
                         action={
                             isCompletedTask && (
-                                <IconButton
+                                <Box // Changed from IconButton to div
                                     edge="end"
                                     aria-label="delete"
                                     onClick={async () => await displatch(deleteTasks(info.id))}
                                     size="medium"
-                                    className="min-w-fit"
+                                    sx={{
+                                        "&:hover": {
+                                            bgcolor: "error.light",
+                                        },
+                                        transition: "all 0.3s",
+                                        width: "fit-content",
+                                        aspectRatio: "1",
+                                        borderRadius: "50%",
+                                        p: 0.45,
+                                        mx: 0.5,
+                                        color: "var(--mui-palette-action-active)"
+                                    }}
                                 >
                                     <Delete />
-                                </IconButton>
+                                </Box>
                             )
                         }
                         title={
@@ -870,6 +867,23 @@ export function friendlyStatus(status) {
             return status;
     }
 }
+
+
+// const taskPriorityColor = (priority) => {
+//     if (isCompletedTask) return "background.paper";
+//     switch (priority) {
+//         case "low":
+//             return "divider";
+//         case "casual":
+//             return "info.main";
+//         case "medium":
+//             return "success.main";
+//         case "high":
+//             return "error.main";
+//         default:
+//             return "divider";
+//     }
+// };
 
 // Code for multiple task with tabbed
 {
