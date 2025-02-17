@@ -33,7 +33,7 @@ import {
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { themeChangeContext } from "../context/ThemeContext";
-import * as Yup from 'yup'
+import * as Yup from 'yup';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;

@@ -1,7 +1,9 @@
 "use client";
 import { colors } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setThemeMode } from "../redux/slice/utilSlice";
 
 export const Theme = createTheme({
     cssVariables: {
@@ -159,12 +161,11 @@ export const darkTheme = createTheme({
 export const themeChangeContext = createContext();
 
 export const MyThemeProvider = ({ children }) => {
-    const [themeMode, setThemeMode] = useState(() => {
-        return 'dark';
-    });
+    const dispatch = useDispatch();
+    const themeMode = useSelector((state) => state.UTIL.themeMode);
 
     useEffect(() => {
-        setThemeMode(localStorage.getItem('themeMode') || 'dark');
+        dispatch(setThemeMode(localStorage.getItem('themeMode') || 'dark'));
     }, []);
 
     useEffect(() => {
@@ -172,14 +173,9 @@ export const MyThemeProvider = ({ children }) => {
     }, [themeMode]);
 
     const preferredTheme = themeMode === 'light' ? Theme : darkTheme;
-    const toggleTheme = () => {
-        setThemeMode((prevMode) => prevMode === 'light' ? 'dark' : 'light');
-    }
     return (
-        <themeChangeContext.Provider value={{ toggleTheme, themeMode }}>
-            <ThemeProvider theme={preferredTheme}>
-                {children}
-            </ThemeProvider>
-        </themeChangeContext.Provider>
+        <ThemeProvider theme={preferredTheme}>
+            {children}
+        </ThemeProvider>
     )
 };

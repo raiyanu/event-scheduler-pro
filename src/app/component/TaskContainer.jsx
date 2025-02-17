@@ -253,7 +253,7 @@ export const TaskCardItem = ({ info }) => {
                         avatar={
                             <>
                                 {info.icon ? (
-                                    <Avatar>{info.icon} </Avatar>
+                                    <Avatar sx={{ background: "transparent" }}>{info.icon} </Avatar>
                                 ) : (
                                     <Avatar alt={info.Name} />
                                 )}

@@ -11,8 +11,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { themeChangeContext } from "../context/ThemeContext";
-import { Button, Fab, Fade, Menu, MenuItem, Popper, styled, Switch, Tooltip } from "@mui/material";
+import { Fab, Menu, styled, Switch, Tooltip } from "@mui/material";
 import {
     CalendarMonth,
     MoreVert, Settings,
@@ -25,6 +24,8 @@ import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AddTaskButton, TaskCrudDrawerContext } from "./AddTask";
+import { useDispatch, useSelector } from "react-redux";
+import { setThemeMode } from "../redux/slice/utilSlice";
 const drawerWidth = 200;
 const navItems = ["Home", "About", "Contact"];
 
@@ -43,7 +44,7 @@ function DrawerAppBar(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
-    const { toggleTheme, themeMode } = React.useContext(themeChangeContext);
+    const themeMode = useSelector((state) => state.UTIL.themeMode);
 
     const pathname = usePathname();
 
@@ -66,6 +67,7 @@ function DrawerAppBar(props) {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const dispatch = useDispatch();
     return (
         <Box
             sx={{
@@ -142,7 +144,9 @@ function DrawerAppBar(props) {
                                     Darkmode
                                     <Switch
                                         checked={themeMode === "dark"}
-                                        onChange={toggleTheme}
+                                        onChange={() => {
+                                            dispatch(setThemeMode(themeMode === 'light' ? 'dark' : 'light'));
+                                        }}
                                         color="primary"
                                         name="checkedB"
                                         inputProps={{ 'aria-label': 'primary checkbox' }}
@@ -169,11 +173,13 @@ function DrawerAppBar(props) {
                             color="primary.contrastText"
                             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
                         >
-                            ES<sup className="-top-4 text-xs">Pro</sup>
+                            ES<sup className="-top-6 text-xs">Pro</sup>
                         </Typography>
                     </Link>
                     <Box className="flex gap-3">
-                        <IconButton color="" onClick={toggleTheme}>
+                        <IconButton color="" onClick={() => {
+                            dispatch(setThemeMode(themeMode === 'light' ? 'dark' : 'light'));
+                        }}>
                             {
                                 themeMode === "light" ? <DarkMode /> : <LightMode />
                             }
@@ -219,6 +225,17 @@ function DrawerAppBar(props) {
                 >
                     <Box onClick={handleDrawerToggle} sx={{ minWidth: "100%" }}>
                         <Divider />
+
+                        <Link href={"/"}>
+                            <Typography
+                                variant="h3"
+                                component="div"
+                                color="primary.contrastText"
+                                sx={{ flexGrow: 1, paddingY: 1, textAlign: "center" }}
+                            >
+                                ES<sup className="-top-6 text-xs">Pro</sup>
+                            </Typography>
+                        </Link>
                         <Box>
                             {[
                                 {

@@ -6,20 +6,14 @@ import {
     FormControl,
     FormControlLabel,
     FormLabel,
-    IconButton,
-    InputLabel,
-    Menu,
-    MenuItem,
-    Paper,
+    IconButton, Menu, Paper,
     Radio,
-    RadioGroup,
-    Select,
-    Slider,
+    RadioGroup, Slider,
     TextField,
-    Typography,
+    Typography
 } from "@mui/material";
 
-import { createContext, memo, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Divider from "@mui/material/Divider";
 import { useFormik } from "formik";
@@ -28,9 +22,8 @@ import Chip from "@mui/material/Chip";
 import EmojiPicker from "emoji-picker-react";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addTasks } from "../redux/slice/taskSlice";
-import { themeChangeContext } from "../context/ThemeContext";
 
 export function AddTaskLineCard() {
     const [date, setDate] = useState(null);
@@ -81,30 +74,7 @@ export const TaskCrudDrawerProvider = ({ children }) => {
             startTime: dayjs(),
             endTime: dayjs(),
             importance: "",
-            icon: [
-                "😉",
-                "🚲",
-                "📅",
-                "📝",
-                "📋",
-                "📌",
-                "📍",
-                "📎",
-                "🗂️",
-                "🗃️",
-                "🗄️",
-                "📂",
-                "📁",
-                "🗓️",
-                "📆",
-                "🗒️",
-                "🗳️",
-                "📜",
-                "📑",
-                "🗞️",
-                "📇",
-                "📊",
-            ].at(Math.floor(Math.random() * 22)),
+            icon: IconList.at(Math.floor(Math.random() * 22)),
             difficulty: "",
             createdAt: null,
             status: "",
@@ -135,30 +105,7 @@ export const TaskCrudDrawerProvider = ({ children }) => {
     useEffect(() => {
         formik.setFieldValue(
             "icon",
-            [
-                "😉",
-                "🚲",
-                "📅",
-                "📝",
-                "📋",
-                "📌",
-                "📍",
-                "📎",
-                "🗂️",
-                "🗃️",
-                "🗄️",
-                "📂",
-                "📁",
-                "🗓️",
-                "📆",
-                "🗒️",
-                "🗳️",
-                "📜",
-                "📑",
-                "🗞️",
-                "📇",
-                "📊",
-            ].at(Math.floor(Math.random() * 22))
+            IconList.at(Math.floor(Math.random() * 22))
         );
     }, [drawerState]);
 
@@ -312,7 +259,8 @@ export const TaskForm = ({ formik }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const { themeMode } = useContext(themeChangeContext);
+    const themeMode = useSelector((state) => state.UTIL.themeMode);
+
     return (
         <form onSubmit={formik.handleSubmit} className="grid gap-7 px-3 py-2">
             <Box sx={{ display: "flex", alignItems: "flex-end" }}>
@@ -632,3 +580,8 @@ const priorityMap = new Map([
 // console.log([...priorityMap.entries()].find(([key, val]) => val === "casual")?.[0])
 
 // console.log(Array.from(priorityMap, ([name, value]) => ({ value, label: name })))
+
+
+const IconList = ["😉", "🚲", "📅", "📝", "📋", "📌", "📍", "📎",
+    "🗂️", "🗃️", "🗄️", "📂", "📁", "🗓️", "📆", "🗒️", "🗳️", "📜",
+    "📑", "🗞️", "📇", "📊"]

@@ -1,5 +1,5 @@
 "use client";
-import { onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Suspense, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { extractUserInfo, logout, setPublicState, updateUser } from "./redux/slice/userSlice";
@@ -16,7 +16,7 @@ export default function GlobalActionProvider({ children }) {
         (async () => {
             let unsub;
             try {
-                if (auth.currentUser) {
+                if (await getAuth()?.currentUser) {
                     await dispatch(updateUser(extractUserInfo(auth.currentUser)));
                 } else {
                     await dispatch(setPublicState());
@@ -27,9 +27,7 @@ export default function GlobalActionProvider({ children }) {
                             console.log("User is signed in: ", user);
                             const fetchedUser = await getUserFullInfo();
                             const userFullInfo = fetchedUser.data();
-                            setTimeout(async () => {
-                                await dispatch(updateUser(extractUserInfo({ ...user, ...userFullInfo })));
-                            }, 500);
+                            await dispatch(updateUser(extractUserInfo({ ...user, ...userFullInfo })));
                             dispatch(fetchTasks());
                             unsub = onSnapshot(collection(db, "users", auth.currentUser?.uid, "tasks"), async (taskList) => {
                                 const source = taskList.metadata.hasPendingWrites ? "Local" : "Server";
