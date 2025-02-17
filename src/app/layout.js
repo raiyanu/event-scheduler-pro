@@ -18,13 +18,24 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "Event Scheduler Pro",
-  description: "Event Scheduler Pro",
+  description: "Plan, organize, and manage your events with ease using ES Pro.",
   favicon: "/favicon.ico",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <meta property="og:title" content="ES Pro - Event Scheduler" />
+        <meta property="og:description" content="Plan, organize, and manage your events with ease using ES Pro." />
+        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:url" content="https://es-pro.vercel.app/" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="Plan, organize, and manage your events with ease using ES Pro." />
+        <meta name="twitter:title" content="ES Pro - Event Scheduler" />
+        <meta name="twitter:description" content="Manage events efficiently with ES Pro. Plan, schedule, and collaborate seamlessly." />
+        <meta name="twitter:image" content="/og-image.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased max-w-[100vw] `}
       >

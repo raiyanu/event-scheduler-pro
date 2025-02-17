@@ -328,7 +328,7 @@ const UserSettings = () => {
                         <Button
                             variant="contained"
                             color="primary"
-                            sx={{ ml: "auto", mt: 8, width: { xs: "100%", sm: "auto" } }}
+                            sx={{ ml: "auto", width: { xs: "100%", sm: "auto" } }}
                             onClick={formik.handleSubmit}
                             type="submit"
                         >
@@ -338,12 +338,11 @@ const UserSettings = () => {
                 )}
             </Box>
             {!isEditing && (
-                <Box sx={{ mt: 4 }}>
+                <Box sx={{ mt: 8 }}>
                     <Button
                         variant="contained"
                         color="error"
                         sx={{
-                            mt: 8,
                             display: "block",
                             maxWidth: "80%",
                             mr: { xs: "auto", sm: "0" },
