@@ -148,12 +148,14 @@ const UserSettings = () => {
                         tabIndex={-1}
                     >
                         <Badge
-                            badgeContent={<FileUploadSharp color="action" />}
+                            badgeContent={<FileUploadSharp color="action" className={`${userInfo.photoURL ? "hidden" : ""}`} />}
                             overlap="circular"
                             className="cursor-pointer bg-transparent hover:opacity-80"
                         >
                             {userInfo.photoURL ? (
-                                <Image src={userInfo.photoURL} />
+                                <Tooltip title="Click to Profile Picture" enterDelay={500} leaveDelay={200}>
+                                    <img src={userInfo.photoURL} className="rounded-full" />
+                                </Tooltip>
                             ) : (
                                 <Box>
                                     <AccountCircle color="disabled" sx={{ fontSize: 100 }} />
