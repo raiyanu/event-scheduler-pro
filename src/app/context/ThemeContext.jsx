@@ -161,7 +161,12 @@ export const darkTheme = createTheme({
 export const themeChangeContext = createContext();
 
 export const MyThemeProvider = ({ children }) => {
+    const dispatch = useDispatch();
     const themeMode = useSelector((state) => state.UTIL.themeMode);
+
+    useEffect(() => {
+        dispatch(setThemeMode(localStorage.getItem('themeMode') || 'light'));
+    }, []);
 
     useEffect(() => {
         localStorage.setItem('themeMode', themeMode);
