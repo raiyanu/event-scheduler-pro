@@ -83,6 +83,8 @@ const CustomListContainer = styled(List)({
 
 export default function TaskContainer() {
     const isLoading = useSelector((state) => state.TASK.taskLoading);
+    const tasks = useSelector((state) => state.TASK.tasks);
+    const taskCount = tasks.length ? tasks.length : 0;
     return (
         <Box className="relative mt-8 grid grid-cols-1 gap-4 lg:px-0">
             <Backdrop
@@ -102,7 +104,11 @@ export default function TaskContainer() {
                 <CircularProgress sx={(theme) => ({ color: "orange" })} />
             </Backdrop>
             <Typography variant="h4" className="font-semibold">
-                Your tasks
+                {taskCount > 1 ? (
+                    <>Your tasks</>
+                ) : (
+                    <>Your task</>
+                )}
             </Typography>
             <Box
                 sx={{
@@ -120,13 +126,9 @@ export default function TaskContainer() {
 
 export function TaskList() {
     const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-
     const tasks = useSelector((state) => state.TASK.tasks);
+    const dispatch = useDispatch();
+
     const sortedTasks = useMemo(() => {
         try {
             return sortTasksByCreatedAt(tasks);
@@ -135,18 +137,17 @@ export function TaskList() {
             return [];
         }
     }, [tasks]);
-    const dispatch = useDispatch();
+
     useEffect(() => {
-        loadTask();
+        setIsClient(true);
     }, []);
 
-    const loadTask = () => {
+    useEffect(() => {
         dispatch(fetchTasks());
-    };
+    }, []);
 
     const taskCount = tasks.length ? tasks.length : 0;
 
-    const numberOfColumn = taskCount > 4 ? 4 : taskCount > 3 ? 3 : taskCount;
     if (!isClient) {
         return null;
     }
@@ -160,16 +161,14 @@ export function TaskList() {
                 {sortedTasks.map((task, index) => (
                     <Fragment key={index}>
                         <TaskCardItem info={task} />
-
                     </Fragment>
                 ))}
-                {
-                    taskCount === 0 && (
-                        <Alert severity="info" className="w-full" sx={{ p: 2 }}>
-                            You have no task
-                        </Alert>
-                    )
-                }
+
+                {taskCount === 0 && (
+                    <Alert severity="info" className="w-full" sx={{ p: 2 }}>
+                        You have no task
+                    </Alert>
+                )}
             </Masonry>
         </ResponsiveMasonry >
     );
@@ -461,7 +460,7 @@ export const TaskCardItem = ({ info }) => {
                     <Box className="flex justify-between">
                         <IconButton
                             onClick={() => {
-                                handleClose();
+                                // handleClose();
                                 handleDeleteActionModalOpen();
                             }}
                             variant="contained"
@@ -502,8 +501,8 @@ export const TaskCardItem = ({ info }) => {
                                     size="small"
                                     className="p-0"
                                 >
-                                    <MenuItem value={"to-start"}>To-start</MenuItem>
-                                    <MenuItem value={"progress"}>Progress</MenuItem>
+                                    <MenuItem value={"to-start"}>To start</MenuItem>
+                                    <MenuItem value={"progress"}>On progress</MenuItem>
                                     <MenuItem value={"done"}>Done</MenuItem>
                                 </Select>
                             </FormControl>
@@ -518,7 +517,7 @@ export const TaskCardItem = ({ info }) => {
                                         await handleClose();
                                     }}
                                 >
-                                    Updated
+                                    Update
                                 </Button>
                             )}
                         </Box>
@@ -674,12 +673,12 @@ export const TaskDeleteModal = ({
                                 variant="contained"
                                 color="error"
                                 onClick={async () => {
-                                    await displatch(deleteTasks(taskId));
-                                    handleDeleteActionModalClose();
                                     handleClose();
+                                    handleDeleteActionModalClose();
+                                    await displatch(deleteTasks(taskId));
                                 }}
                             >
-                                Delete
+                                Confirm
                             </Button>
                             <Button
                                 variant="contained"
@@ -688,7 +687,7 @@ export const TaskDeleteModal = ({
                                     handleDeleteActionModalClose();
                                 }}
                             >
-                                Cancel
+                                Go back
                             </Button>
                         </Box>
                     </Alert>
@@ -860,7 +859,7 @@ export function friendlyStatus(status) {
         case "to-start":
             return "To start";
         case "progress":
-            return "In progress";
+            return "On progress";
         case "done":
             return "Done";
         default:

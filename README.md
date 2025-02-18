@@ -41,6 +41,24 @@ npm start
 
 Open your browser and navigate to `http://localhost:3000` to use the application.
 
+## TODO
+
+- [x] Remove the button on add task modal
+- [x] While clicking cancel the form should resetted to default state
+- [X] While clicking delete, one extra modal is being appeared out of nowhere
+- [X] Text content missing, for status
+- [X] While clicking the logo, the entire application seems to be rendering again..
+- [x] Phone number should not accept the alphabet / the validation is missing
+- [X] The spelling for your task needs to be changed when there is no task added in the background
+- [x] There is a border radius is missing on the add task modal.. In the dark mode the modal is rounded and in the white mode it's not
+- [x] While initially loading, I can see the please login button there is a glimpse of it need to fix this
+- [ ] The first name should be a compulsory field. (Because of this I couldn't able to see the HI text in the home page)
+- [ ] Ask the basic information from the singup/registration like phone number and all
+- [ ] Fix the date, after typing it shows as Invalid Date in the view modal
+- [ ] While changing the time it's not getting reflected on the UI
+- [ ] Maintain consistency throghout the application, use same wordings
+- [ ] Calendar date focus is of different color
+
 ## Contributing
 
 We welcome contributions to Event Scheduler Pro! To contribute, follow these steps:

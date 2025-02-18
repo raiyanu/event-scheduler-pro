@@ -13,14 +13,14 @@ import {
     Typography
 } from "@mui/material";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Divider from "@mui/material/Divider";
 import { useFormik } from "formik";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import EmojiPicker from "emoji-picker-react";
-import { DateTimePicker } from "@mui/x-date-pickers";
+import { DateTimePicker, renderTimeViewClock } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import { addTasks } from "../redux/slice/taskSlice";
@@ -71,8 +71,8 @@ export const TaskCrudDrawerProvider = ({ children }) => {
             title: "",
             description: "",
             priority: "",
-            startTime: dayjs(),
-            endTime: dayjs(),
+            startTime: dayjs(new Date()).add(5, 'minute'),
+            endTime: dayjs(new Date()).add(10, 'minute'),
             importance: "",
             icon: IconList.at(Math.floor(Math.random() * 22)),
             difficulty: "",
@@ -147,6 +147,7 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                             maxWidth: "700px",
                             minWidth: "300px",
                             marginInline: "auto",
+                            borderRadius: "10px",
                         },
                         "& .MuiDrawer-modal": {
                             backdropFilter: "blur(10px)",
@@ -158,7 +159,7 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                     <Paper
                         sx={{
                             width: "100%",
-                            height: "80vh",
+                            height: "90vh",
                             p: "1rem",
                             marginInline: "auto",
                             maxWidth: "700px",
@@ -196,6 +197,7 @@ export const TaskCrudDrawerProvider = ({ children }) => {
                                             variant="text"
                                             onClick={(event) => {
                                                 toggleDrawer(false, event);
+                                                formik.resetForm();
                                             }}
                                         >
                                             Cancel
@@ -252,6 +254,10 @@ export const UpdateTaskButton = () => {
 export const TaskForm = ({ formik }) => {
     const [EmojiState, setEmojiState] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+
+    const calenderStartDateRef = useRef(null);
+    const calenderEndDateRef = useRef(null);
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -274,6 +280,14 @@ export const TaskForm = ({ formik }) => {
                         onClick={(event) => {
                             handleClick(event);
                             setEmojiState(true);
+                        }}
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            mr: 1,
+                            height: "2.5rem",
+                            width: "2.5rem",
                         }}
                     >
                         {formik.values.icon}
@@ -326,8 +340,14 @@ export const TaskForm = ({ formik }) => {
             />
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
                 <DateTimePicker
-                    // disablePast T// ODO: enable this feature depending on the task status
+                    sx={{
+                        "& .Mui-selected:focus-visible": {
+                            backgroundColor: "red",
+                        }
+                    }}
+                    disablePast // TODO: enable this feature depending on the task status
                     name="startTime"
+                    ref={calenderStartDateRef}
                     label="Start Time"
                     onError={(reason, value) => { }}
                     format="DD/MM/YYYY-hh:MM"
@@ -350,11 +370,19 @@ export const TaskForm = ({ formik }) => {
                             helpertext: formik.touched.startTime && formik.errors.startTime,
                         },
                     }}
+                    onClick={() => {
+                        calenderStartDateRef.current.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                        });
+                    }}
+
                 />
                 <DateTimePicker
                     // disablePast // TODO: enable this feature depending on the task status
                     label="End Time"
                     name="endTime"
+                    ref={calenderEndDateRef}
                     onError={(reason, value) => { }}
                     format="DD/MM/YYYY-hh:MM"
                     minDate={dayjs(new Date(-8640000000000000))}
@@ -372,6 +400,12 @@ export const TaskForm = ({ formik }) => {
                             error: formik.touched.endTime && Boolean(formik.errors.endTime),
                             helpertext: formik.touched.endTime && formik.errors.endTime,
                         },
+                    }}
+                    onClick={() => {
+                        calenderEndDateRef.current.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                        });
                     }}
                 />
             </Box>
@@ -455,44 +489,15 @@ export const TaskForm = ({ formik }) => {
                         <FormControlLabel
                             value="progress"
                             control={<Radio />}
-                            label="Progress"
+                            label="In progress"
                         />
-                        <FormControlLabel value="done" control={<Radio />} label="Done" />
+                        {/* <FormControlLabel value="done" control={<Radio />} label="Done" /> */}
                     </RadioGroup>
                 </FormControl>
             </Box>
 
-            <Autocomplete
-                multiple
-                id="tags"
-                options={tagIdeas}
-                freeSolo
-                value={formik.values.tags}
-                onChange={(event, newValue) => {
-                    formik.setFieldValue("tags", newValue);
-                }}
-                renderTags={(value, getTagProps) =>
-                    value.map((option, index) => (
-                        <Chip
-                            variant="outlined"
-                            label={option}
-                            {...getTagProps({ index })}
-                            key={index + "-chips"}
-                        />
-                    ))
-                }
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        variant="standard"
-                        label="Tags"
-                        placeholder="Add tags"
-                        error={formik.touched.tags && Boolean(formik.errors.tags)}
-                        helpertext={formik.touched.tags && formik.errors.tags}
-                    />
-                )}
-            />
-            <Button type="submit"></Button>
+
+            <Button type="submit" className="hidden"></Button>
         </form>
     );
 };

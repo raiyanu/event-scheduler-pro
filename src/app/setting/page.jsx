@@ -80,21 +80,25 @@ const UserSettings = () => {
             name: "username",
             label: "Username",
             displayValue: userInfo.username ? userInfo.username : "No Username",
+            type: "text",
         },
         {
             name: "firstName",
             label: "First Name",
             displayValue: userInfo.firstName ? userInfo.firstName : "Not provided",
+            type: "text",
         },
         {
             name: "lastName",
             label: "Last Name",
             displayValue: userInfo.lastName ? userInfo.lastName : "Not provided",
+            type: "text",
         },
         {
             name: "phone",
             label: "Phone",
             displayValue: userInfo.phone ? userInfo.phone : "No Phone",
+            type: "number",
         },
     ];
 
@@ -261,11 +265,13 @@ const UserSettings = () => {
                     <Box>
                         {isEditing ? (
                             <TextField
+                                type="number"
                                 variant="outlined"
                                 label="Phone"
                                 name="phone"
                                 value={formik.values.phone}
                                 onChange={formik.handleChange}
+                                className="button-less"
                             />
                         ) : (
                             <>

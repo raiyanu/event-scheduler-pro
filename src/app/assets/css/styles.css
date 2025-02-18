@@ -21,6 +21,19 @@ button.rbc-input::-moz-focus-inner {
   padding: 0;
 }
 
+.button-less input::-webkit-outer-spin-button,
+.button-less input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.button-less input[type=number] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
   background-color: var(--mui-palette-background-paper);

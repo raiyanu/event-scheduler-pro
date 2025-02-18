@@ -166,7 +166,7 @@ function DrawerAppBar(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Link href={"/"}>
+                    <Link href={"/home"}>
                         <Typography
                             variant="h3"
                             component="div"
