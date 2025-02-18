@@ -1,16 +1,12 @@
 "use client";
 import { useState, useEffect, Fragment, useMemo } from "react";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import {
     Alert,
-    Backdrop,
-    Box,
+    Backdrop, Box,
     Button,
     Card,
     CardActionArea,
@@ -27,16 +23,14 @@ import {
     Fade,
     FormControl,
     IconButton,
-    InputLabel,
-    ListItemButton,
-    MenuItem,
+    InputLabel, MenuItem,
     Modal,
     Paper,
     Select,
     styled,
     Tooltip,
     useMediaQuery,
-    useTheme,
+    useTheme
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTasks, fetchTasks, updateTask } from "../redux/slice/taskSlice";
@@ -44,14 +38,13 @@ import {
     Close,
     Delete,
     Edit,
-    HourglassBottom,
-    PushPin,
+    HourglassBottom, PushPin,
     Repeat,
     Tag,
-    WorkspacePremium,
+    WorkspacePremium
 } from "@mui/icons-material";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
-import { AddTaskButton, TaskForm } from "./AddTask";
+import { TaskForm } from "./AddTask";
 import { useFormik } from "formik";
 import dayjs from "dayjs";
 import { ClockIcon } from "@mui/x-date-pickers";
@@ -215,7 +208,8 @@ export const TaskCardItem = ({ info }) => {
                     borderRadius: "md",
                     "& .MuiCardContent-root": {
                         p: 0,
-                    }
+                    },
+                    boxShadow: "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.13) 0px 3px 6px",
                 }}
             >
                 <CardActionArea sx={{ py: 1, px: 2 }} onClick={() => setOpen(true)}>
@@ -590,7 +584,7 @@ export const QuoteCard = () => {
                     "& .MuiCardContent-root": {
                         p: 0,
                     },
-                    bgcolor: "secondary.s7",
+                    bgcolor: "secondary.main",
                 }}
             >
                 <CardContent>

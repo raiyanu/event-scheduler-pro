@@ -17,10 +17,8 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Divider from "@mui/material/Divider";
 import { useFormik } from "formik";
-import Autocomplete from "@mui/material/Autocomplete";
-import Chip from "@mui/material/Chip";
 import EmojiPicker from "emoji-picker-react";
-import { DateTimePicker, renderTimeViewClock } from "@mui/x-date-pickers";
+import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import { addTasks } from "../redux/slice/taskSlice";
@@ -322,7 +320,7 @@ export const TaskForm = ({ formik }) => {
                     value={formik.values.title}
                     onChange={formik.handleChange}
                     error={formik.touched.title && Boolean(formik.errors.title)}
-                    helpertext={formik.touched.title && formik.errors.title}
+                    helperText={formik.touched.title && formik.errors.title}
                 />
             </Box>
             <TextField
@@ -334,33 +332,49 @@ export const TaskForm = ({ formik }) => {
                 value={formik.values.description}
                 onChange={formik.handleChange}
                 error={formik.touched.description && Boolean(formik.errors.description)}
-                helpertext={formik.touched.description && formik.errors.description}
+                helperText={formik.touched.description && formik.errors.description}
                 multiline
                 maxRows={6}
             />
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
-                <DateTimePicker
+                <MobileDateTimePicker
+                    autoFocus={false}
                     sx={{
-                        "& .Mui-selected:focus-visible": {
-                            backgroundColor: "red",
+                        // .css-1u9omgy-MuiButtonBase-root-MuiPickersDay-root:focus.Mui-selected
+                        ".MuiPickersDay-root:focus.Mui-selected": {
+                            backgroundColor: "red !important",
+                        },
+                        "&:focus.Mui-selected": {
+                            backgroundColor: "primary.light"
                         }
                     }}
-                    disablePast // TODO: enable this feature depending on the task status
+
                     name="startTime"
                     ref={calenderStartDateRef}
-                    label="Start Time"
+                    label="Start Date"
                     onError={(reason, value) => { }}
-                    format="DD/MM/YYYY-hh:MM"
-                    minDate={dayjs(new Date(-8640000000000000))}
-                    maxDate={dayjs(new Date(8640000000000000))}
+                    format="DD/MM/YYYY - hh:mmA"
+                    // minDate={dayjs(new Date(-8640000000000000))}
+                    // maxDate={dayjs(new Date(8640000000000000))}
                     defaultValue={formik.values.startTime}
                     // value={formik.values.startTime}
+                    onAccept={(date, dateType) => {
+                        console.log(date, dateType);
+                        if (date.isAfter(dayjs(formik.values.endTime))) {
+                            console.log("Date is before end time");
+                            formik.setFieldValue("endTime", dayjs(formik.values.startTime).add(2, 'minute').toDate(), false);
+                        }
+                    }}
                     value={
                         formik.values.startTime ? dayjs(formik.values.startTime) : null
                     }
                     // value={dayjs(formik.values.startTime)}
                     onChange={(date, dateType) => {
                         formik.setFieldValue("startTime", date.toDate(), false);
+                        if (date.isAfter(dayjs(formik.values.endTime))) {
+                            console.log("Date is before end time");
+                            formik.setFieldValue("endTime", dayjs(formik.values.startTime).add(2, 'minute').toDate(), false);
+                        }
                     }}
                     slotProps={{
                         textField: {
@@ -369,6 +383,14 @@ export const TaskForm = ({ formik }) => {
                                 formik.touched.startTime && Boolean(formik.errors.startTime),
                             helpertext: formik.touched.startTime && formik.errors.startTime,
                         },
+                        day: {
+                            sx: {
+                                "&:focus.Mui-selected": {
+                                    backgroundColor: (theme) => theme.palette.primary.light,
+                                },
+                                // backgroundColor: "red",
+                            }
+                        }
                     }}
                     onClick={() => {
                         calenderStartDateRef.current.scrollIntoView({
@@ -378,15 +400,15 @@ export const TaskForm = ({ formik }) => {
                     }}
 
                 />
-                <DateTimePicker
+                <MobileDateTimePicker
                     // disablePast // TODO: enable this feature depending on the task status
-                    label="End Time"
+                    label="End Date"
                     name="endTime"
                     ref={calenderEndDateRef}
                     onError={(reason, value) => { }}
-                    format="DD/MM/YYYY-hh:MM"
-                    minDate={dayjs(new Date(-8640000000000000))}
-                    maxDate={dayjs(new Date(8640000000000000))}
+                    format="DD/MM/YYYY - hh:mmA"
+                    minDateTime={dayjs(new Date(formik.values.startTime)).add(1, 'minute')}
+                    // maxDate={dayjs(new Date(8640000000000000))}
                     defaultValue={formik.values.endTime}
                     // value={formik.values.endTime}
                     value={formik.values.endTime ? dayjs(formik.values.endTime) : null}
