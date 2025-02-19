@@ -6,43 +6,12 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { UpdateTask } from './TaskContainer';
-import { Modal, Paper, useTheme } from '@mui/material';
+import { Modal, Paper } from '@mui/material';
 import { updateTask } from '../redux/slice/taskSlice';
 import { TaskCrudDrawerContext } from './AddTask';
 
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const localizer = momentLocalizer(moment);
-
-const myEventsList = [
-  {
-    id: 1,
-    title: 'Today',
-    start: new Date(new Date().setHours(new Date().getHours() - 3)),
-    end: new Date(new Date().setHours(new Date().getHours() + 3)),
-  },
-  {
-    id: 2,
-    title: 'Meeting',
-    start: new Date(new Date().setDate(new Date().getDate() + 1)),
-    end: new Date(new Date().setDate(new Date().getDate() + 1)),
-  },
-  {
-    id: 3,
-    title: 'Conference',
-    start: new Date(new Date().setDate(new Date().getDate() + 2)),
-    end: new Date(new Date().setDate(new Date().getDate() + 3)),
-  },
-  {
-    id: 4,
-    title: 'Party',
-    start: new Date(new Date().setDate(new Date().getDate() + 4)),
-    end: new Date(new Date().setDate(new Date().getDate() + 4)),
-  }
-]
-const adjEvents = myEventsList.map((it, ind) => ({
-  ...it,
-  isDraggable: ind % 2 === 0,
-}))
 
 const formatName = (name, count) => `${name} ID ${count}`
 
@@ -53,7 +22,7 @@ export default function CalendarMain() {
   const [displayDragItemInCell, setDisplayDragItemInCell] = useState(true)
   const [counters, setCounters] = useState({ item1: 0, item2: 0 })
   const tasks = useSelector(state => state.TASK.tasks)
-  const { task: newTask, toggleDrawer, drawerState, setTask: setNewTask, addTaskWithPreTime } = useContext(TaskCrudDrawerContext);
+  const { toggleDrawer, addTaskWithPreTime } = useContext(TaskCrudDrawerContext);
   const [task, setTask] = useState({})
   const dispatch = useDispatch()
   useEffect(() => {
@@ -216,7 +185,7 @@ export default function CalendarMain() {
       <div className="h-full">
         <DragAndDropCalendar
           defaultDate={defaultDate}
-          defaultView={isMobileDevice ? Views.WEEK : Views.MONTH}
+          defaultView={isMobileDevice ? Views.DAY : Views.MONTH}
           dragFromOutsideItem={
             displayDragItemInCell ? dragFromOutsideItem : null
           }
@@ -277,19 +246,8 @@ export default function CalendarMain() {
   )
 }
 
-function Card({ children, className, style }) {
-  return (
-    <div className={`${className || ''} card`} style={style}>
-      {children}
-    </div>
-  )
-}
 CalendarMain.propTypes = {
   localizer: PropTypes.instanceOf(DateLocalizer),
 }
-
-
-
-const placeHolderEventList = "";
 
 

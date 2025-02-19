@@ -364,9 +364,6 @@ function DrawerAppBar(props) {
                                 </Link>
                             ))}
                         </Box>
-                        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-                            hey there
-                        </Box>
                     </Drawer>
                     <Box
                         sx={{
