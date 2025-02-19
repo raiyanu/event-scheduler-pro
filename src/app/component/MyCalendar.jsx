@@ -182,10 +182,10 @@ export default function CalendarMain() {
 
   return (
     <>
-      <div className="h-full">
+      <div className="h-full max-w-full">
         <DragAndDropCalendar
           defaultDate={defaultDate}
-          defaultView={isMobileDevice ? Views.DAY : Views.MONTH}
+          defaultView={isMobileDevice ? Views.WEEK : Views.MONTH}
           dragFromOutsideItem={
             displayDragItemInCell ? dragFromOutsideItem : null
           }

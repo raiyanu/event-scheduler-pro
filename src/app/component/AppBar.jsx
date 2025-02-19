@@ -282,6 +282,8 @@ function DrawerAppBar(props) {
                             xs: "1fr",
                             sm: "60px 1fr",
                             md: `${drawerWidth}px 1fr`,
+                            maxWidth: "100%",
+                            overflow: "hidden"
                         }, // TODO: FIX THIS
                         flexWrap: "nowrap",
                         minHeight: "100vh",

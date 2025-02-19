@@ -407,6 +407,29 @@ button.rbc-input::-moz-focus-inner {
 	-webkit-user-select: none;
 	height: 100%;
 	padding: 0.3rem;
+	max-width: calc(98vw - 60px);
+	margin-inline: auto;
+}
+
+@media (min-width: 700px) {
+	.rbc-month-view {
+		max-width: calc(98vw - 60px);
+	}
+}
+@media (min-width: 900px) {
+	.rbc-month-view {
+		max-width: calc(98vw - 200px);
+	}
+}
+@media (max-width: 600px) and (max-width: 900px) {
+	.rbc-month-view {
+		max-width: calc(98vw);
+	}
+}
+
+rbc-calendar {
+	max-width: 100%;
+	overflow-x: scroll;
 }
 
 .rbc-month-header {
