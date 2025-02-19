@@ -232,12 +232,13 @@ export const AddTaskButton = () => {
 };
 
 export const UpdateTaskButton = () => {
-    const { toggleDrawer, setTask } = useContext(TaskCrudDrawerContext);
+    const { toggleDrawer, setTask, handleClose } = useContext(TaskCrudDrawerContext);
     return (
         <Button
             onClick={(event) => {
                 toggleDrawer(true, event);
                 setTask(null); // Ensure this does not cause an infinite loop
+                handleClose();
             }}
             variant="contained"
             className="px-3 py-2"
@@ -436,6 +437,7 @@ export const TaskForm = ({ formik }) => {
                     <Typography id="priority-select-label">Priority</Typography>
                     <Slider
                         value={priorityMap.get(formik.values.priority) || null}
+                        color={formik.values.priority === "low" ? "success" : formik.values.priority === "casual" ? "info" : formik.values.priority === "medium" ? "warning" : formik.values.priority === "high" ? "error" : "success"}
                         min={1}
                         max={4}
                         step={1}
