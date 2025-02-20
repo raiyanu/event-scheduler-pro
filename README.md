@@ -5,9 +5,24 @@ Event Scheduler Pro is a powerful and easy-to-use application for scheduling and
 ## Features
 
 - Create, edit, and delete events
-- Set reminders for events
 - View events in a calendar format
 - User-friendly interface
+- Dark/White theme
+- All device screen friendly
+
+## Tech-in-use
+
+- Firebase@11
+- React.js@18
+- Next.Js@14
+- React-Redux@9.0
+- MUI@6 @mui/x-date-pickers@7.0
+- react-big-calendar@1.0
+- emoji-picker-react@4.0
+- formik@2.0
+- Sass@1.0
+- yup@1.0
+- react-responsive-masonry@2.7
 
 ## Installation
 
