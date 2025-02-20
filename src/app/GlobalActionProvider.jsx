@@ -18,7 +18,7 @@ export default function GlobalActionProvider({ children }) {
                 if (await getAuth()?.currentUser) {
                     await dispatch(updateUser(extractUserInfo(auth.currentUser)));
                 } else {
-                    await dispatch(setPublicState());
+                    // await dispatch(setPublicState());
                     dispatch(logout())
                 }
                 onAuthStateChanged(auth, async (user) => {

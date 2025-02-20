@@ -158,7 +158,7 @@ export const UserSettings = (props) => {
 
                 <Box
                     sx={{ p: 0, mx: "auto" }}
-                    className="grid w-full flex-grow basis-full grid-cols-[auto_auto] gap-x-4 gap-y-4 max-sm:max-w-[300px] max-sm:grid-cols-[1fr] md:grid-cols-[1fr_4fr]" >
+                    className="grid w-full max-w-lg flex-grow basis-full grid-cols-[auto_auto] gap-x-4 gap-y-4 max-sm:max-w-[300px] max-sm:grid-cols-[1fr] md:grid-cols-[1fr_4fr]" >
                     <UserTextField label={"USERNAME"} isEditing={isEditing} value={formik.values.username} onChange={formik.handleChange} name={"username"} user={userInfo} />
                     <UserTextField label={"FIRST NAME"} isEditing={isEditing} value={formik.values.firstName} onChange={formik.handleChange} name={"firstName"} user={userInfo} />
                     <UserTextField label={"LAST NAME"} isEditing={isEditing} value={formik.values.lastName} onChange={formik.handleChange} name={"lastName"} user={userInfo} />

@@ -45,6 +45,7 @@ function DrawerAppBar(props) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
     const themeMode = useSelector((state) => state.UTIL.themeMode);
+    const loginStatus = useSelector((state) => state.AUTH.loginStatus);
 
     const pathname = usePathname();
 
@@ -184,7 +185,11 @@ function DrawerAppBar(props) {
                                 themeMode === "light" ? <DarkMode /> : <LightMode />
                             }
                         </IconButton>
-                        <AddTaskButton />
+                        {
+                            loginStatus && (
+                                <AddTaskButton />
+                            )
+                        }
                     </Box>
                 </Toolbar>
             </AppBar>
