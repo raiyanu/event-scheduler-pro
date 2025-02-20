@@ -43,6 +43,7 @@ Open your browser and navigate to `http://localhost:3000` to use the application
 
 ## TODO
 
+- [ ] The first name should be a compulsory field. (Because of this I couldn't able to see the HI text in the home page)
 - [x] Remove the button on add task modal
 - [x] While clicking cancel the form should resetted to default state
 - [X] While clicking delete, one extra modal is being appeared out of nowhere
@@ -55,9 +56,8 @@ Open your browser and navigate to `http://localhost:3000` to use the application
 - [x] Fix the date, after typing it shows as Invalid Date in the view modal
 - [x] While changing the time it's not getting reflected on the UI
 - [x] Calendar date focus is of different color
-- [ ] The first name should be a compulsory field. (Because of this I couldn't able to see the HI text in the home page)
-- [ ] Ask the basic information from the singup/registration like phone number and all
-- [ ] Maintain consistency throghout the application, use same wordings
+- [x] Ask the basic information from the singup/registration like phone number and all
+- [x] Maintain consistency throghout the application, use same wordings
 
 ## Contributing
 
