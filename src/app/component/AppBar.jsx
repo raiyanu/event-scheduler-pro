@@ -315,7 +315,7 @@ function DrawerAppBar(props) {
                         }}
                         open
                     >
-                        <Box onClick={handleDrawerToggle} sx={{ minWidth: "100%", mt: 1 }}>
+                        <Box onClick={handleDrawerToggle} sx={{ minWidth: "100%", mt: 2 }}>
                             {[
                                 {
                                     segment: "home",
@@ -383,7 +383,8 @@ function DrawerAppBar(props) {
                             pb: {
                                 xs: 8,
                                 md: 1
-                            }
+                            },
+                            pt: 1.5
                         }}
                     >
                         {props.children}
