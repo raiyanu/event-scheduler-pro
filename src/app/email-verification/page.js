@@ -2,15 +2,18 @@
 import { useEffect } from "react";
 import { PublicLayout } from "../PrimaryLayout";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/config/firebase";
+import { auth, validateUserEmail } from "@/config/firebase";
 import { useRouter } from "next/navigation";
+import { Box, Typography } from "@mui/material";
+import Link from "next/link";
 
 export default function page() {
     const router = useRouter();
     useEffect(() => {
         let interval;
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
+                await validateUserEmail();
                 interval = setInterval(() => {
                     user.reload().then(() => {
                         console.log("Refreshed user:", user.emailVerified);
@@ -31,18 +34,23 @@ export default function page() {
 
     return (
         <PublicLayout>
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-6 offset-md-3">
-                        <div className="card">
-                            <div className="card-body">
-                                <h1>Email Verification</h1>
-                                <p>Thank you for signing up. Please check your email to verify your account.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Box sx={{ mt: 4, mx: 'auto', maxWidth: 600, textAlign: 'center' }}>
+                <Typography variant="h4" component="h1" gutterBottom align="center">
+                    Email Verification
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 2, textAlign: 'center' }}>
+                    Thank you for signing up. Please check your email to verify your account. Once verified, you will be redirected automatically.
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 2, textAlign: 'center' }}>
+                    If you did not receive the email, please check your spam folder or
+                    <Typography component={"span"} color="primary">
+                        {" "}
+                        <a href="/email-verification">click here</a>
+                        {" "}
+                    </Typography>
+                    to resend the verification email.
+                </Typography>
+            </Box>
         </PublicLayout>
     )
 }

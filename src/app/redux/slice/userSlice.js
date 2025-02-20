@@ -1,11 +1,8 @@
 import {
-    createNewUser,
-    isUsernameTaken,
-    loginUser,
+    createNewUser, loginUser,
     logOut,
     occupyUsername,
-    storeUserDetails,
-    validateUserEmail,
+    storeUserDetails
 } from "@/config/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -69,7 +66,6 @@ export const userSignUp = createAsyncThunk(
                     uid: res.uid,
                     username: payload.username,
                 });
-                await validateUserEmail();
                 return { ...res, router: payload.router };
             } else {
                 return rejectWithValue(new Error(res.errorCode));
@@ -94,6 +90,9 @@ const userSlice = createSlice({
             state.user = action.payload;
             state.loginStatus = true;
             state.authenticatingState = "idle";
+        },
+        setAuthenticatingState: (state, action) => {
+            state.authenticatingState = action.payload;
         },
         logout: (state) => {
             state.user = {};
@@ -171,7 +170,7 @@ const userSlice = createSlice({
 });
 
 export const selectUser = (state) => state.AUTH.user;
-export const { logout, setPublicState, setLoginStatus, updateUser, calmAuthenticatingState } =
+export const { logout, setAuthenticatingState, setPublicState, setLoginStatus, updateUser, calmAuthenticatingState } =
     userSlice.actions;
 export default userSlice.reducer;
 

@@ -103,7 +103,7 @@ export const createNewUser = async ({ email, password, username }) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
-        return { errorCode, errorMessage, ok: false }; // Return error for handling elsewhere
+        return { errorCode, errorMessage, ok: false };
     }
 };
 
@@ -122,7 +122,7 @@ export const loginUser = async (email, password) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
-        return { errorCode, errorMessage, ok: false }; // Return error for handling elsewhere
+        return { errorCode, errorMessage, ok: false };
     }
 };
 
