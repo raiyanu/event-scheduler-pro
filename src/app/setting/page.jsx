@@ -29,12 +29,12 @@ import { updateUserInfo, validateUserEmail } from "@/config/firebase";
 export default function page() {
     return (
         <MainLayout>
-            <UserSettingsNew />
+            <UserSettings />
         </MainLayout>
     );
 }
 
-const UserSettingsNew = () => {
+export const UserSettings = (props) => {
     const userInfo = useSelector((state) => state.AUTH.user);
     const formik = useFormik({
         initialValues: {
@@ -50,14 +50,18 @@ const UserSettingsNew = () => {
                 console.log("User info updated successfully");
                 formik.setValues(values);
                 dispatch(updateUser(values));
-                setIsEditing(false);
+                if (props.onDateChange) {
+                    props.onDateChange();
+                } else {
+                    setIsEditing(false);
+                }
             } else {
                 console.error("User info update failed");
             }
         },
     });
     const isLogged = useSelector((state) => state.AUTH.loginStatus);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(props.editOpen);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -78,7 +82,7 @@ const UserSettingsNew = () => {
     ) : (
         <form
             onSubmit={formik.submitForm}
-            className="mx-auto max-h-full max-w-[1100px] overflow-y-scroll px-3 pb-24 max-sm:mx-auto md:px-6"
+            className="mx-auto max-h-full max-w-[1100px] overflow-y-auto px-3 pb-24 max-sm:mx-auto md:px-6"
         >
             <Box className="flex max-w-[1000px] items-center justify-between gap-4">
                 <Box>
@@ -92,9 +96,13 @@ const UserSettingsNew = () => {
                     >
                         Account
                     </Typography>
-                    <Typography variant="h4" sx={{ my: 0 }} fontWeight={200} color="textSecondary">
-                        Settings
-                    </Typography>
+                    {
+                        !props.editOpen && (
+                            <Typography variant="h4" sx={{ my: 0 }} fontWeight={200} color="textSecondary">
+                                Settings
+                            </Typography>
+                        )
+                    }
                 </Box>
                 {
                     !isEditing &&
@@ -155,6 +163,48 @@ const UserSettingsNew = () => {
                     <UserTextField label={"FIRST NAME"} isEditing={isEditing} value={formik.values.firstName} onChange={formik.handleChange} name={"firstName"} user={userInfo} />
                     <UserTextField label={"LAST NAME"} isEditing={isEditing} value={formik.values.lastName} onChange={formik.handleChange} name={"lastName"} user={userInfo} />
                     <UserTextField label={"PHONE"} isEditing={isEditing} value={formik.values.phone} onChange={formik.handleChange} name={"phone"} user={userInfo} />
+                    <Box className="contents">
+                        <Typography variant="h6" color="textSecondary" sx={{
+                            minWidth: "max-content", fontSize: "1.5rem", textAlign: {
+                                md: "right",
+                                display: "block"
+                            }
+                        }}>
+                            Email
+                        </Typography>
+                        <Typography
+                            variant="h5"
+                            color="textDisabled"
+                            className="flex items-center gap-2"
+                        >
+                            {userInfo.emailVerified ? (
+                                <Tooltip title="Email is verified" placement="top-end">
+                                    {userInfo.email ? userInfo.email : "No Email"}{" "}
+                                    <VerifiedUser color="info" />
+                                </Tooltip>
+                            ) : (
+                                <Tooltip title="Email is Not Verified!" placement="top-end">
+                                    {userInfo.email ? userInfo.email : "No Email"}{" "}
+                                    <Button
+                                        variant="outlined"
+                                        color="warning"
+                                        onClick={() => {
+                                            validateUserEmail();
+                                        }}
+                                        size="small"
+                                        sx={{
+                                            ml: {
+                                                sm: 0,
+                                                lg: 2
+                                            }
+                                        }}
+                                    >
+                                        <GppMaybe color="warning" /> Verify
+                                    </Button>
+                                </Tooltip>
+                            )}
+                        </Typography>
+                    </Box>
                 </Box>
             </Box>
             {isEditing && (
@@ -223,15 +273,13 @@ const UserSettingsNew = () => {
 const UserTextField = (props) => {
     return (
         <FormControl className="contents">
-            <label htmlFor={props.name}>
-                <Typography variant="h6" color="textSecondary" sx={{
-                    minWidth: "max-content", fontSize: "1.5rem", textAlign: {
-                        md: "right",
-                    }
-                }}>
-                    {props.label}
-                </Typography>
-            </label>
+            <Typography variant="h6" color="textSecondary" sx={{
+                minWidth: "max-content", fontSize: "1.5rem", textAlign: {
+                    md: "right",
+                }
+            }}>
+                {props.label}
+            </Typography>
             {
                 props.isEditing ? (
                     <TextField
@@ -249,7 +297,7 @@ const UserTextField = (props) => {
                     />
                 ) : (
                     <Typography variant="h5" color="textPrimary" >
-                        {props.user[props.name] ? props.user[props.name] : "Not provided"}
+                        {props.user[props.name] ? props.user[props.name] : "--"}
                     </Typography>
                 )
             }
@@ -257,7 +305,7 @@ const UserTextField = (props) => {
     )
 }
 
-const UserSettings = () => {
+const UserSettingsOld = () => {
     const userInfo = useSelector((state) => state.AUTH.user);
     const formik = useFormik({
         initialValues: {
@@ -302,7 +350,7 @@ const UserSettings = () => {
     ) : (
         <form
             onSubmit={formik.submitForm}
-            className="block max-h-full overflow-y-scroll px-3 pb-24 max-sm:mx-auto md:px-6"
+            className="block max-h-full overflow-y-auto px-3 pb-24 max-sm:mx-auto md:px-6"
         >
             <Typography
                 sx={{

@@ -55,7 +55,7 @@ export function AuthenticationFrame({ children }) {
         return <LoadingFallback />;
     }
 
-    if (!(authenticatingState !== 'to_initiate')) {
+    if ((authenticatingState === 'to_initiate')) {
         return (
             <>
                 <Box sx={{ height: "100%", maxHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}>

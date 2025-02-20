@@ -1,16 +1,15 @@
 "use client";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { Suspense, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux";
+import { Suspense, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { extractUserInfo, logout, setPublicState, updateUser } from "./redux/slice/userSlice";
 import { auth, db, getUserFullInfo } from "@/config/firebase";
 import { fetchTasks, pushTasks } from "./redux/slice/taskSlice";
-import { collection, doc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 
 
 
 export default function GlobalActionProvider({ children }) {
-    const tasks = useSelector((state) => state.TASK.tasks);
     const dispatch = useDispatch();
     useEffect(() => {
         (async () => {
@@ -19,7 +18,8 @@ export default function GlobalActionProvider({ children }) {
                 if (await getAuth()?.currentUser) {
                     await dispatch(updateUser(extractUserInfo(auth.currentUser)));
                 } else {
-                    // await dispatch(setPublicState());
+                    await dispatch(setPublicState());
+                    dispatch(logout())
                 }
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
@@ -27,7 +27,7 @@ export default function GlobalActionProvider({ children }) {
                             console.log("User is signed in: ", user);
                             const fetchedUser = await getUserFullInfo();
                             const userFullInfo = fetchedUser.data();
-                            await dispatch(updateUser(extractUserInfo({ ...user, ...userFullInfo })));
+                            await dispatch(updateUser(extractUserInfo({ ...user, ...userFullInfo, emailVerified: user.emailVerified })));
                             dispatch(fetchTasks());
                             unsub = onSnapshot(collection(db, "users", auth.currentUser?.uid, "tasks"), async (taskList) => {
                                 const source = taskList.metadata.hasPendingWrites ? "Local" : "Server";

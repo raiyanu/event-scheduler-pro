@@ -5,6 +5,7 @@ import {
     logOut,
     occupyUsername,
     storeUserDetails,
+    validateUserEmail,
 } from "@/config/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -68,6 +69,7 @@ export const userSignUp = createAsyncThunk(
                     uid: res.uid,
                     username: payload.username,
                 });
+                await validateUserEmail();
                 return { ...res, router: payload.router };
             } else {
                 return rejectWithValue(new Error(res.errorCode));
@@ -141,7 +143,7 @@ const userSlice = createSlice({
                 state.authenticatingState = "succeeded";
                 state.user = userInfo;
                 state.loginStatus = true;
-                action.payload.router.push("/home");
+                action.payload.router.push("/email-verification");
             })
             .addCase(userSignUp.rejected, (state, action) => {
                 console.log(action.payload.message.split("/")[1].split("-").join(" "));
@@ -182,6 +184,7 @@ export const isLogged = (state) => {
 };
 
 export function extractUserInfo(userData) {
+    console.log(userData);
     const userInfo = {
         displayName: userData.displayName ? userData.displayName : null,
         photoURL: userData.providerData[0].photoURL,
