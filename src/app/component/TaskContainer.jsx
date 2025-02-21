@@ -572,6 +572,12 @@ export const QuoteCard = () => {
     const [index, setIndex] = useState(gr());
     const quote = quotes[index];
     const update = () => setIndex(gr());
+    useEffect(() => {
+        const interval = setInterval(() => {
+            update();
+        }, 1000 * 30);
+        return () => clearInterval(interval);
+    }, []);
     return (
         <>
             <Card
