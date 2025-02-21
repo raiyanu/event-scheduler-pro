@@ -79,7 +79,7 @@ export default function TaskContainer() {
     const tasks = useSelector((state) => state.TASK.tasks);
     const taskCount = tasks.length ? tasks.length : 0;
     return (
-        <Box className="relative mt-8 grid grid-cols-1 gap-4 lg:px-0">
+        <Box className="relative mt-4 grid grid-cols-1 gap-4 lg:px-0">
             <Backdrop
                 sx={(theme) => ({
                     zIndex: theme.zIndex.drawer + 1,
@@ -558,6 +558,7 @@ export const TaskCardItem = ({ info }) => {
                     <UpdateTask
                         task={info}
                         openEditModal={openEditModal}
+                        handleClose={handleClose}
                         handleEditModalOpen={handleEditModalOpen}
                         handleEditModalClose={handleEditModalClose}
                     />
@@ -697,7 +698,7 @@ export const TaskDeleteModal = ({
     );
 };
 
-export const UpdateTask = ({ task, handleEditModalClose }) => {
+export const UpdateTask = ({ task, handleEditModalClose, handleClose }) => {
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
@@ -719,6 +720,7 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
         },
         onSubmit: async (values) => {
             console.log("values before mod: ", values);
+
             let startTime = values.startTime;
             values.startTime = {
                 seconds: Math.floor(startTime / 1000),
@@ -737,9 +739,10 @@ export const UpdateTask = ({ task, handleEditModalClose }) => {
             };
             values.id = task.id;
             console.log("values after mod: ", values);
+            await handleEditModalClose();
+            await handleClose();
             await dispatch(updateTask({ id: task.id, task: values }));
             await dispatch(fetchTasks());
-            await handleEditModalClose();
             formik.resetForm();
         },
     });

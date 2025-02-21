@@ -152,7 +152,7 @@ const Login = memo(() => {
                 <Box className="flex flex-col gap-4 *:!bg-transparent">
                     <TextField
                         id="standard-basic"
-                        label="EMAIL"
+                        label="Email"
                         variant="standard"
                         type="email"
                         name="email"

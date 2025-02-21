@@ -57,7 +57,7 @@ export const WelcomeMessage = () => {
         {userInfo.firstName ? `Hey ${userInfo.firstName}! 👋` :
           null}
       </Typography>
-      <Typography className="text-2xl font-bold" sx={{ color: "text.secondary" }}>
+      <Typography className="text-xl font-bold" sx={{ color: "text.secondary" }}>
         {
           taskCount > 0 ? `You have ${taskCount} task${taskCount > 1 ? "s" : ""} waiting!` : userLoadingStatus === "loading" ? "Loading..." : ""
         }

@@ -340,16 +340,6 @@ export const TaskForm = ({ formik }) => {
             <Box className="grid grid-cols-1 place-content-end content-end gap-3 lg:grid-cols-2">
                 <MobileDateTimePicker
                     autoFocus={false}
-                    sx={{
-                        // .css-1u9omgy-MuiButtonBase-root-MuiPickersDay-root:focus.Mui-selected
-                        ".MuiPickersDay-root:focus.Mui-selected": {
-                            backgroundColor: "red !important",
-                        },
-                        "&:focus.Mui-selected": {
-                            backgroundColor: "primary.light"
-                        }
-                    }}
-
                     name="startTime"
                     ref={calenderStartDateRef}
                     label="Start Date"
@@ -390,6 +380,14 @@ export const TaskForm = ({ formik }) => {
                                     backgroundColor: (theme) => theme.palette.primary.light,
                                 },
                                 // backgroundColor: "red",
+                            }
+                        },
+                        toolbar: {
+                            sx: {
+                                py: 1,
+                                "& .MuiTypography-overline": {
+                                    display: "none"
+                                }
                             }
                         }
                     }}
@@ -483,13 +481,13 @@ export const TaskForm = ({ formik }) => {
                         }
                         helpertext={formik.touched.difficulty && formik.errors.difficulty}
                     >
-                        <FormControlLabel value="easy" control={<Radio />} label="Easy" />
+                        <FormControlLabel value="Easy" control={<Radio color="success" />} label="Easy" />
                         <FormControlLabel
-                            value="medium"
-                            control={<Radio />}
+                            value="Medium"
+                            control={<Radio color="info" />}
                             label="Medium"
                         />
-                        <FormControlLabel value="hard" control={<Radio />} label="Hard" />
+                        <FormControlLabel value="Hard" control={<Radio color="error" />} label="Hard" />
                     </RadioGroup>
                 </FormControl>
                 <FormControl>
@@ -506,16 +504,16 @@ export const TaskForm = ({ formik }) => {
                         helpertext={formik.touched.status && formik.errors.status}
                     >
                         <FormControlLabel
-                            value="to-start"
+                            value="To start"
                             control={<Radio />}
                             label="To start"
                         />
                         <FormControlLabel
-                            value="progress"
+                            value="In progress"
                             control={<Radio />}
                             label="In progress"
                         />
-                        {/* <FormControlLabel value="done" control={<Radio />} label="Done" /> */}
+                        {/* <FormControlLabel value="Done" control={<Radio />} label="Done" /> */}
                     </RadioGroup>
                 </FormControl>
             </Box>
