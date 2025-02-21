@@ -2,7 +2,8 @@ import {
     createNewUser, loginUser,
     logOut,
     occupyUsername,
-    storeUserDetails
+    storeUserDetails,
+    updateUserInfo
 } from "@/config/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -17,6 +18,7 @@ const initialState = {
     loginStatus: false,
     authenticatingState: "to_initiate",
     authenticatingError: null,
+    userSettingState: "idle",
 };
 
 export const userLogin = createAsyncThunk(
@@ -67,6 +69,23 @@ export const userSignUp = createAsyncThunk(
                     username: payload.username,
                 });
                 return { ...res, router: payload.router };
+            } else {
+                return rejectWithValue(new Error(res.errorCode));
+            }
+        } catch (error) {
+            return rejectWithValue(new Error(res.message));
+        }
+    }
+);
+
+export const userInfoUpdate = createAsyncThunk(
+    "auth/userInfoUpdate",
+    async (payload, { rejectWithValue }) => {
+        try {
+            const res = await updateUserInfo(payload);
+            if (res.ok) {
+                console.log("User created successfully");
+                return { ...res };
             } else {
                 return rejectWithValue(new Error(res.errorCode));
             }
@@ -164,6 +183,15 @@ const userSlice = createSlice({
             .addCase(userLogout.rejected, (state, action) => {
                 state.authenticatingState = "failed";
                 state.authenticatingError = action.payload.message;
+            })
+            .addCase(userInfoUpdate.pending, (state) => {
+                state.userSettingState = "loading";
+            })
+            .addCase(userInfoUpdate.fulfilled, (state) => {
+                state.userSettingState = "idle";
+            })
+            .addCase(userInfoUpdate.rejected, (state, action) => {
+                state.authenticatingState = "failed";
             });
     },
     selectors: (state) => state.user,

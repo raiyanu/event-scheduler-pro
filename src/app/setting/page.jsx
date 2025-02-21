@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import MainLayout from "../PrimaryLayout";
 import { useDispatch, useSelector } from "react-redux";
-import { userLogout, updateUser } from "../redux/slice/userSlice";
+import { userLogout, updateUser, userInfoUpdate } from "../redux/slice/userSlice";
 import {
     AccountCircle,
     Close,
@@ -46,7 +46,7 @@ export const UserSettings = (props) => {
         },
         onSubmit: async (values) => {
             console.log(JSON.stringify(values, null, 2));
-            if (await updateUserInfo(values)) {
+            if (await dispatch(userInfoUpdate(values))) {
                 console.log("User info updated successfully");
                 formik.setValues(values);
                 dispatch(updateUser(values));

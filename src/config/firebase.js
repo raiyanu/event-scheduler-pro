@@ -2,10 +2,7 @@ import { initializeApp } from "firebase/app";
 import {
     getAuth,
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    sendSignInLinkToEmail,
-    sendEmailVerification,
-    applyActionCode,
+    signInWithEmailAndPassword, sendEmailVerification
 } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import {
@@ -13,12 +10,10 @@ import {
     doc,
     getDoc,
     getDocs,
-    collection,
-    query,
-    updateDoc,
+    collection, updateDoc,
     addDoc,
     setDoc,
-    deleteDoc,
+    deleteDoc
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -182,6 +177,7 @@ export const getUserFullInfo = async () => {
 };
 
 export const updateUserInfo = async (newData) => {
+    console.log("Updating user info...", newData);
     try {
         const myuserDooc = doc(db, "users", auth.currentUser.uid);
         const isExists = await getDoc(myuserDooc);
@@ -193,9 +189,14 @@ export const updateUserInfo = async (newData) => {
         }
     } catch (error) {
         console.error("Error updating user info:", error.message);
-        return false;
+        return {
+            ok: false,
+            message: error.message,
+        };
     }
-    return true;
+    return {
+        ok: true
+    };
 };
 
 export const validateUserEmail = async () => {
