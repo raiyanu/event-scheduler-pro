@@ -158,10 +158,14 @@ export const UserSettings = (props) => {
 
                 <Box
                     sx={{ p: 0, mx: "auto" }}
-                    className="grid w-full max-w-lg flex-grow basis-full grid-cols-[auto_auto] gap-x-4 gap-y-4 max-sm:max-w-[300px] max-sm:grid-cols-[1fr] md:grid-cols-[1fr_4fr]" >
-                    <UserTextField label={"USERNAME"} isEditing={isEditing} value={formik.values.username} onChange={formik.handleChange} name={"username"} user={userInfo} />
-                    <UserTextField label={"FIRST NAME"} isEditing={isEditing} value={formik.values.firstName} onChange={formik.handleChange} name={"firstName"} user={userInfo} />
-                    <UserTextField label={"LAST NAME"} isEditing={isEditing} value={formik.values.lastName} onChange={formik.handleChange} name={"lastName"} user={userInfo} />
+                    className="flex w-full max-w-[400px] flex-col items-start gap-4 max-sm:w-full">
+                    <div className="col-span-2">
+                        <UserTextField label={"USERNAME"} isEditing={isEditing} value={formik.values.username} onChange={formik.handleChange} name={"username"} user={userInfo} />
+                    </div>
+                    <Box className="flex w-full justify-between gap-4">
+                        <UserTextField label={"FIRST NAME"} className="col-span-2" isEditing={isEditing} value={formik.values.firstName} onChange={formik.handleChange} name={"firstName"} user={userInfo} />
+                        <UserTextField label={"LAST NAME"} isEditing={isEditing} value={formik.values.lastName} onChange={formik.handleChange} name={"lastName"} user={userInfo} />
+                    </Box>
                     <UserTextField label={"PHONE"} isEditing={isEditing} value={formik.values.phone} onChange={formik.handleChange} name={"phone"} user={userInfo} />
                     <Box className="contents">
                         <Typography variant="h6" color="textSecondary" sx={{
@@ -207,77 +211,80 @@ export const UserSettings = (props) => {
                     </Box>
                 </Box>
             </Box>
-            {isEditing && (
-                <Box
-                    sx={{
-                        mt: 8,
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        gap: 2,
-                    }}
-                >
-                    <Button
-                        variant="text"
-                        color="secondary"
-                        sx={{ width: { xs: "100%", sm: "auto" } }}
-                        onClick={
-                            () => {
-                                setIsEditing(false);
-                                formik.setValues(userInfo);
-                            }
-                        }
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ width: { xs: "100%", sm: "auto" } }}
-                        onClick={formik.handleSubmit}
-                        type="submit"
-                    >
-                        Save
-                    </Button>
-                </Box>
-            )}
-            {!isEditing && (
-                <Box sx={{ mt: 8 }}>
-                    <Button
-                        variant="contained"
-                        color="error"
+            {
+                isEditing && (
+                    <Box
                         sx={{
-                            display: "block",
-                            maxWidth: "80%",
-                            mr: { xs: "auto", sm: "0" },
-                            ml: "auto",
-                            width: { xs: "100%", sm: "auto" },
-                        }}
-                        onClick={() => {
-                            dispatch(userLogout());
+                            mt: 2,
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            gap: 2,
                         }}
                     >
-                        Logout
-                    </Button>
-                    <Button
-                        type="submit"
-                        hidden
-                    ></Button>
-                </Box>
-            )}
-
-        </form>
+                        <Button
+                            variant="text"
+                            color="secondary"
+                            sx={{ width: { xs: "100%", sm: "auto" } }}
+                            onClick={
+                                () => {
+                                    setIsEditing(false);
+                                    formik.setValues(userInfo);
+                                }
+                            }
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{ width: { xs: "100%", sm: "auto" } }}
+                            onClick={formik.handleSubmit}
+                            type="submit"
+                        >
+                            Save
+                        </Button>
+                    </Box>
+                )
+            }
+            {
+                !isEditing && (
+                    <Box sx={{ mt: 4 }}>
+                        <Button
+                            variant="contained"
+                            color="error"
+                            sx={{
+                                display: "block",
+                                maxWidth: "80%",
+                                mr: { xs: "auto", sm: "0" },
+                                ml: "auto",
+                                width: { xs: "100%", sm: "auto" },
+                            }}
+                            onClick={() => {
+                                dispatch(userLogout());
+                            }}
+                        >
+                            Logout
+                        </Button>
+                        <Button
+                            type="submit"
+                            hidden
+                        ></Button>
+                    </Box>
+                )
+            }
+        </form >
     );
 }
 
 
 const UserTextField = (props) => {
     return (
-        <FormControl className="contents">
+        <FormControl >
             <Typography variant="h6" color="textSecondary" sx={{
                 minWidth: "max-content", fontSize: "1.5rem", textAlign: {
-                    md: "right",
+                    md: "",
                 }
-            }}>
+            }} className="text-zinc-600">
                 {props.label}
             </Typography>
             {
