@@ -208,12 +208,9 @@ export const UserSettings = (props) => {
                             )
                         }
                     </FormControl>
-                    <Box className="contents">
+                    <Box >
                         <Typography variant="h6" color="textSecondary" sx={{
-                            minWidth: "max-content", fontSize: "1.5rem", textAlign: {
-                                md: "right",
-                                display: "block",
-                            }
+                            minWidth: "max-content", fontSize: "1.5rem"
                         }}
                             className="text-zinc-600"
                         >
