@@ -1,29 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import url(./styles.css);
 @import url(./drag-n-drop-styles.css);
 @import url(./react-big-calendar.css);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.remove-arrow::-webkit-inner-spin-button,
+.remove-arrow::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  appearance: none;
+}
+
+.remove-arrow {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
 
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
-	}
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
-
 body {
-	font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
-	.text-balance {
-		text-wrap: balance;
-	}
+  .text-balance {
+    text-wrap: balance;
+  }
 }
+
+/*# sourceMappingURL=globals.css.map */

@@ -10,7 +10,7 @@ export default function page() {
         <PublicLayout>
             <Box sx={{
                 p: 2,
-                maxWidth: "min-content",
+                maxWidth: "max-content",
                 marginInline: "auto"
             }}>
                 <UserSettings editOpen onDateChange={() => {

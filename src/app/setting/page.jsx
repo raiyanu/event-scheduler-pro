@@ -162,19 +162,62 @@ export const UserSettings = (props) => {
                     <div className="col-span-2">
                         <UserTextField label={"USERNAME"} isEditing={isEditing} value={formik.values.username} onChange={formik.handleChange} name={"username"} user={userInfo} />
                     </div>
-                    <Box className="flex w-full justify-between gap-4">
+                    <Box className="flex w-full justify-between gap-4 max-sm:flex-col">
                         <UserTextField label={"FIRST NAME"} className="col-span-2" isEditing={isEditing} value={formik.values.firstName} onChange={formik.handleChange} name={"firstName"} user={userInfo} />
                         <UserTextField label={"LAST NAME"} isEditing={isEditing} value={formik.values.lastName} onChange={formik.handleChange} name={"lastName"} user={userInfo} />
                     </Box>
-                    <UserTextField label={"PHONE"} isEditing={isEditing} value={formik.values.phone} onChange={formik.handleChange} name={"phone"} user={userInfo} />
+                    <FormControl>
+                        <Typography variant="h6" color="textSecondary" sx={{
+                            minWidth: "max-content", fontSize: "1.5rem"
+                        }} className="text-zinc-600">
+                            PHONE
+                        </Typography>
+                        {
+                            isEditing ? (
+                                <TextField
+                                    variant="standard"
+                                    name={"phone"}
+                                    value={formik.values.phone}
+                                    onChange={formik.handleChange}
+                                    sx={{
+                                        "& input": {
+                                            fontSize: "1.5rem",
+                                            padding: "0",
+                                        },
+                                        maxWidth: "max-content",
+                                        "&::-webkit-inner-spin-button,&::-webkit-outer-spin-button": {
+                                            "-webkit-appearance": "none",
+                                            margin: 0
+                                        },
+                                        "&": {
+                                            "-moz-appearance": "textfield"
+                                        }
+                                    }}
+                                    type="number"
+                                    slotProps={
+                                        {
+                                            inputMode: "numeric",
+                                            pattern: "[0-9]*"
+                                        }
+                                    }
+                                />
+                            ) : (
+                                <Typography variant="h5" color="textPrimary">
+                                    +{userInfo.phone ? userInfo.phone : "--"}
+                                </Typography>
+                            )
+                        }
+                    </FormControl>
                     <Box className="contents">
                         <Typography variant="h6" color="textSecondary" sx={{
                             minWidth: "max-content", fontSize: "1.5rem", textAlign: {
                                 md: "right",
-                                display: "block"
+                                display: "block",
                             }
-                        }}>
-                            Email
+                        }}
+                            className="text-zinc-600"
+                        >
+                            EMAIL
                         </Typography>
                         <Typography
                             variant="h5"
@@ -279,12 +322,14 @@ export const UserSettings = (props) => {
 
 const UserTextField = (props) => {
     return (
-        <FormControl >
-            <Typography variant="h6" color="textSecondary" sx={{
-                minWidth: "max-content", fontSize: "1.5rem", textAlign: {
-                    md: "",
-                }
-            }} className="text-zinc-600">
+        <FormControl>
+            <Typography
+                variant="h6"
+                color="textSecondary"
+                sx={{
+                    minWidth: "max-content", fontSize: "1.5rem"
+                }}
+                className="text-zinc-600">
                 {props.label}
             </Typography>
             {
@@ -303,7 +348,7 @@ const UserTextField = (props) => {
                         }}
                     />
                 ) : (
-                    <Typography variant="h5" color="textPrimary" >
+                    <Typography variant="h5" color="textPrimary">
                         {props.user[props.name] ? props.user[props.name] : "--"}
                     </Typography>
                 )
