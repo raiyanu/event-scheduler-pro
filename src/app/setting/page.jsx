@@ -85,9 +85,6 @@ export const UserSettings = (props) => {
             className="max-h-full overflow-y-auto px-3 pb-24 max-sm:mx-auto md:px-6"
 
         >
-            <Box className="max-h-full max-w-[1100px] px-3 pb-24 max-sm:mx-auto md:px-6">
-
-            </Box>
             <Box className="flex max-w-[1000px] items-center justify-between gap-4">
                 <Box>
                     <Typography
@@ -207,7 +204,7 @@ export const UserSettings = (props) => {
                                 />
                             ) : (
                                 <Typography variant="h5" color="textPrimary">
-                                    +{userInfo.phone ? userInfo.phone : "--"}
+                                    {userInfo.phone ? "+" + userInfo.phone : "--"}
                                 </Typography>
                             )
                         }

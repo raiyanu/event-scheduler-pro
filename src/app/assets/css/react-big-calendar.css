@@ -171,7 +171,7 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-today {
-  background-color: rgba(var(--mui-palette-secondary-mainChannel)/0.4);
+  background-color: rgba(var(--mui-palette-secondary-mainChannel)/0.3);
 }
 
 .rbc-toolbar {
@@ -323,7 +323,7 @@ button.rbc-input::-moz-focus-inner {
   box-shadow: none;
   margin: 0;
   padding: 2px 5px;
-  background-color: var(--mui-palette-secondary-main);
+  background-color: rgba(var(--mui-palette-primary-mainChannel)/0.8);
   border-radius: 5px;
   color: #fff;
   cursor: pointer;
@@ -542,7 +542,6 @@ rbc-calendar {
   position: absolute;
   z-index: 5;
   border: 1px solid var(--mui-palette-divider);
-  background-color: var(--mui-palette-background-paper);
   -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
   padding: 10px;
@@ -704,7 +703,7 @@ rbc-calendar {
 
 .rbc-day-slot .rbc-event,
 .rbc-day-slot .rbc-background-event {
-  border: 1px solid var(--mui-palette-divider);
+  border: 1px solid var(--mui-palette-TableCell-border);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

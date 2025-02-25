@@ -37,6 +37,7 @@ export const updateTask = createAsyncThunk(
     "tasks/UpdateTasks",
     async (payload, { rejectWithValue }) => {
         try {
+            console.log("adadasdsa", payload);
             await updateTaskDoc(payload.id, payload.task);
             const resTask = await getTaskList();
             return resTask;
