@@ -1,15 +1,14 @@
 "use client"
 import { Typography } from "@mui/material";
-import MainLayout from "../PrimaryLayout";
+import MainLayout, { PublicLayout } from "../PrimaryLayout";
 import { ThemeProvider } from "@emotion/react";
 import { Theme } from "../context/ThemeContext";
+import { GridStack } from "../component/DMasonry/src/demo/demo";
 
 export default function page() {
     return (
-        <MainLayout>
-            <Typography sx={{
-                color: "primary.light",
-            }}>Agenda</Typography>
-        </MainLayout>
+        <PublicLayout>
+            <GridStack />
+        </PublicLayout>
     )
 }

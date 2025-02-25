@@ -51,6 +51,7 @@ import { ClockIcon } from "@mui/x-date-pickers";
 import Image from "next/image";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import quotes from '../assets/quotes.json';
+import { GridStack } from "./DMasonry/src/demo/demo";
 
 const FriendlyDate = (input) => {
     const date = new Date(input.seconds * 1000);
@@ -111,7 +112,8 @@ export default function TaskContainer() {
                 }}
                 className="relative"
             >
-                <TaskList />
+                <GridStack />
+                {/* <TaskList /> */}
             </Box>
         </Box>
     );
@@ -124,7 +126,7 @@ export function TaskList() {
 
     const sortedTasks = useMemo(() => {
         try {
-            return sortTasksByCreatedAt(tasks);
+            return SortTasks(tasks);
         } catch (error) {
             console.log(error);
             return [];
@@ -830,7 +832,7 @@ export const UpdateTask = ({ task, handleEditModalClose, handleClose }) => {
     );
 };
 
-function sortTasksByCreatedAt(tasks) {
+function SortTasks(tasks) {
     return [...tasks].sort((a, b) => {
         if (a.status === "done" && b.status !== "done") return 1;
         if (a.status !== "done" && b.status === "done") return -1;
