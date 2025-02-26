@@ -739,10 +739,10 @@ export const UpdateTask = ({ task, handleEditModalClose, handleClose }) => {
             };
             values.id = task.id;
             console.log("values after mod: ", values);
-            await handleEditModalClose();
-            await handleClose();
             await dispatch(updateTask({ id: task.id, task: values }));
-            await dispatch(fetchTasks());
+            handleEditModalClose();
+            handleClose();
+            dispatch(fetchTasks());
             formik.resetForm();
         },
     });
