@@ -31,7 +31,7 @@ To install the application, follow these steps:
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/event-scheduler-pro.git
+   git clone https://github.com/raiyanu/event-scheduler-pro.git
    ```
 
 2. Navigate to the project directory:
@@ -58,7 +58,7 @@ Open your browser and navigate to `http://localhost:3000` to use the application
 
 ## TODO
 
-- [ ] The first name should be a compulsory field. (Because of this I couldn't able to see the HI text in the home page)
+- [x] The first name should be a compulsory field. (Because of this I couldn't able to see the HI text in the home page)
 - [x] Remove the button on add task modal
 - [x] While clicking cancel the form should resetted to default state
 - [X] While clicking delete, one extra modal is being appeared out of nowhere
