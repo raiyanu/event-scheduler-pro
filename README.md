@@ -101,6 +101,6 @@ We welcome contributions to Event Scheduler Pro! To contribute, follow these ste
 
 ## License
 
-This project is licensed under the GNU GENERAL PUBLIC LICENSE. See the [LICENSE](LICENSE) file for details.
+This work is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) License. To view a copy of this license, visit [http://creativecommons.org/licenses/by-nc/4.0/](http://creativecommons.org/licenses/by-nc/4.0/).
 
 > An idiot admires complexity while genius admires simplicity
